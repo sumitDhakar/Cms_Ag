@@ -1,0 +1,277 @@
+ *ngIf="permissions.isDeleteable"<!-- Page Wrapper -->
+<div class="page-wrapper">
+			
+    <!-- Page Content -->
+    <div class="content container-fluid">
+    
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Promotion</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Promotion</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a (click)="addForm()" *ngIf="permissions.isWriteable" class="btn add-btn" data-toggle="modal" data-target="#add_promotion"><i class="fa fa-plus"></i> Add Promotion</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+        
+        <!-- Search Filter -->
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3">  
+                <div class="form-group form-focus">
+                    <input type="text" class="form-control floating" name="firstName" [(ngModel)]="searching.employee.firstName">
+                    <label class="focus-label">Promotion User</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3"> 
+                
+                <div class="form-group form-focus select-focus">
+                    <select   [(ngModel)]="searching.designationTo.id" name="id" >
+                        <option value="0">--Select--</option>
+                        <option *ngFor="let item of designations"  [value]="item.id">{{ item.title }}</option>
+                      </select>
+                    <label class="focus-label">Designation</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">  
+                <a (click)="filter()" class="btn btn-success btn-block"> Search </a>  
+            </div>
+        </div>
+        <!-- Search Filter -->
+        
+<!---- pagination -->
+    
+<mat-paginator #paginator
+class="demo-paginator"
+(page)="handlePageEvent($event)"
+[length]="length"
+[pageSize]="pageSize"
+[disabled]="disabled"
+[showFirstLastButtons]="showFirstLastButtons"
+[pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+[hidePageSize]="hidePageSize"
+[pageIndex]="pageIndex"
+aria-label="Select page">
+</mat-paginator>
+<!---pagination end -->
+        <div class="row" *ngIf="permissions.isReadable">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                
+                    <!-- Promotion Table -->
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Promoted Employee </th>
+                                <th>Department</th>
+                                <th>Promotion Designation From </th>
+                                <th>Promotion Designation To </th>
+                                <th>Promotion Date </th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let promotion of promotionsList let i = index">
+                                <td>{{sequence+i+1}}</td>
+                                <td>
+                                    
+                                    <h2 class="table-avatar">
+                                        <a href="javascript:void(0);" class="avatar"><img
+                                              [src]="promotion.employee.profileName" alt=""></a>
+                                        <a >{{promotion.employee.firstName+" "+promotion.employee.lastName}}
+                                          </a>
+                                    </h2>
+                                </td>
+                                <td>{{promotion.designationTo.department.title}}</td>
+                                <td>{{promotion.designationFrom}} </td>
+                                <td>{{promotion.designationTo.title}} </td>
+                                <td>{{promotion.promotionDate}} </td>
+                                
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" *ngIf="permissions.isEditable" (click)="setEditData(promotion.id)" data-toggle="modal" data-target="#edit_promotion"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" *ngIf="permissions.isDeleteable" (click)="confirm(promotion.id)" data-toggle="modal" data-target="#delete_promotion"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- /Promotion Table -->
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+    
+    <!-- Add Promotion Modal -->
+    <div id="add_promotion" class="modal custom-modal fade"*ngIf="permissions.isWriteable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Promotion</h5>
+                    <button type="button" class="close" id="add" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="E" (ngSubmit)="addPromotion()">
+                        <div class="form-group">
+                                <label>Promotion For  <span class="text-danger">*</span></label>
+                                <select    formControlName="employee" (change)="optionSelected(inp.value)" #inp [(ngModel)]="promotion.employee.id" name="id" >
+                                    <option *ngFor="let item of users"  [value]="item.id">{{ item.firstName +" "+ item.lastName }}</option>
+                                  </select> <span class="text-danger"
+                                  *ngIf="(E.get('employee')?.touched ) && E.get('employee')?.hasError('required')">
+                                  Promotion For Is Required.
+                              </span>
+  
+                                                          
+                            </div>
+                        <div class="form-group">
+                            <label>Promotion From <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="designationFrom"  formControlName="designationFrom" [(ngModel)]="promotion.designationFrom" placeholder="designation From" readonly>
+                            <span class="text-danger"
+                            *ngIf="(E.get('designationFrom')?.touched ) && E.get('designationFrom')?.hasError('required')">
+                            Promotion From Is Required.
+                        </span>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Promotion To <span class="text-danger">*</span></label>
+                            <select    formControlName="designationTo" #inp [(ngModel)]="promotion.designationTo.id" name="id" >
+                                <option *ngFor="let designation of designations"  [value]="designation.id">{{ designation.title }}</option>
+                              </select>
+                              <span class="text-danger"
+                              *ngIf="(E.get('designationTo')?.touched ) && E.get('designationTo')?.hasError('required')">
+                              Promotion To  Is Required.
+                          </span>
+
+                        </div>
+                        <div class="form-group">
+                            <!-- <div class="col-sm-6"> -->
+                                <div class="form-group">
+                                    <label>Promotion Date <span class="text-danger">*</span></label>
+                                     <input  formControlName="promotionDate" class="form-control " [min]="todayDate" [max]="todayDate" name="promotionDate" [(ngModel)]="promotion.promotionDate" type="date">
+                                <!-- </div> -->
+                                <span class="text-danger"
+                                *ngIf="(E.get('promotionDate')?.touched ) && E.get('promotionDate')?.hasError('required')">
+                                Promotion Date  Is Required.
+                            </span>
+
+                            </div></div>
+                        
+                        <div class="submit-section">
+                            <button  type="submit"    class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Promotion Modal -->
+    
+    <!-- Edit Promotion Modal -->
+    <div id="edit_promotion" class="modal custom-modal fade" *ngIf="permissions.isEditable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Promotion</h5>
+                    <button type="button" class="close" id='editClose' data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="eadit" (ngSubmit)="updatePromotion()">
+                        <div class="form-group">
+                                <label>Promotion For  <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="firstName"  formControlName="employee" [(ngModel)]="promotion.employee.firstName" placeholder="Employee " readonly>
+                            <!-- <select    formControlName="employee" (change)="optionSelected(inp)" #inp [(ngModel)]="promotion.employee.id" name="id" >
+                                    <option *ngFor="let item of users"  [value]="item.id">{{ item.firstName +" "+ item.lastName }}</option>
+                                  </select>  -->
+                                  <span class="text-danger"
+                                  *ngIf="(eadit.get('employee')?.touched ) && eadit.get('employee')?.hasError('required')">
+                                  Promotion For Is Required.
+                              </span>
+  
+                                                          
+                            </div>
+                        <div class="form-group">
+                            <label>Promotion From <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="designationFrom"  formControlName="designationFrom" [(ngModel)]="promotion.designationFrom" placeholder="designation From" readonly>
+                            <span class="text-danger"
+                            *ngIf="(eadit.get('designationFrom')?.touched ) && eadit.get('designationFrom')?.hasError('required')">
+                            Promotion From Is Required.
+                        </span>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Promotion To <span class="text-danger">*</span></label>
+                            <select    formControlName="designationTo" #inp [(ngModel)]="promotion.designationTo.id" name="id" >
+                                <option *ngFor="let designation of designations"  [value]="designation.id">{{ designation.title }}</option>
+                              </select>
+                              <span class="text-danger"
+                              *ngIf="(eadit.get('designationTo')?.touched ) && eadit.get('designationTo')?.hasError('required')">
+                              Promotion To  Is Required.
+                          </span>
+
+                        </div>
+                        <div class="form-group">
+                            <!-- <div class="col-sm-6"> -->
+                                <div class="form-group">
+                                    <label>Promotion Date <span class="text-danger">*</span></label>
+                                     <input  formControlName="promotionDate" class="form-control " [min]="todayDate" max="2024-12-31" name="promotionDate" [(ngModel)]="promotion.promotionDate" type="date">
+                                <!-- </div> -->
+                                <span class="text-danger"
+                                *ngIf="(eadit.get('promotionDate')?.touched ) && eadit.get('promotionDate')?.hasError('required')">
+                                Promotion Date  Is Required.
+                            </span>
+
+                            </div></div>
+                           
+                        <div class="submit-section">
+                            <button  type="submit" class="btn btn-primary submit-btn">Save</button>
+                        </div>
+                    </form>
+              </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Promotion Modal -->
+    
+    <!-- Delete Promotion Modal -->
+    <div class="modal custom-modal fade" id="delete_promotion" *ngIf="permissions.isDeleteable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Promotion</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a (click)="deletePromotion()" data-dismiss="modal" class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Promotion Modal -->
+
+</div>
+<!-- /Page Wrapper -->

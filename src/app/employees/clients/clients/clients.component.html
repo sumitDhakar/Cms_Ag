@@ -1,0 +1,1574 @@
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Clients</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Clients</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a (click)="addForm()" href="#" class="btn add-btn" data-toggle="modal" data-target="#add_client"><i
+                            class="fa fa-plus"></i> Add Client</a>
+                    <div class="view-icons">
+                        <a (click)="changeView(false)" class="grid-view btn btn-link active"><i
+                                class="fa fa-th"></i></a>
+                        <a (click)="changeView(true)" class="list-view btn btn-link"><i class="fa fa-bars"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <!-- Search Filter -->
+        <div class="row filter-row">
+             <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                    <input type="text" class="form-control floating" name="firstName" [(ngModel)]="search.firstName">
+                    <label class="focus-label">Client Name</label>
+                </div>
+            </div> 
+            <!-- <div class="col-sm-6 col-md-3"> --> 
+                <!-- <div class="form-group form-focus">
+                    <input type="text" class="form-control floating" name="firstName"
+                        [(ngModel)]="search.owner.firstName">
+                    <label class="focus-label">Client Name</label>
+                </div>
+            </div> -->
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus ">
+                    <label class="focus-label">Company Name</label>
+                    <input class="form-control floating" placeholder="Select Company"  name="companyName"
+                        [(ngModel)]="search.companyName" />
+                                 </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a (click)="searchClient()" class="btn btn-success btn-block"> Search </a>
+            </div>
+        </div>
+        <!-- Search Filter -->
+        <!---- pagination -->
+
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+
+
+
+        <!------ Grid View -->
+        <div class="row staff-grid-row" *ngIf="!isListView">
+            <div class="col-md-4 col-sm-6 col-12 col-lg-4 col-xl-3" *ngFor="let client of clients">
+                <div class="profile-widget">
+                    <div class="profile-img" >
+                        <a class="avatar"><img alt="" [src]="client.profileName"></a>
+                    </div>
+                    <div class="dropdown profile-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i
+                                class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" (click)="setEditData(client.id)" data-toggle="modal"
+                                data-target="#edit_client"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                            <a class="dropdown-item" (click)="confirm(client.id)" data-toggle="modal"
+                                data-target="#delete_client"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                        </div>
+                    </div>
+                    <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a
+                        [routerLink]="baseRoute+'/user/profile/'+client.id">{{(client!=null?
+                            client.firstName:"No Owner") + " "+(client!=null? client.lastName:"")}}
+                        </a></h4>
+                  
+                        <div class="small text-align" 
+                        [routerLink]="baseRoute+'/clients/client_view/'+client.id">{{client.companyName}}</div>
+                
+                   
+                    <!-- <a href="chat.html" class="btn btn-white btn-sm m-t-10">Message</a> -->
+                    <a [routerLink]="baseRoute+'/clients/client_view/'+client.id" class="btn btn-white btn-sm m-t-10">View Profile</a>
+                </div>
+            </div>
+
+
+        </div>
+        <!---- Grid View Ends -->
+
+        <!---List View-->
+        <div class="row" *ngIf="isListView">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table datatable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Client ID</th>
+                                <th>Contact Person</th>
+                                <th>Client Groups</th>
+                                <th>Labels</th>
+                                <th>Status</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let client of clients">
+                                <td>
+
+                                    
+                                    <h2 class="table-avatar">
+<!--                                        
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+client.id"
+                                            class="avatar"> <img [src]="imageUrl+client.profileName" alt=""
+                                                class="img-fluid imagestudent"></a>
+                                  -->
+                                       
+                                       
+                                        <a  [routerLink]="baseRoute+'/clients/client_view/'+client.id" class="avatar"><img
+                                            [src]="client.profileName" alt=""></a>
+                                        <a  [routerLink]="baseRoute+'/clients/client_view/'+client.id">{{client.companyName}}</a>
+                                    </h2>
+
+
+
+                                    
+                                </td>
+                                <td>CLT-{{client.id}}</td>
+                                <td>{{client.phone}}</td>
+                                <td>{{client.clientGroups}}</td>
+                                <td>{{client.labels}}</td>
+                                <td>
+                                    <div class="dropdown action-label">
+                                        <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false"><i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (client.status=='Active'?'text-success':'text-danger')"></i>
+                                            {{client.status}} </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" (click)="updateClientStatus(client.id,'Active')"><i
+                                                    class="fa fa-dot-circle-o text-success"></i> Active</a>
+                                            <a class="dropdown-item"
+                                                (click)="updateClientStatus(client.id,'InActive')"><i
+                                                    class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" (click)="setEditData(client.id)"
+                                                data-toggle="modal" data-target="#edit_client"><i
+                                                    class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" (click)="confirm(client.id)" href="#"
+                                                data-toggle="modal" data-target="#delete_client"><i
+                                                    class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                          
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!--- List view ends -->
+
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Client Modal -->
+    <div id="add_client" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Client</h5>
+                    <button type="button" class="close"id="add" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form [formGroup]="myForm" (ngSubmit)="addClient()">
+                    
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Company Name <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" placeholder="Company Name"
+                                    formControlName="companyName"     name="companyName" [(ngModel)]="client.companyName">
+                                    <span class="text-danger"
+                                *ngIf="(myForm.get('companyName')?.touched ) && myForm.get('companyName')?.hasError('required')">
+                               Company Name  Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('companyName')?.touched ) && myForm.get('companyName')?.hasError('minlength')">
+                               Company Name  length should be greater than 3.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('companyName')?.touched ) && myForm.get('companyName')?.hasError('maxlength')">
+                               Company Name  length should be smaller than 25.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('companyName')?.touched ) && myForm.get('companyName')?.hasError('pattern')">
+                           Company Name  Is invalid .
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(myForm.get('companyName')?.touched ) && myForm.get('companyName')?.hasError('pattern')">
+                       Ex:- Dollop.
+                    </span>
+
+                                </div>
+                            </div>
+                           
+ 
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="firstName" formControlName="firstName"
+                                        [(ngModel)]="client.firstName">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('required')">
+                                    firstName Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('minlength')">
+                                    firstName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('maxlength')">
+                                    firstName length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('pattern')">
+                                    firstName is invalid.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('pattern')">
+                                Ex:- Xyz.
+                            </span>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Last Name<span
+                                        class="text-danger">*</span></label>
+                                   <input class="form-control" type="text" name="lastName" formControlName="lastName"
+                                        [(ngModel)]="client.lastName">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('required')">
+                                    lastName Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('minlength')">
+                                    lastName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('maxlength')">
+                                    lastName length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('pattern')">
+                                    lastName is invalid.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('pattern')">
+                                Ex:- Xyz.
+                            </span>
+                            </div>
+                            
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Client Profile :<span
+                                        class="text-danger">*</span></label>
+                                    <input type="file" name="profile" (change)="selectFile($event)" accept="image/*">
+                                </div>
+
+
+                            </div>
+                            
+
+                                
+                        
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Date of Birth <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control " id="selectedDate" type="date" (keydown)="false" name="dob"
+                                        [(ngModel)]="client.dob" formControlName="dob">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('dob')?.touched ) && myForm.get('dob')?.hasError('required')">
+                                    dob Is Required.
+                                </span>
+                                <span class="text-danger" *ngIf="myForm.get('dob')?.hasError('invalidDate') ">
+                                    Selected date must be at least 18 years ago and not in the future.
+                                </span>
+                                <span class="text-danger" *ngIf="myForm.get('dob')?.hasError('invalidDate') ">
+                                    Ex:- 09-05-2001.
+                                </span>
+                            </div>
+                            
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Joining Date <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control " type="date" (keydown)="false" name="createdAt" [min]="todayDate" [max]="todayDate"
+                                        [(ngModel)]="client.createdAt" formControlName="joining">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('joining')?.touched ) && myForm.get('joining')?.hasError('required')">
+                                    joining Date Is Required.
+                                </span>
+                            </div>
+                                 
+                                 <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-form-label">Gender<span
+                                            class="text-danger">*</span></label>
+    
+                                        <select formControlName="gender" name="gender" [(ngModel)]="client.gender">
+                                            <option value="">--select-- </option>
+                                            <option value="Male">Male </option>
+                                            <option value="Female">Female </option>
+                                            <option value="Other">Other </option>
+                                        </select>
+                                    </div>
+                                 </div>
+                        
+
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="email" name="email" formControlName="email"
+                                        [(ngModel)]="client.email">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('required')">
+                                    Email Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('email')">
+                                    Email Formate Is Wrong.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('email')">
+                                    ex:- xyx@gmail.com
+                                </span>
+
+
+                            </div>
+                             
+ 
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Password<span
+                                        class="text-danger">*</span></label>
+                                    <input class="form-control" type="password" formControlName="password"
+                                        name="password" [(ngModel)]="client.password">
+                                </div>
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('password')?.touched ) && (myForm.get('password')?.hasError('pattern')&&myForm.get('password')?.hasError('minlength'))">
+                                    Password Should Contain UpperCase And LowerCase With Numbers.
+                                </div>
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('password')?.touched ) && myForm.get('password')?.hasError('minlength')">
+                                    Password Length Must Be More Than 7.
+                                </div>
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('password')?.touched ) && myForm.get('password')?.hasError('required')">
+                                    Password Is Required.
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Repeat Password</label>
+                                    <input class="form-control" type="password" name="confirmPassword"
+                                        formControlName="confirmPassword" [(ngModel)]="confirmPassword">
+                                </div>
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('confirmPassword')?.touched && !myForm.get('password')?.hasError('minlength')) && myForm.get('confirmPassword')?.hasError('required')">
+                                    confirmPassword Is Required.
+                                </div>
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('confirmPassword')?.touched && this.confirmPassword.length>=7) && myForm?.hasError('passwordMatch')">
+                                    Password and confirmPassword Must Be Same.
+                                </div>
+                            </div>
+                          
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Address <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="address"  name="address"
+                                    formControlName="address"    [(ngModel)]="client.address">
+                                </div>   <span class="text-danger"
+                                        *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('required')">
+                                        Address Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('minlength')">
+                                        Address length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('maxlength')">
+                                        Address length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('pattern')">
+                                    Address Is invalid .
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('pattern')">
+                               Ex- Abcd.
+                            </span>
+                                    
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">City <span class="text-danger">*</span></label>
+                                    <input class="form-control floating" type="email" placeholder="City" name="city"
+                                    formControlName="city"     [(ngModel)]="client.city">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('city')?.touched ) && myForm.get('city')?.hasError('required')">
+                                        City Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('city')?.touched ) && myForm.get('city')?.hasError('minlength')">
+                                        City length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('city')?.touched ) && myForm.get('city')?.hasError('maxlength')">
+                                        City length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('city')?.touched ) && myForm.get('city')?.hasError('pattern')">
+                                    City Is invalid .
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('city')?.touched ) && myForm.get('city')?.hasError('pattern')">
+                               Ex:- Abcd .
+                            </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">State</label>
+                                    <input class="form-control" type="text" name="state" 
+                                    formControlName="state"     [(ngModel)]="client.state">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('state')?.touched ) && myForm.get('state')?.hasError('required')">
+                                        State Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('state')?.touched ) && myForm.get('state')?.hasError('minlength')">
+                                        State length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('state')?.touched ) && myForm.get('state')?.hasError('maxlength')">
+                                        State length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('state')?.touched ) && myForm.get('state')?.hasError('pattern')">
+                                    State Is invalid .
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('state')?.touched ) && myForm.get('state')?.hasError('pattern')">
+                              Ex:-  MadhyaPradesh .
+                            </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Zip</label>
+                                    <input class="form-control" type="text" name="zip" placeholder="Zip"
+                                    formControlName="zip"      [(ngModel)]="client.zip">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('zip')?.touched ) && myForm.get('zip')?.hasError('required')">
+                                        Zip Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('zip')?.touched ) && myForm.get('zip')?.hasError('minlength')">
+                                        Zip length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('zip')?.touched ) && myForm.get('zip')?.hasError('maxlength')">
+                                        Zip length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('zip')?.touched ) && myForm.get('zip')?.hasError('pattern')">
+                                    Zip Is invalid .
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('zip')?.touched ) && myForm.get('zip')?.hasError('pattern')">
+                                Ex:- 123456.
+                            </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Country <span class="text-danger">*</span></label>
+                                    <input class="form-control floating" type="text" name="country"
+                                        placeholder="Country"  formControlName="country"   [(ngModel)]="client.country">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('country')?.touched ) && myForm.get('country')?.hasError('required')">
+                                        Country Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('country')?.touched ) && myForm.get('country')?.hasError('minlength')">
+                                        Country length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('country')?.touched ) && myForm.get('country')?.hasError('maxlength')">
+                                        Country length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('country')?.touched ) && myForm.get('country')?.hasError('pattern')">
+                                    Country Is invalid .
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('country')?.touched ) && myForm.get('country')?.hasError('pattern')">
+                                Ex:- India .
+                            </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Phone </label>
+                                    <input class="form-control" type="text" name="phone" placeholder="Phone"
+                                    formControlName="phone"      [(ngModel)]="client.phone">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('required')">
+                                        phone Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('minlength')">
+                                        phone length should be greater than 10.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('maxlength')">
+                                        phone length should be smaller than 10.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('pattern')">
+                                    phone Is invalid .
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('pattern')">
+                                phone no above 5 .
+                            </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Website</label>
+                                    <input class="form-control" type="text" name="website" placeholder="Website"
+                                    formControlName="website"       [(ngModel)]="client.website">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('website')?.touched ) && myForm.get('website')?.hasError('required')">
+                                        Website Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('website')?.touched ) && myForm.get('website')?.hasError('minlength')">
+                                        Website length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('website')?.touched ) && myForm.get('website')?.hasError('maxlength')">
+                                        Website length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('website')?.touched ) && myForm.get('website')?.hasError('pattern')">
+                                    Website Is invalid .
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('website')?.touched ) && myForm.get('website')?.hasError('pattern')">
+                                    EX:- www.xyz.com .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">VAT number </label>
+                                    <input class="form-control" type="text" name="vatNumber" placeholder="Vat Number"
+                                    formControlName="vatNumber"      [(ngModel)]="client.vatNumber">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('vatNumber')?.touched ) && myForm.get('vatNumber')?.hasError('required')">
+                                        VAT number Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('vatNumber')?.touched ) && myForm.get('vatNumber')?.hasError('minlength')">
+                                        VAT number length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('vatNumber')?.touched ) && myForm.get('vatNumber')?.hasError('maxlength')">
+                                        VAT number length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('vatNumber')?.touched ) && myForm.get('vatNumber')?.hasError('pattern')">
+                                    VAT number Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> GST number</label>
+                                    <input class="form-control" type="text" name="gstNumber" placeholder="Gst Number"
+                                    formControlName="gstNumber"      [(ngModel)]="client.gstNumber">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('gstNumber')?.touched ) && myForm.get('gstNumber')?.hasError('required')">
+                                        GST number Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('gstNumber')?.touched ) && myForm.get('gstNumber')?.hasError('minlength')">
+                                        GST number length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('gstNumber')?.touched ) && myForm.get('gstNumber')?.hasError('maxlength')">
+                                        GST number length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('gstNumber')?.touched ) && myForm.get('gstNumber')?.hasError('pattern')">
+                                    GST number Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Client Groups</label>
+                                    <input class="form-control" list="group" name="clientGroups"
+                                        placeholder="Client Group"  formControlName="clientGroups"   [(ngModel)]="client.clientGroups" />
+                                    <datalist id="group">
+                                        <option value="VIP"></option>
+                                        <option value="GOLD"></option>
+                                        <option value="Silver"></option>
+
+                                    </datalist>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('clientGroups')?.touched ) && myForm.get('clientGroups')?.hasError('required')">
+                                    Client Groups Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('clientGroups')?.touched ) && myForm.get('clientGroups')?.hasError('minlength')">
+                                    Client Groups length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('clientGroups')?.touched ) && myForm.get('clientGroups')?.hasError('maxlength')">
+                                    Client Groups length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('clientGroups')?.touched ) && myForm.get('clientGroups')?.hasError('pattern')">
+                                Client Groups Is invalid .
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Currency</label>
+                                    <input class="form-control" list="currencies" name="currency"
+                                        placeholder="Keep it blank to use default (USD)"
+                                        formControlName="currency"    [(ngModel)]="client.currency" />
+                                    <datalist id="currencies">
+                                        <option value="Chrome"></option>
+                                        <option [value]="currency.code" *ngFor="let currency of currencies">
+                                            {{currency.code}}</option>
+                                    </datalist>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('currency')?.touched ) && myForm.get('currency')?.hasError('required')">
+                                  Currency Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('currency')?.touched ) && myForm.get('currency')?.hasError('minlength')">
+                                  Currency length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('currency')?.touched ) && myForm.get('currency')?.hasError('maxlength')">
+                                  Currency length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('currency')?.touched ) && myForm.get('currency')?.hasError('pattern')">
+                              Currency Is invalid .
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Currency Symbole</label>
+                                    <input class="form-control" list="symbol" name="currencySymbol"
+                                        placeholder="Keep it blank to use default ($)"
+                                        formControlName="currencySymbol"    [(ngModel)]="client.currencySymbol" />
+                                    <datalist id="symbol">
+                                        <option value="Chrome"></option>
+                                        <option [value]="currency.symbol" *ngFor="let currency of currencies">
+                                            {{currency.code}}</option>
+                                    </datalist>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('currencySymbol')?.touched ) && myForm.get('currencySymbol')?.hasError('required')">
+                                   Currency Symbole Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('currencySymbol')?.touched ) && myForm.get('currencySymbol')?.hasError('minlength')">
+                                   Currency Symbole length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('currencySymbol')?.touched ) && myForm.get('currencySymbol')?.hasError('maxlength')">
+                                   Currency Symbole length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('currencySymbol')?.touched ) && myForm.get('currencySymbol')?.hasError('pattern')">
+                               Currency Symbole Is invalid .
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Labels</label>
+                                    <input class="form-control" type="text" name="labels" placeholder="labels"
+                                    formControlName="labels"      [(ngModel)]="client.labels[0]">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('labels')?.touched ) && myForm.get('labels')?.hasError('required')">
+                                       Labels Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('labels')?.touched ) && myForm.get('labels')?.hasError('minlength')">
+                                       Labels length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('labels')?.touched ) && myForm.get('labels')?.hasError('maxlength')">
+                                       Labels length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('labels')?.touched ) && myForm.get('labels')?.hasError('pattern')">
+                                   Labels Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Disable Online Payments</label>
+                                    <input class="" type="checkbox"   formControlName="disableOnlinePayment"  [(ngModel)]="client.disableOnlinePayment"
+                                        name="disableOnlinePayment">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('disableOnlinePayment')?.touched ) && myForm.get('disableOnlinePayment')?.hasError('required')">
+                                        Disable Online Payments Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('disableOnlinePayment')?.touched ) && myForm.get('disableOnlinePayment')?.hasError('minlength')">
+                                        Disable Online Payments length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('disableOnlinePayment')?.touched ) && myForm.get('disableOnlinePayment')?.hasError('maxlength')">
+                                        Disable Online Payments length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('disableOnlinePayment')?.touched ) && myForm.get('disableOnlinePayment')?.hasError('pattern')">
+                                    Disable Online Payments Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                        </div>
+                        <!-- <div class="table-responsive m-t-15">
+                            <table class="table table-striped custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module Permission</th>
+                                        <th class="text-center">Read</th>
+                                        <th class="text-center">Write</th>
+                                        <th class="text-center">Create</th>
+                                        <th class="text-center">Delete</th>
+                                        <th class="text-center">Import</th>
+                                        <th class="text-center">Export</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Projects</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tasks</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chat</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Estimates</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoices</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Timing Sheets</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr> -->
+                                <!-- </tbody> -->
+                            <!-- </table> -->
+                        <!-- </div> -->
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" 
+                                type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Client Modal -->
+
+    <!-- Edit Client Modal -->
+    <div id="edit_client" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Client</h5>
+                    <button type="button" class="close"id="Edit" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="E" (ngSubmit)="updateClient()">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Company Name <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" placeholder="Company Name"
+                                    formControlName="companyName"     name="companyName" [(ngModel)]="client.companyName">
+                                    <span class="text-danger"
+                                *ngIf="(E.get('companyName')?.touched ) && E.get('companyName')?.hasError('required')">
+                               Company Name  Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('companyName')?.touched ) && E.get('companyName')?.hasError('minlength')">
+                               Company Name  length should be greater than 3.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('companyName')?.touched ) && E.get('companyName')?.hasError('maxlength')">
+                               Company Name  length should be smaller than 25.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(E.get('companyName')?.touched ) && E.get('companyName')?.hasError('pattern')">
+                           Company Name  Is invalid .
+                        </span>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="firstName" formControlName="firstName"
+                                        [(ngModel)]="client.firstName">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('firstName')?.touched ) && E.get('firstName')?.hasError('required')">
+                                    firstName Is Required.
+                                </span>
+                                <span class="text-danger"2
+                                    *ngIf="(E.get('firstName')?.touched ) && E.get('firstName')?.hasError('minlength')">
+                                    firstName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('name')?.touched ) && E.get('name')?.hasError('maxlength')">
+                                    firstName length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('name')?.touched ) && E.get('name')?.hasError('pattern')">
+                                    firstName is invalid.
+                                </span>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Last Name<span
+                                        class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="lastName" formControlName="lastName"
+                                        [(ngModel)]="client.lastName">
+                                
+                                <span class="text-danger"
+                                    *ngIf="(E.get('lastName')?.touched ) && E.get('lastName')?.hasError('required')">
+                                    lastName Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('lastName')?.touched ) && E.get('lastName')?.hasError('minlength')">
+                                    lastName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('lastName')?.touched ) && E.get('lastName')?.hasError('maxlength')">
+                                    lastName length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('lastName')?.touched ) && E.get('lastName')?.hasError('pattern')">
+                                    lastName is invalid.
+                                </span>
+                            </div>
+                                
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Client Profile :<span
+                                        class="text-danger">*</span></label>
+                                    <input type="file" name="profile" (change)="selectFile($event)" accept="image/*">
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="email" name="email" formControlName="email"
+                                        [(ngModel)]="client.email">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('email')?.touched ) && E.get('email')?.hasError('required')">
+                                    Email Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('email')?.touched ) && E.get('email')?.hasError('email')">
+                                    Email Formate Is Wrong.
+                                </span>
+
+                            </div>
+                          
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Address <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" placeholder="Address" name="address"
+                                    formControlName="address"    [(ngModel)]="client.address">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('address')?.touched ) && E.get('address')?.hasError('required')">
+                                        Address Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('address')?.touched ) && E.get('address')?.hasError('minlength')">
+                                        Address length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('address')?.touched ) && E.get('address')?.hasError('maxlength')">
+                                        Address length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('address')?.touched ) && E.get('address')?.hasError('pattern')">
+                                    Address Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">City <span class="text-danger">*</span></label>
+                                    <input class="form-control floating" type="email" placeholder="City" name="city"
+                                    formControlName="city"     [(ngModel)]="client.city">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('city')?.touched ) && E.get('city')?.hasError('required')">
+                                        City Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('city')?.touched ) && E.get('city')?.hasError('minlength')">
+                                        City length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('city')?.touched ) && E.get('city')?.hasError('maxlength')">
+                                        City length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('city')?.touched ) && E.get('city')?.hasError('pattern')">
+                                    City Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">State</label>
+                                    <input class="form-control" type="text" name="state" placeholder="State"
+                                    formControlName="state"     [(ngModel)]="client.state">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('state')?.touched ) && E.get('state')?.hasError('required')">
+                                        State Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('state')?.touched ) && E.get('state')?.hasError('minlength')">
+                                        State length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('state')?.touched ) && E.get('state')?.hasError('maxlength')">
+                                        State length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('state')?.touched ) && E.get('state')?.hasError('pattern')">
+                                    State Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Zip</label>
+                                    <input class="form-control" type="text" name="zip" placeholder="Zip"
+                                    formControlName="zip"      [(ngModel)]="client.zip">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('zip')?.touched ) && E.get('zip')?.hasError('required')">
+                                        Zip Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('zip')?.touched ) && E.get('zip')?.hasError('minlength')">
+                                        Zip length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('zip')?.touched ) && E.get('zip')?.hasError('maxlength')">
+                                        Zip length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('zip')?.touched ) && E.get('zip')?.hasError('pattern')">
+                                    Zip Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Country <span class="text-danger">*</span></label>
+                                    <input class="form-control floating" type="text" name="country"
+                                        placeholder="Country"  formControlName="country"   [(ngModel)]="client.country">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('country')?.touched ) && E.get('country')?.hasError('required')">
+                                        Country Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('country')?.touched ) && E.get('country')?.hasError('minlength')">
+                                        Country length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('country')?.touched ) && E.get('country')?.hasError('maxlength')">
+                                        Country length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('country')?.touched ) && E.get('country')?.hasError('pattern')">
+                                    Country Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Phone </label>
+                                    <input class="form-control" type="text" name="phone" 
+                                    formControlName="phone"      [(ngModel)]="client.phone">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('phone')?.touched ) && E.get('phone')?.hasError('required')">
+                                        phone Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('phone')?.touched ) && E.get('phone')?.hasError('minlength')">
+                                        phone length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('phone')?.touched ) && E.get('phone')?.hasError('maxlength')">
+                                        phone length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('phone')?.touched ) && E.get('phone')?.hasError('pattern')">
+                                    phone Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Website</label>
+                                    <input class="form-control" type="text" name="website" placeholder="Website"
+                                    formControlName="website"       [(ngModel)]="client.website">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('website')?.touched ) && E.get('website')?.hasError('required')">
+                                        Website Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('website')?.touched ) && E.get('website')?.hasError('minlength')">
+                                        Website length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('website')?.touched ) && E.get('website')?.hasError('maxlength')">
+                                        Website length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('website')?.touched ) && E.get('website')?.hasError('pattern')">
+                                    Website Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">VAT number </label>
+                                    <input class="form-control" type="text" name="vatNumber" placeholder="Vat Number"
+                                    formControlName="vatNumber"      [(ngModel)]="client.vatNumber">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('vatNumber')?.touched ) && E.get('vatNumber')?.hasError('required')">
+                                        VAT number Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('vatNumber')?.touched ) && E.get('vatNumber')?.hasError('minlength')">
+                                        VAT number length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('vatNumber')?.touched ) && E.get('vatNumber')?.hasError('maxlength')">
+                                        VAT number length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('vatNumber')?.touched ) && E.get('vatNumber')?.hasError('pattern')">
+                                    VAT number Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> GST number</label>
+                                    <input class="form-control" type="text" name="gstNumber" placeholder="Gst Number"
+                                    formControlName="gstNumber"      [(ngModel)]="client.gstNumber">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('gstNumber')?.touched ) && E.get('gstNumber')?.hasError('required')">
+                                        GST number Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('gstNumber')?.touched ) && E.get('gstNumber')?.hasError('minlength')">
+                                        GST number length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('gstNumber')?.touched ) && E.get('gstNumber')?.hasError('maxlength')">
+                                        GST number length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('gstNumber')?.touched ) && E.get('gstNumber')?.hasError('pattern')">
+                                    GST number Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Client Groups</label>
+                                    <input class="form-control" list="group" name="clientGroups"
+                                        placeholder="Client Group"  formControlName="clientGroups"   [(ngModel)]="client.clientGroups" />
+                                    <datalist id="group">
+                                        <option value="VIP"></option>
+                                        <option value="GOLD"></option>
+                                        <option value="Silver"></option>
+
+                                    </datalist>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('clientGroups')?.touched ) && E.get('clientGroups')?.hasError('required')">
+                                    Client Groups Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('clientGroups')?.touched ) && E.get('clientGroups')?.hasError('minlength')">
+                                    Client Groups length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('clientGroups')?.touched ) && E.get('clientGroups')?.hasError('maxlength')">
+                                    Client Groups length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(E.get('clientGroups')?.touched ) && E.get('clientGroups')?.hasError('pattern')">
+                                Client Groups Is invalid .
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Currency</label>
+                                    <input class="form-control" list="currencies" name="currency"
+                                        placeholder="Keep it blank to use default (USD)"
+                                        formControlName="currency"    [(ngModel)]="client.currency" />
+                                    <datalist id="currencies">
+                                        <option value="Chrome"></option>
+                                        <option [value]="currency.code" *ngFor="let currency of currencies">
+                                            {{currency.code}}</option>
+                                    </datalist>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('currency')?.touched ) && E.get('currency')?.hasError('required')">
+                                  Currency Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('currency')?.touched ) && E.get('currency')?.hasError('minlength')">
+                                  Currency length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('currency')?.touched ) && E.get('currency')?.hasError('maxlength')">
+                                  Currency length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(E.get('currency')?.touched ) && E.get('currency')?.hasError('pattern')">
+                              Currency Is invalid .
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Currency Symbole</label>
+                                    <input class="form-control" list="symbol" name="currencySymbol"
+                                        placeholder="Keep it blank to use default ($)"
+                                        formControlName="currencySymbol"    [(ngModel)]="client.currencySymbol" />
+                                    <datalist id="symbol">
+                                        <option value="Chrome"></option>
+                                        <option [value]="currency.symbol" *ngFor="let currency of currencies">
+                                            {{currency.code}}</option>
+                                    </datalist>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('currencySymbol')?.touched ) && E.get('currencySymbol')?.hasError('required')">
+                                   Currency Symbole Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('currencySymbol')?.touched ) && E.get('currencySymbol')?.hasError('minlength')">
+                                   Currency Symbole length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('currencySymbol')?.touched ) && E.get('currencySymbol')?.hasError('maxlength')">
+                                   Currency Symbole length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(E.get('currencySymbol')?.touched ) && E.get('currencySymbol')?.hasError('pattern')">
+                               Currency Symbole Is invalid .
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Labels</label>
+                                    <input class="form-control" type="text" name="labels" placeholder="labels"
+                                    formControlName="labels"      [(ngModel)]="client.labels[0]">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('labels')?.touched ) && E.get('labels')?.hasError('required')">
+                                       Labels Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('labels')?.touched ) && E.get('labels')?.hasError('minlength')">
+                                       Labels length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('labels')?.touched ) && E.get('labels')?.hasError('maxlength')">
+                                       Labels length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('labels')?.touched ) && E.get('labels')?.hasError('pattern')">
+                                   Labels Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Disable Online Payments</label>
+                                    <input class="" type="checkbox"   formControlName="disableOnlinePayment"  [(ngModel)]="client.disableOnlinePayment"
+                                        name="disableOnlinePayment">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('disableOnlinePayment')?.touched ) && E.get('disableOnlinePayment')?.hasError('required')">
+                                        Disable Online Payments Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('disableOnlinePayment')?.touched ) && E.get('disableOnlinePayment')?.hasError('minlength')">
+                                        Disable Online Payments length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('disableOnlinePayment')?.touched ) && E.get('disableOnlinePayment')?.hasError('maxlength')">
+                                        Disable Online Payments length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('disableOnlinePayment')?.touched ) && E.get('disableOnlinePayment')?.hasError('pattern')">
+                                    Disable Online Payments Is invalid .
+                                </span>
+                                    </div>
+                            </div>
+                        </div>
+                             <!-- <div class="table-responsive m-t-15">
+                            <table class="table table-striped custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module Permission</th>
+                                        <th class="text-center">Read</th>
+                                        <th class="text-center">Write</th>
+                                        <th class="text-center">Create</th>
+                                        <th class="text-center">Delete</th>
+                                        <th class="text-center">Import</th>
+                                        <th class="text-center">Export</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Projects</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tasks</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chat</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Estimates</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoices</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Timing Sheets</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> -->
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" type="submit"
+                            >Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Client Modal -->
+
+    <!-- Delete Client Modal -->
+    <div class="modal custom-modal fade" id="delete_client" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Client</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a data-dismiss="modal" (click)="deleteClient()"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Client Modal -->
+
+</div>
+
+<!-- /Page Wrapper -->

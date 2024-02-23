@@ -1,0 +1,661 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Performance Indicator</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Performance</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a (click)="addForm()" class="btn add-btn" data-toggle="modal" data-target="#add_indicator"><i
+                            *ngIf="permissions.isWriteable" class="fa fa-plus"></i> Add New</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+
+        <!-- Search Filter -->
+         <div class="row filter-row">
+             
+        <div class="col-sm-6 col-md-4">
+
+             <div>
+                <select [(ngModel)]="searching.designation.id" name="id">
+                    <option value="0">--Select--</option>
+                    <option *ngFor="let item of designations" [value]="item.id">{{ item.title }}</option>
+                    <label class="focus-label">Designation</label>
+                </select>
+            </div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+                <a (click)="filter()" class="btn btn-success btn-block"> Search </a>
+            </div>
+       </div>
+        <!-- Search Filter -->
+
+        <!---- pagination -->
+
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+
+        <div class="row" *ngIf="permissions.isReadable">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px;">#</th>
+                                <th>Designation</th>
+                                <th>Department</th>
+                                <th>Added By</th>
+                                <th>Create At</th>
+                                <th>Status</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let performanceIndicator of performanceIndicators">
+                                <td>{{performanceIndicator.id}}</td>
+                                <td>{{performanceIndicator.designation.title}} </td>
+                                <td>{{performanceIndicator.designation.department.title}}</td>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a href="profile.html" class="avatar"><img alt=""
+                                                src="assets/img/profiles/avatar-02.jpg"></a>
+                                        <a href="profile.html">John Doe </a>
+                                    </h2>
+                                </td>
+                                <td>
+                                    {{performanceIndicator.createdAt}}
+                                </td>
+
+                                <td>
+                                    <div class="dropdown action-label">
+                                        <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false"><i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (performanceIndicator.status=='Active'?'text-success':'text-danger')">
+                                                {{performanceIndicator.status}} </i></a>
+                                        <div class="dropdown-menu" *ngIf="permissions.isEditable">
+                                            <a class="dropdown-item"
+                                                (click)="updatePerformanceIndicatorStatus(performanceIndicator.id,'Active')"><i
+                                                    class="fa fa-dot-circle-o text-success"></i> Active</a>
+                                            <a class="dropdown-item"
+                                                (click)="updatePerformanceIndicatorStatus(performanceIndicator.id,'InActive')"><i
+                                                    class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+                                        </div>
+                                    </div>
+
+                                </td>
+
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" (click)="setEditData(performanceIndicator.id)"
+                                                data-toggle="modal" data-target="#edit_indicator"><i
+                                                    *ngIf="permissions.isEditable" class="fa fa-pencil m-r-5"></i>
+                                                Edit</a>
+                                            <a class="dropdown-item" (click)="confirm(performanceIndicator.id)"
+                                                data-toggle="modal" data-target="#delete_indicator"><i
+                                                    *ngIf="permissions.isDeleteable" class="fa fa-trash-o m-r-5"></i>
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Performance Indicator Modal -->
+    <div id="add_indicator" class="modal custom-modal fade" *ngIf="permissions.isWriteable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                
+                    <h5 class="modal-title">Set New Indicator</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="E" (ngSubmit)="addPerformanceIndicator()">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Designation <span class="text-danger">*</span></label>
+                                    <select  class="form-control" [(ngModel)]="performanceIndicator.designation.id" formControlName="designation" name="id">
+                                        <option *ngFor="let item of designations"  [value]="item.id">{{ item.title }}
+                                        </option>
+                                    </select>  
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('designation')?.touched ) && E.get('designation')?.hasError('required')">
+                                    Designation Is Required.
+                                </span>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4 class="modal-sub-title">Technical</h4>
+                                <div class="form-group">
+                                    <label class="col-form-label">Customer Experience</label>
+                                    <select  class="form-control" formControlName="customerExperience" [(ngModel)]="performanceIndicator.customerExperience"
+                                        name="customerExperience">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate ">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('customerExperience')?.touched ) && E.get('customerExperience')?.hasError('required')">
+                                    Customer Experience Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Marketing</label>
+                                    <select  class="form-control" formControlName="marketing" [(ngModel)]="performanceIndicator.marketing"
+                                        name="marketing">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('marketing')?.touched ) && E.get('marketing')?.hasError('required')">
+                                    Marketing Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Management</label>
+                                    <select  class="form-control" formControlName="management"[(ngModel)]="performanceIndicator.management"
+                                        name="management">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('management')?.touched ) && E.get('management')?.hasError('required')">
+                                    Management Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Administration</label>
+                                    <select  class="form-control" formControlName="administration"[(ngModel)]="performanceIndicator.administration"
+                                        name="administration">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('administration')?.touched ) && E.get('administration')?.hasError('required')">
+                                    Administration Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Presentation Skill</label>
+                                    <select  class="form-control" formControlName="presentationSkill" [(ngModel)]="performanceIndicator.presentationSkill"
+                                        name="presentationSkill">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('presentationSkill')?.touched ) && E.get('presentationSkill')?.hasError('required')">
+                                    Presentation Skill Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Quality Of Work</label>
+                                    <select  class="form-control" formControlName="qualityOfWork"[(ngModel)]="performanceIndicator.qualityOfWork"
+                                        name="qualityOfWork">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('qualityOfWork')?.touched ) && E.get('qualityOfWork')?.hasError('required')">
+                                    Quality Of Work Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Efficiency</label>
+                                    <select  class="form-control" formControlName="efficiency" [(ngModel)]="performanceIndicator.efficiency"
+                                        name="efficiency">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('efficiency')?.touched ) && E.get('efficiency')?.hasError('required')">
+                                    Efficiency Is Required.
+                                </span>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <h4 class="modal-sub-title">Organizational</h4>
+                                <div class="form-group">
+                                    <label class="col-form-label">Integrity</label>
+                                    <select  class="form-control" formControlName="integrity" [(ngModel)]="performanceIndicator.integrity"
+                                        name="integrity">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('integrity')?.touched ) && E.get('integrity')?.hasError('required')">
+                                    Integrity Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Professionalism</label>
+                                    <select  class="form-control" formControlName="professionalism"[(ngModel)]="performanceIndicator.professionalism"
+                                        name="professionalism">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('professionalism')?.touched ) && E.get('professionalism')?.hasError('required')">
+                                    Professionalism Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Team Work</label>
+                                    <select  class="form-control" formControlName="teamWork" [(ngModel)]="performanceIndicator.teamWork" name="teamWork">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('teamWork')?.touched ) && E.get('teamWork')?.hasError('required')">
+                                    Team Work Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Critical Thinking</label>
+                                    <select  class="form-control" formControlName="criticalThinking"[(ngModel)]="performanceIndicator.criticalThinking"
+                                        name="criticalThinking">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('criticalThinking')?.touched ) && E.get('criticalThinking')?.hasError('required')">
+                                    Critical Thinking Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Conflict Management</label>
+                                    <select  class="form-control" [(ngModel)]="performanceIndicator.conflictManagement"
+                                    formControlName="conflictManagement"  name="conflictManagement">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('conflictManagement')?.touched ) && E.get('conflictManagement')?.hasError('required')">
+                                    Conflict Management Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Attendance</label>
+                                    <select  class="form-control" [(ngModel)]="performanceIndicator.attendance"
+                                    formControlName="attendance"  name="attendance">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('attendance')?.touched ) && E.get('attendance')?.hasError('required')">
+                                    Attendance Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Ability To Meet Deadline</label>
+                                    <select  class="form-control" [(ngModel)]="performanceIndicator.abilityToMeetDeadline"
+                                     
+                                    formControlName="abilityToMeetDeadline"name="abilityToMeetDeadline">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(E.get('abilityToMeetDeadline')?.touched ) && E.get('abilityToMeetDeadline')?.hasError('required')">
+                                Ability To Meet Deadline Is Required.
+                            </span>
+
+    
+                            </div>
+                           
+                        </div>
+                        <div class="submit-section">
+                            <button (click)="addPerformanceIndicator()" data-dismiss="modal" [disabled]="E.invalid"
+                                class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Performance Indicator Modal -->
+
+    <!-- Edit Performance Indicator Modal -->
+    <div id="edit_indicator" class="modal custom-modal fade" *ngIf="permissions.isEditable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Performance Indicator</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="E" (ngSubmit)="updatePerformanceIndicator()">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Designation <span class="text-danger">*</span></label>
+                                    <select  class="form-control" [(ngModel)]="performanceIndicator.designation.id" formControlName="designation" name="id">
+                                        <option *ngFor="let item of designations"  [value]="item.id">{{ item.title }}
+                                        </option>
+                                    </select>  
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('designation')?.touched ) && E.get('designation')?.hasError('required')">
+                                    Designation Is Required.
+                                </span>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4 class="modal-sub-title">Technical</h4>
+                                <div class="form-group">
+                                    <label class="col-form-label">Customer Experience</label>
+                                    <select  class="form-control" formControlName="customerExperience" [(ngModel)]="performanceIndicator.customerExperience"
+                                        name="customerExperience">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate ">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('customerExperience')?.touched ) && E.get('customerExperience')?.hasError('required')">
+                                    Customer Experience Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Marketing</label>
+                                    <select  class="form-control" formControlName="marketing" [(ngModel)]="performanceIndicator.marketing"
+                                        name="marketing">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('marketing')?.touched ) && E.get('marketing')?.hasError('required')">
+                                    Marketing Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Management</label>
+                                    <select  class="form-control"  formControlName="management"[(ngModel)]="performanceIndicator.management"
+                                        name="management">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('management')?.touched ) && E.get('management')?.hasError('required')">
+                                    Management Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Administration</label>
+                                    <select  class="form-control"  formControlName="administration"[(ngModel)]="performanceIndicator.administration"
+                                        name="administration">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('administration')?.touched ) && E.get('administration')?.hasError('required')">
+                                    Administration Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Presentation Skill</label>
+                                    <select  class="form-control" formControlName="presentationSkill" [(ngModel)]="performanceIndicator.presentationSkill"
+                                        name="presentationSkill">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('presentationSkill')?.touched ) && E.get('presentationSkill')?.hasError('required')">
+                                    Presentation Skill Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Quality Of Work</label>
+                                    <select  class="form-control"  formControlName="qualityOfWork"[(ngModel)]="performanceIndicator.qualityOfWork"
+                                        name="qualityOfWork">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('qualityOfWork')?.touched ) && E.get('qualityOfWork')?.hasError('required')">
+                                    Quality Of Work Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Efficiency</label>
+                                    <select  class="form-control"  formControlName="efficiency" [(ngModel)]="performanceIndicator.efficiency"
+                                        name="efficiency">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('efficiency')?.touched ) && E.get('efficiency')?.hasError('required')">
+                                    Efficiency Is Required.
+                                </span>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <h4 class="modal-sub-title">Organizational</h4>
+                                <div class="form-group">
+                                    <label class="col-form-label">Integrity</label>
+                                    <select  class="form-control"  formControlName="integrity" [(ngModel)]="performanceIndicator.integrity"
+                                        name="integrity">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('integrity')?.touched ) && E.get('integrity')?.hasError('required')">
+                                    Integrity Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Professionalism</label>
+                                    <select  class="form-control"  formControlName="professionalism"[(ngModel)]="performanceIndicator.professionalism"
+                                        name="professionalism">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>  <span class="text-danger"
+                                    *ngIf="(E.get('professionalism')?.touched ) && E.get('professionalism')?.hasError('required')">
+                                    Professionalism Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Team Work</label>
+                                    <select  class="form-control" formControlName="teamWork" [(ngModel)]="performanceIndicator.teamWork" name="teamWork">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('teamWork')?.touched ) && E.get('teamWork')?.hasError('required')">
+                                    Team Work Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Critical Thinking</label>
+                                    <select  class="form-control"  formControlName="criticalThinking"[(ngModel)]="performanceIndicator.criticalThinking"
+                                        name="criticalThinking">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('criticalThinking')?.touched ) && E.get('criticalThinking')?.hasError('required')">
+                                    Critical Thinking Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Conflict Management</label>
+                                    <select  class="form-control"  [(ngModel)]="performanceIndicator.conflictManagement"
+                                    formControlName="conflictManagement"  name="conflictManagement">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('conflictManagement')?.touched ) && E.get('conflictManagement')?.hasError('required')">
+                                    Conflict Management Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Attendance</label>
+                                    <select  class="form-control"  [(ngModel)]="performanceIndicator.attendance"
+                                    formControlName="attendance"  name="attendance">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('attendance')?.touched ) && E.get('attendance')?.hasError('required')">
+                                    Attendance Is Required.
+                                </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Ability To Meet Deadline</label>
+                                    <select  class="form-control"  [(ngModel)]="performanceIndicator.abilityToMeetDeadline"
+                                     
+                                    formControlName="abilityToMeetDeadline"name="abilityToMeetDeadline">
+                                        <option value="0">None</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert / Leader</option>
+                                    </select>
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(E.get('abilityToMeetDeadline')?.touched ) && E.get('abilityToMeetDeadline')?.hasError('required')">
+                                Ability To Meet Deadline Is Required.
+                            </span>
+
+    
+                            </div>
+                           
+                        </div>
+                          <div class="submit-section">
+                            <button (click)="updatePerformanceIndicator()" data-dismiss="modal"[disabled]="E.invalid"
+                                class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Performance Indicator Modal -->
+
+    <!-- Delete Performance Indicator Modal -->
+    <div class="modal custom-modal fade" id="delete_indicator" *ngIf="permissions.isDeleteable"ś role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Performance Indicator List</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a (click)="deletePerformanceIndicator()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Performance Indicator Modal -->
+
+</div>
+<!-- /Page Wrapper -->

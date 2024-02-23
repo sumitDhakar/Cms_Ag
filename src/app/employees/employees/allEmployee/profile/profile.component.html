@@ -1,0 +1,2142 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Profile</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="card mb-0">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="profile-view" *ngIf="permissions.isReadable">
+                            <div class="profile-img-wrap">
+                                <div class="profile-img">
+                                  
+                                    <a  class="edit-icon"   data-toggle="modal" class data-target="#emergency_contact_modals" class="emergency_contact_modals"><img alt="" [src]="user.profileName"></a>
+                                </div>
+                            </div>
+                            <div class="profile-basic">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="profile-info-left">
+                                            <h3 class="user-name m-t-0 mb-0">{{user.firstName + " "+user.lastName}}</h3>
+                                           
+                                            <small class="text-muted"
+                                                *ngIf="user.designation">{{user.designation.title}}</small>
+                                            <div class="staff-id">Employee ID : FT-{{user.id}}</div>
+                                            <div class="small doj text-muted">Date of Join : {{user.createdAt | date}}</div>
+                                           </div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <ul class="personal-info">
+                                            <li>
+                                                <div class="title">Phone:</div>
+                                                <div class="text"><a href="">{{user.phone?user.phone:'--'}}</a></div>
+                                            </li>
+                                            <li>
+                                                <div class="title">Email:</div>
+                                                <div class="text"><a href="">{{user.email?user.email:'--'}}</a></div>
+                                            </li>
+                                            <li>
+                                                <div class="title">Birthday:</div>
+                                                <div class="text">{{user.dob?(user.dob | date):'--'}}</div>
+                                            </li>
+                                            <li>
+                                                <div class="title">Address:</div>
+                                                <div class="text">{{user.address}}</div>
+                                            </li>
+                                            <li>
+                                                <div class="title">Gender:</div>
+                                                <div class="text">{{user.gender}}</div>
+                                            </li>
+                                           
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pro-edit"><a data-target="#profile_info" data-toggle="modal" class="edit-icon"
+                                    *ngIf="permissions.isEditable" href="#"><i class="fa fa-pencil"></i></a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card tab-box">
+            <div class="row user-tabs">
+                <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
+                    <ul class="nav nav-tabs nav-tabs-bottom">
+                        <li class="nav-item"><a href="#emp_profile" data-toggle="tab"
+                                class="nav-link active">Profile</a></li>
+                        <li class="nav-item"><a href="#emp_projects" data-toggle="tab" class="nav-link">Projects</a>
+                        </li>
+                        <!-- <li *ngIf="isAdmin" class="nav-item"><a href="#bank_statutory" data-toggle="tab"
+                                class="nav-link">Bank & Statutory <small class="text-danger">(Admin Only)</small></a>
+                        </li> -->
+                            </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content">
+
+            <!-- Profile Info Tab -->
+            <div id="emp_profile" class="pro-overview tab-pane fade show active">
+                <div class="row">
+                    <div class="col-md-6 d-flex">
+                        <div class="card profile-box flex-fill">
+                            <div class="card-body">
+                                
+                                <h3 class="card-title">Personal Informations <a href="#"  class="edit-icon"
+                                        data-toggle="modal" data-target="#personal_info_modal"><i
+                                            class="fa fa-pencil"></i></a></h3>
+                                <ul class="personal-info">
+                                    <li>
+                                        <div class="title">Passport No.</div>
+                                        <div class="text">{{personalInformations.passportNo}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Passport Exp Date.</div>
+                                        <div class="text">{{personalInformations.passportExpiryDate |date:'dd-MM-yyyy'}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Tel</div>
+                                        <div class="text"><a href="">{{personalInformations.tel}}</a></div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Nationality</div>
+                                        <div class="text">{{personalInformations.nationality}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Religion</div>
+                                        <div class="text">{{personalInformations.religion}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Marital status</div>
+                                        <div class="text">{{personalInformations.maritalstatus}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Employment of spouse</div>
+                                        <div class="text">{{personalInformations.employmentOfSpouse}}</div>
+                                    </li>
+                                    <!-- <li>
+                                        <div class="title">No. of children</div>
+                                        <div class="text">{{personalInformations.noOfChildren}}</div>
+                                    </li> -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex">
+                        <div class="card profile-box flex-fill">
+                            <div class="card-body">
+                                <h3 class="card-title">Emergency Contact <a href="#" class="edit-icon"
+                                        data-toggle="modal" data-target="#emergency_contact_modal"><i
+                                            class="fa fa-pencil"></i></a></h3>
+                                <h5 class="section-title">Primary</h5>
+                                <ul class="personal-info">
+                                    <li>
+                                        <div class="title">Name</div>
+                                         <div class="text">  {{emergencyContact.name}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Relationship</div>
+                                        <div class="text">{{emergencyContact.relationship}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Phone </div>
+                                        <div class="text">{{emergencyContact.phone}}, {{emergencyContact.phone1}}</div>
+                                    </li>
+                                </ul>
+                                <hr>
+                                <h5 class="section-title">Secondary</h5>
+                                <ul class="personal-info">
+                                    <li>
+                                        <div class="title">Name</div>
+                                        <div class="text">{{emergencyContact.name1}} </div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Relationship</div>
+                                        <div class="text">{{emergencyContact.relationship1}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Phone </div>
+                                        <div class="text">{{emergencyContact.phone2}}, {{emergencyContact.Phone3}}</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 d-flex">
+                        <div class="card profile-box flex-fill">
+                            <div class="card-body">
+                                <h3 class="card-title">Bank information <a class="edit-icon"
+                                    data-toggle="modal" data-target="#bank_statutor"><i
+                                        class="fa fa-pencil"></i></a></h3>
+                                <ul class="personal-info">
+                                    <li>
+                                        <div class="title">Bank name</div>
+                                        <div class="text">{{bankInformation.bankName}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">Bank account No.</div>
+                                        <div class="text">{{bankInformation.bankAccountNo}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">IFSC Code</div>
+                                        <div class="text">{{bankInformation.ifscCode}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="title">PAN No</div>
+                                        <div class="text">{{bankInformation.panNo}}</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+<!-- Emergency Contact Modal -->
+<div id="bank_statutor" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bank information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div >
+            <div class="modal-body">
+                <form  [formGroup]="myForm" (ngSubmit)="addBankInformation()">
+
+                    <div class="card">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Bank name <span >*</span></label>
+                                        <input type="bankName" class="form-control" name="bankName"
+                                        formControlName="bankName"   [(ngModel)]="bankInformation.bankName">
+                                    </div>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('bankName')?.touched ) && myForm.get('bankName')?.hasError('required')">
+                                    Bank name  Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('bankName')?.touched ) && myForm.get('bankName')?.hasError('pattern')">
+                                    Bank name  length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('bankName')?.touched ) && myForm.get('bankName')?.hasError('pattern')">
+                                    Bank name  length should be smaller than 50.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('bankName')?.touched ) && myForm.get('bankName')?.hasError('pattern')">
+                               Ex:-State Bank Of India.
+                            </span>
+
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Bank account No.<span >*</span></label>
+                                        <input class="form-control" type="number" name="bankAccountNo"  formControlName="bankAccountNo"
+                                            [(ngModel)]="bankInformation.bankAccountNo">
+                                    </div>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('bankAccountNo')?.touched ) && myForm.get('bankAccountNo')?.hasError('required')">
+                                    Bank account No Is Required.
+                                </span>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('bankAccountNo')?.touched ) && myForm.get('bankAccountNo')?.hasError('minlength')">
+                                    Bank account No length should be greater than 12.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('bankAccountNo')?.touched ) && myForm.get('bankAccountNo')?.hasError('maxlength')">
+                                    Bank account No length should be smaller than 15.
+                                </span> -->
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>IFSC Code <span >*</span></label>
+                                        <input class="form-control" type="ifscCode" name="ifscCode"  formControlName="ifscCode"
+                                            [(ngModel)]="bankInformation.ifscCode">
+                                    </div>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('ifscCode')?.touched ) && myForm.get('ifscCode')?.hasError('required')">
+                                    IFSC Code  Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('ifscCode')?.touched ) && myForm.get('ifscCode')?.hasError('pattern')">
+                                    IFSC Code  length should be greater than 10.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('ifscCode')?.touched ) && myForm.get('ifscCode')?.hasError('pattern')">
+                                    IFSC CodeNo length should be smaller than 10.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('ifscCode')?.touched ) && myForm.get('ifscCode')?.hasError('pattern')">
+                                Ex:-GGIN022333.
+                            </span>
+                           
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>PAN No</label>
+                                        <input class="form-control" type="panNo" name="panNo"  formControlName="panNo"
+                                            [(ngModel)]="bankInformation.panNo">
+                                    </div>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('panNo')?.touched ) && myForm.get('panNo')?.hasError('required')">
+                                    PAN No   Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('panNo')?.touched ) && myForm.get('panNo')?.hasError('minlength')">
+                                    PAN No   length should be greater than 10.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('panNo')?.touched ) && myForm.get('panNo')?.hasError('maxlength')">
+                                    PAN No  length should be smaller than 10.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('panNo')?.touched ) && myForm.get('panNo')?.hasError('pattern')">
+                                PAN No  Is Invalid.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('panNo')?.touched ) && myForm.get('panNo')?.hasError('pattern')">
+                            Ex:-AASSQ1234F
+                        </span>
+                                </div>
+                            </div>
+                        </div>
+                    
+
+                   
+                    
+                    
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn"  [disabled]="myForm.invalid" data-dismiss="modal"(click)="addBankInformation()">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Emergency Contact Modal -->
+
+
+
+
+
+
+
+                    <div class="col-md-6 d-flex">
+                        <div class="card profile-box flex-fill">
+                            <div class="card-body">
+                                <h3 class="card-title">Family Informations <a href="#" class="edit-icon"
+                                    data-toggle="modal" data-target="#family_info_modal"><i
+                                    class="fa fa-pencil"></i></a></h3>
+                        <div class="table-responsive">
+                            <table class="table table-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Relationship</th>
+                                        <th>Date of Birth</th>
+                                        <th>Phone</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let family of  familyInformationList">
+                                        <td>{{family.name}}</td>
+                                        <td>{{family.relationship}}</td>
+                                        <td>{{family.dateOfBirth| date:'MMM d, y'}}</td>
+                                        <td>{{family.phone}}</td>
+                                       
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 d-flex">
+                <div class="card profile-box flex-fill">
+                    <div class="card-body">
+                        <h3 class="card-title">Education Informations <a href="#" class="edit-icon"
+                                data-toggle="modal" data-target="#education_info"><i
+                                    class="fa fa-pencil"></i></a></h3>
+                        <div class="experience-box">
+                            <ul class="experience-list">
+                                <li *ngFor="let edList of educationInformationList">
+                                    <div class="experience-user">
+                                        <div class="before-circle"></div>
+                                    </div>
+                                    <div class="experience-content">
+                                        <div class="timeline-content">
+                                            <a href="#/" class="name">{{edList.institution}}
+                                                (UG)</a>
+                                            <div>{{edList.subject}}</div>
+                                            <span class="time">{{edList.startingDate|date: 'yyyy'}} -
+                                                {{edList.completeDate|date:'yyyy'}}</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <!-- <li>
+                                    <div class="experience-user">
+                                        <div class="before-circle"></div>
+                                    </div>
+                                    <div class="experience-content">
+                                        <div class="timeline-content">
+                                            <a href="#/" class="name">International College of Arts and Science
+                                                (PG)</a>
+                                            <div>Msc Computer Science</div>
+                                            <span class="time">2000 - 2003</span>
+                                        </div>
+                                    </div>
+                                </li> -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex">
+                <div class="card profile-box flex-fill">
+                    <div class="card-body">
+                        <h3 class="card-title">Experience <a href="#" class="edit-icon" data-toggle="modal"
+                                data-target="#experience_info"><i class="fa fa-pencil"></i></a></h3>
+                        <div class="experience-box">
+                            <ul class="experience-list" *ngFor="let experience of experienceInformationList">
+                                <li>
+                                    <div class="experience-user">
+                                        <div class="before-circle"></div>
+                                    </div>
+                                    <div class="experience-content">
+                                        <div class="timeline-content">
+                                            <a href="#/" class="name">{{experience.jobPosition}} at
+                                                {{experience.companyName}}</a>
+                                            <span class="time">{{experience.periodFrom| date:'MMM y'}} -
+                                                {{experience.location}}
+                                                ({{experience.periodFrom| date:'MMM y'}} -
+                                                {{experience.periodTo| date:'MMM y'}})</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <!-- <li>
+                                    <div class="experience-user">
+                                        <div class="before-circle"></div>
+                                    </div>
+                                    <div class="experience-content">
+                                        <div class="timeline-content">
+                                            <a href="#/" class="name">Web Designer at Ron-tech</a>
+                                            <span class="time">Jan 2013 - Present (5 years 2 months)</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="experience-user">
+                                        <div class="before-circle"></div>
+                                    </div>
+                                    <div class="experience-content">
+                                        <div class="timeline-content">
+                                            <a href="#/" class="name">Web Designer at Dalt Technology</a>
+                                            <span class="time">Jan 2013 - Present (5 years 2 months)</span>
+                                        </div>
+                                    </div>
+                                </li> -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Profile Info Tab -->
+
+    <!-- Projects Tab -->
+    <div class="tab-pane fade" id="emp_projects">
+        <div class="row">
+            <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3" *ngIf="projects.length==0">
+                No Projects Alloted
+            </div>
+            <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3" *ngFor="let project of projects">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- <div class="dropdown profile-action">
+                            <a aria-expanded="false" data-toggle="dropdown" class="action-icon dropdown-toggle"
+                                href="#"><i class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a data-target="#edit_project" data-toggle="modal" href="#"
+                                    class="dropdown-item"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                <a data-target="#delete_project" data-toggle="modal" href="#"
+                                    class="dropdown-item"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            </div> -->
+                        <!-- </div> -->
+                        <h4 class="project-title"><a
+                            [routerLink]="'/dollop/projects/projects_view/'+project.id">{{project.title}}</a>
+                    </h4>
+                  
+                         <small class="block text-ellipsis m-b-15">
+                            <span class="text-xs"><a href="javascript:void(0);">{{project.completedTask}} </a></span> <span class="text-muted">open tasks, </span>
+                            <span class="text-xs"><a href="javascript:void(0);">{{project.leftTask}}</a></span> <span class="text-muted">tasks completed</span>
+                    </small>
+                        <p class="text-muted">{{project.description}}
+                        </p>
+                        <div class="pro-deadline m-b-15">
+                            <div class="sub-title">
+                                Deadline:
+                            </div>
+                            <div class="text-muted"><a href="javascript:void(0);">
+                                {{project.deadline|dateFormat}}
+                            </a>
+                            </div>
+                        </div>
+                        <div class="project-members m-b-15">
+                            <div>Project Leader :</div>
+                            <ul class="team-members">
+                                <li *ngFor="let member of project.projectMembers; index as i">
+                                    <a *ngIf="member.isLeader && i<5"
+                                        [routerLink]="baseRoute+'/employee/employee_profile/'+member.userId.id"
+                                        data-toggle="tooltip" [title]="member.userId.firstName"><img
+                                            alt="" [src]="member.userId.profileName"></a>
+                                </li>
+                            </ul>                        </div>
+                        <div class="project-members m-b-15">
+                            <div>Team :</div>
+                            <div>Team :</div>
+                            <ul class="team-members">
+                                <li *ngFor="let member of project.projectMembers; index as i">
+                                    <a *ngIf="!member.isLeader && i<5"
+                                        [routerLink]="baseRoute+'/employee/employee_profile/'+member.userId.id"
+                                        data-toggle="tooltip" [title]="member.userId.firstName"><img
+                                            alt="" [src]="member.userId.profileName"></a>
+                                </li>
+
+                            </ul>                        </div>
+                        <p class="m-b-5">Progress <span class="text-success float-right">40%</span></p>
+                        <div class="progress progress-xs mb-0">
+                            <div style="width: 40%" title="" data-toggle="tooltip" role="progressbar"
+                                class="progress-bar bg-success" data-original-title="40%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+          
+
+<!--     
+    <div class="tab-content">
+        <div id="emp_user_roles" class="pro-overview tab-pane fade show active">
+            <div class="row">
+                <div class="col-md-6 d-flex">
+                    <div class="card profile-box flex-fill">
+                        <div class="card-body">
+                            <h3 class="card-title">User Roles <button type="button"
+                                    class="float-right btn btn-primary btn-sm" data-toggle="modal"
+                                    data-target="#add_user_roles"><i class="fa fa-plus"></i> Add</button></h3>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped custom-table datatable">
+                                            <thead>
+                                                <tr>
+                                                    <th>User Role Id</th>
+                                                    <th> Role</th>
+
+                                                    <th class="text-right no-sort">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let userRole of userRoles ; index as i">
+                                                    <td>
+                                                        <h2 class="table-avatar">
+                                                            {{i+1}}
+                                                        </h2>
+                                                    </td>
+                                                    <td>{{userRole.roles.title}}</td> -->
+
+                                                    <!-- <td><a href="#" class="edit-icon" data-toggle="modal" data-target="#personal_info_modal"><i class="fa fa-pencil"></i></a></td> -->
+
+
+
+                                                    <!-- <td class="text-right">
+                                                        <div class="dropdown dropdown-action">
+                                                            <a href="#" class="action-icon dropdown-toggle"
+                                                                data-toggle="dropdown" aria-expanded="false"><i
+                                                                    class="material-icons">more_vert</i></a>
+                                                            <div class="dropdown-menu dropdown-menu-right">
+                                                                <a class="dropdown-item" data-toggle="modal"
+                                                                    data-target="#edit_user_roles"
+                                                                    (click)="setEditDate(userRole.id)"><i
+                                                                        class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                                <a class="dropdown-item"
+                                                                    (click)="setDelete(userRole.id)"
+                                                                    data-toggle="modal"
+                                                                    data-target="#delete_employee"><i
+                                                                        class="fa fa-trash-o m-r-5"></i>
+                                                                    Delete</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!-----    User Roles      ----->
+
+    <!-- Bank Statutory Tab -->
+    <div class="tab-pane fade" id="bank_statutory" role="dialog" >
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title"> Basic Salary Information</h3>
+                <form>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Salary basis <span
+                                        class="text-danger">*</span></label>
+                                <select class="select">
+                                    <option>Select salary basis type</option>
+                                    <option>Hourly</option>
+                                    <option>Daily</option>
+                                    <option>Weekly</option>
+                                    <option>Monthly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Salary amount <small class="text-muted">per
+                                        month</small></label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="text" class="form-control"
+                                        placeholder="Type your salary amount" value="0.00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Payment type</label>
+                                <select class="select">
+                                    <option>Select payment type</option>
+                                    <option>Bank transfer</option>
+                                    <option>Check</option>
+                                    <option>Cash</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <h3 class="card-title"> PF Information</h3>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">PF contribution</label>
+                                <select class="select">
+                                    <option>Select PF contribution</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">PF No. <span class="text-danger">*</span></label>
+                                <select class="select">
+                                    <option>Select PF contribution</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Employee PF rate</label>
+                                <select class="select">
+                                    <option>Select PF contribution</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Additional rate <span
+                                        class="text-danger">*</span></label>
+                                <select class="select">
+                                    <option>Select additional rate</option>
+                                    <option>0%</option>
+                                    <option>1%</option>
+                                    <option>2%</option>
+                                    <option>3%</option>
+                                    <option>4%</option>
+                                    <option>5%</option>
+                                    <option>6%</option>
+                                    <option>7%</option>
+                                    <option>8%</option>
+                                    <option>9%</option>
+                                    <option>10%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Total rate</label>
+                                <input type="text" class="form-control" placeholder="N/A" value="11%">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Employee PF rate</label>
+                                <select class="select">
+                                    <option>Select PF contribution</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Additional rate <span
+                                        class="text-danger">*</span></label>
+                                <select class="select">
+                                    <option>Select additional rate</option>
+                                    <option>0%</option>
+                                    <option>1%</option>
+                                    <option>2%</option>
+                                    <option>3%</option>
+                                    <option>4%</option>
+                                    <option>5%</option>
+                                    <option>6%</option>
+                                    <option>7%</option>
+                                    <option>8%</option>
+                                    <option>9%</option>
+                                    <option>10%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Total rate</label>
+                                <input type="text" class="form-control" placeholder="N/A" value="11%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <h3 class="card-title"> ESI Information</h3>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">ESI contribution</label>
+                                <select class="select">
+                                    <option>Select ESI contribution</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">ESI No. <span class="text-danger">*</span></label>
+                                <select class="select">
+                                    <option>Select ESI contribution</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Employee ESI rate</label>
+                                <select class="select">
+                                    <option>Select ESI contribution</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Additional rate <span
+                                        class="text-danger">*</span></label>
+                                <select class="select">
+                                    <option>Select additional rate</option>
+                                    <option>0%</option>
+                                    <option>1%</option>
+                                    <option>2%</option>
+                                    <option>3%</option>
+                                    <option>4%</option>
+                                    <option>5%</option>
+                                    <option>6%</option>
+                                    <option>7%</option>
+                                    <option>8%</option>
+                                    <option>9%</option>
+                                    <option>10%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Total rate</label>
+                                <input type="text" class="form-control" placeholder="N/A" value="11%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /Bank Statutory Tab -->
+
+</div>
+</div>
+<!-- /Page Content -->
+
+<!-- Profile Modal -->
+<div id="profile_info" class="modal custom-modal fade" role="dialog">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Profile Information</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="Pl" (ngSubmit)="updateEmployee()">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" value="user.firstName" name="firstName"
+                            formControlName="firstName"
+                            [(ngModel)]="user.firstName">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pl.get('firstName')?.touched ) && Pl.get('firstName')?.hasError('required')">
+                        First Name Is Required.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('firstName')?.touched ) && Pl.get('firstName')?.hasError('minlength')">
+                        First Name length should be greater than 3.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('firstName')?.touched ) && Pl.get('firstName')?.hasError('maxlength')">
+                        First Name length should be smaller than 16.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Pl.get('firstName')?.touched ) && Pl.get('firstName')?.hasError('pattern')">
+                    First Name Is Invalid.
+                </span>
+                <span class="text-danger"
+                    *ngIf="(Pl.get('firstName')?.touched ) && Pl.get('firstName')?.hasError('pattern')">
+                    Ex:- Abcd.
+                </span>
+
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Last Name</label>
+                            <input class="form-control" type="text" value="user.lastName" name="lastName"
+                            formControlName="lastName"      [(ngModel)]="user.lastName">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pl.get('lastName')?.touched ) && Pl.get('lastName')?.hasError('required')">
+                        Last Name Is Required.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('lastName')?.touched ) && Pl.get('lastName')?.hasError('minlength')">
+                        Last Name length should be greater than 3.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('lastName')?.touched ) && Pl.get('lastName')?.hasError('maxlength')">
+                        Last Name length should be smaller than 16.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Pl.get('lastName')?.touched ) && Pl.get('lastName')?.hasError('pattern')">
+                    Last Name Is Invalid.
+                </span> <span class="text-danger"
+                *ngIf="(Pl.get('lastName')?.touched ) && Pl.get('lastName')?.hasError('pattern')">
+                Ex:- Abcd.
+            </span>
+
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Address <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" value="user.address" name="address"
+                            formControlName="address"            [(ngModel)]="user.address">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pl.get('address')?.touched ) && Pl.get('address')?.hasError('required')">
+                        Address Is Required.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('address')?.touched ) && Pl.get('address')?.hasError('minlength')">
+                        Address length should be greater than 3.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('address')?.touched ) && Pl.get('address')?.hasError('maxlength')">
+                        Address length should be smaller than 16.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Pl.get('address')?.touched ) && Pl.get('address')?.hasError('pattern')">
+                    Address Is Invalid.
+                </span>
+                <span class="text-danger"
+                *ngIf="(Pl.get('address')?.touched ) && Pl.get('address')?.hasError('pattern')">
+            Ex:- Indor.
+            </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label"> Date of Birth <span
+                                    class="text-danger">*</span></label>
+                            <input class="form-control " type="date" max="2999-01-01" name="dob" (keydown)="false"
+                            formControlName="dob"       [(ngModel)]="user.dob">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pl.get('dob')?.touched ) && Pl.get('dob')?.hasError('required')">
+                        Date of Birth  Is Required.
+                    </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Phone </label>
+                            <input class="form-control" type="text" value="user.phone" name="phone"
+                            formControlName="phone"             [(ngModel)]="user.phone">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pl.get('phone')?.touched ) && Pl.get('phone')?.hasError('required')">
+                        phone Is Required.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('phone')?.touched ) && Pl.get('phone')?.hasError('minlength')">
+                        phone length should be greater than 10.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('phone')?.touched ) && Pl.get('phone')?.hasError('maxlength')">
+                        phone length should be smaller than 11.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Pl.get('phone')?.touched ) && Pl.get('phone')?.hasError('pattern')">
+                    phone Is Invalid.
+                </span>
+                <span class="text-danger"
+                *ngIf="(Pl.get('phone')?.touched ) && Pl.get('phone')?.hasError('pattern')">
+                phone no above 5.
+            </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">SSN <span class="text-danger">*</span></label>
+                            <input class="form-control datetimepicker" type="text" value="user.ssn" name="ssn"
+                            formControlName="ssn"     [(ngModel)]="user.ssn">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pl.get('ssn')?.touched ) && Pl.get('ssn')?.hasError('required')">
+                        ssn Is Required.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('ssn')?.touched ) && Pl.get('ssn')?.hasError('minlength')">
+                        ssn length should be greater than 10.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pl.get('ssn')?.touched ) && Pl.get('ssn')?.hasError('maxlength')">
+                        ssn length should be smaller than 11.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Pl.get('ssn')?.touched ) && Pl.get('ssn')?.hasError('pattern')">
+                    ssn Is Invalid.
+                </span>
+                <span class="text-danger"
+                *ngIf="(Pl.get('ssn')?.touched ) && Pl.get('ssn')?.hasError('pattern')">
+                Ex:- AK1234 .
+            </span>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Gender</label>
+                            <select class="select" name="gender"   formControlName="gender" value="user.gender" [(ngModel)]="user.gender">
+                                <option value="Male">Male </option>
+                                <option value="Female">Female </option>
+                                <option value="Other">Other </option>
+                            </select>
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pl.get('gender')?.touched ) && Pl.get('gender')?.hasError('required')">
+                        Gender Is Required.
+                    </span>
+                    </div>
+
+                </div>
+                <div class="submit-section">
+                    <button class="btn btn-primary submit-btn" data-dismiss="modal" [disabled]="Pl.invalid"
+
+                        (click)="updateEmployee()">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+<!-- /Profile Modal -->
+
+<!-- Personal Info Modal -->
+<div id="personal_info_modal" class="modal custom-modal fade" role="dialog">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Personal Information</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <form   [formGroup]="Pi" (ngSubmit)="addPersonalInformations()">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Passport No</label>
+                            <input class="form-control" type="passportNo" name="passportNo "
+                            formControlName="passportNo"  [(ngModel)]="personalInformations.passportNo">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pi.get('passportNo')?.touched ) && Pi.get('passportNo')?.hasError('required')">
+                        Passport No  Is Required.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pi.get('passportNo')?.touched ) && Pi.get('passportNo')?.hasError('minLength')">
+                        Passport No length should be greater than 10.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pi.get('passportNo')?.touched ) && Pi.get('passportNo')?.hasError('maxLength')">
+                        Passport No length should be smaller than 15.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Pi.get('passportNo')?.touched ) && Pi.get('passportNo')?.hasError('pattern')">
+                    Passport No Invalid.
+                </span>  <span class="text-danger"
+                *ngIf="(Pi.get('passportNo')?.touched ) && Pi.get('passportNo')?.hasError('pattern')">
+        Ex:-WXYZ123456.
+            </span>
+
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Passport Expiry Date <span
+                                    class="text-danger">*</span></label>
+                            <input class="form-control " id="selectedDate"(keydown)="false" type="date" name="passportExpiryDate" [min]="todayDate"
+                            formControlName="passportExpiryDate"      [(ngModel)]="personalInformations.passportExpiryDate">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pi.get('passportExpiryDate')?.touched ) && Pi.get('passportExpiryDate')?.hasError('required')">
+                        Passport Expiry Date  Is Required.
+                    </span>
+                   
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tel</label>
+                            <input class="form-control" type="tel" name="tel"
+                            formControlName="tel"       [(ngModel)]="personalInformations.tel">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pi.get('tel')?.touched ) && Pi.get('tel')?.hasError('required')">
+                        Tel  Is Required.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pi.get('tel')?.touched ) && Pi.get('tel')?.hasError('minLength')">
+                        Tel length should be Smallar than 11.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pi.get('tel')?.touched ) && Pi.get('tel')?.hasError('pattern')">
+                        Tel Is Invalid
+                    </span>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Nationality <span class="text-danger">*</span></label>
+                            <input class="form-control" type="nationality" name="nationality"
+                            formControlName="nationality"     [(ngModel)]="personalInformations.nationality">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pi.get('nationality')?.touched ) && Pi.get('nationality')?.hasError('required')">
+                        Nationality  Is Required.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pi.get('nationality')?.touched ) && Pi.get('nationality')?.hasError('minLength')">
+                        Nationality length should be Smallar than 11.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pi.get('nationality')?.touched ) && Pi.get('nationality')?.hasError('pattern')">
+                        Nationality Invalid
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pi.get('nationality')?.touched ) && Pi.get('nationality')?.hasError('pattern')">
+                    Ex:-Indian
+                    </span>
+                    
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Religion <span class="text-danger">*</span></label>
+                            <input class="form-control "  type="text" name="religion"
+                            formControlName="religion"      [(ngModel)]="personalInformations.religion">
+                        </div>
+                        <span class="text-danger"
+                        *ngIf="(Pi.get('religion')?.touched ) && Pi.get('religion')?.hasError('required')">
+                        Religion  Is Required.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pi.get('religion')?.touched ) && Pi.get('religion')?.hasError('minLength')">
+                        Religion length should be Smallar than 11.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(Pi.get('religion')?.touched ) && Pi.get('religion')?.hasError('pattern')">
+                        Religion  is Invalid
+                    </span>
+                    
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Marital status <span class="text-danger">*</span></label>
+                            <select class="form-control " [(ngModel)]="personalInformations.maritalstatus"
+                            formControlName="maritalstatus"     name="maritalstatus">
+                            <option>-</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Other">Other </option>
+                        </select>
+                    </div>
+                    <span class="text-danger"
+                    *ngIf="(Pi.get('maritalstatus')?.touched ) && Pi.get('maritalstatus')?.hasError('required')">
+                    Marital status  Is Required.
+                </span>
+                <span class="text-danger"
+                    *ngIf="(Pi.get('maritalstatus')?.touched ) && Pi.get('maritalstatus')?.hasError('minLength')">
+                    Marital status length should be Smallar than 11.
+                </span>
+                <span class="text-danger"
+                    *ngIf="(Pi.get('maritalstatus')?.touched ) && Pi.get('maritalstatus')?.hasError('pattern')">
+                    Marital status  Invalid
+                </span>
+                
+                </div>
+
+
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Employment of spouse</label>
+                        <input class="form-control" type="employmentOfSpouse" name="employmentOfSpouse"
+                        formControlName="employmentOfSpouse"       [(ngModel)]="personalInformations.employmentOfSpouse">
+                    </div>
+                    <span class="text-danger"
+                    *ngIf="(Pi.get('employmentOfSpouse')?.touched ) && Pi.get('employmentOfSpouse')?.hasError('required')">
+                    Employment of spouse  Is Required.
+                </span>
+                <span class="text-danger"
+                    *ngIf="(Pi.get('employmentOfSpouse')?.touched ) && Pi.get('employmentOfSpouse')?.hasError('minLength')">
+                    Employment of spouse length should be Smallar than 11.
+                </span>
+                <span class="text-danger"
+                    *ngIf="(Pi.get('employmentOfSpouse')?.touched ) && Pi.get('employmentOfSpouse')?.hasError('pattern')">
+                    Employment of spouse Invalid
+                </span>
+                
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>No. of children </label>
+                        <input class="form-control" type="noOfChildren" name="noOfChildren"
+                        formControlName="noOfChildren"        [(ngModel)]="personalInformations.noOfChildren">
+                    </div>
+                    <span class="text-danger"
+                    *ngIf="(Pi.get('noOfChildren')?.touched ) && Pi.get('noOfChildren')?.hasError('required')">
+                    No. of children   Is Required.
+                </span>
+                <span class="text-danger"
+                    *ngIf="(Pi.get('noOfChildren')?.touched ) && Pi.get('noOfChildren')?.hasError('minLength')">
+                    No. of children  length should be Smallar than 11.
+                </span>
+                <span class="text-danger"
+                    *ngIf="(Pi.get('noOfChildren')?.touched ) && Pi.get('noOfChildren')?.hasError('pattern')">
+                    No. of children  Invalid
+                </span>
+                
+                </div>
+            </div>
+            <div class="submit-section">
+                <button class="btn btn-primary submit-btn" type="submit" data-dismiss="modal"  [disabled]="Pi.invalid"
+                 (click)="addPersonalInformations()"   >Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+<!-- /Personal Info Modal -->
+
+<!-- Family Info Modal -->
+<div id="family_info_modal" class="modal custom-modal fade" role="dialog">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"> Family Informations</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form  [formGroup]="Fi" (ngSubmit)="addFamilyInformation()">
+            <div class="form-scroll">
+
+                <table class="table table-nowrap">
+                    <thead>
+
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let family of familyInformationList;let i=index">
+                            <td>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h3 class="card-title">{{i+1}}. Family Member <a
+                                                (click)="removeItemList(i,'family')" class="delete-icon"><i
+                                                    class="fa fa-trash-o"></i></a></h3>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Name <span class="text-danger">*</span></label>
+                                                    <input class="form-control" name="name"
+                                                        [(ngModel)]="family.name" formControlName="name2"
+                                                        [placeholder]="family.name" type="text">
+                                                </div>
+                                                <span class="text-danger"
+                                    *ngIf="(Fi.get('name2')?.touched ) && Fi.get('name2')?.hasError('required')">
+                                    Name Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(Fi.get('name2')?.touched ) && Fi.get('name2')?.hasError('minlength')">
+                                    Name length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(Fi.get('name2')?.touched ) && Fi.get('name2')?.hasError('maxlength')">
+                                    Name length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(Fi.get('name2')?.touched ) && Fi.get('name2')?.hasError('pattern')">
+                                Name Is Invalid.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(Fi.get('name2')?.touched ) && Fi.get('name2')?.hasError('pattern')">
+                                Ex:-Abcd.
+                            </span>
+                           
+
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Relationship <span
+                                                            class="text-danger">*</span></label>
+                                                    <input class="form-control" name="relationship"
+                                                        [(ngModel)]="family.relationship" formControlName="relationship2"
+                                                        [placeholder]="family.relationship" type="text">
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(Fi.get('relationship2')?.touched ) && Fi.get('relationship2')?.hasError('required')">
+                                                Relationship Is Required.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(Fi.get('relationship2')?.touched ) && Fi.get('relationship2')?.hasError('minlength')">
+                                                Relationship length should be greater than 3.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(Fi.get('relationship2')?.touched ) && Fi.get('relationship2')?.hasError('maxlength')">
+                                                Relationship length should be smaller than 25.
+                                            </span>
+                                            <span class="text-danger"
+                                            *ngIf="(Fi.get('relationship2')?.touched ) && Fi.get('relationship2')?.hasError('pattern')">
+                                            Relationship Is Invalid.
+                                        </span>
+                                        <span class="text-danger"
+                                        *ngIf="(Fi.get('relationship2')?.touched ) && Fi.get('relationship2')?.hasError('pattern')">
+                                        Ex:-Father.
+                                    </span>
+                                       
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="col-form-label"> Date of birth <span
+                                                            class="text-danger">*</span></label>
+                                                    <input class="form-control " (keydown)="false" name="dateOfBirth" [max]="todayDate"
+                                                        [(ngModel)]="family.dateOfBirth" formControlName="dateOfBirth"
+                                                        [placeholder]="family.dateOfBirth" id="selectedDate"
+                                                        type="date">
+                                                </div>                <span class="text-danger"
+                                                *ngIf="(Fi.get('dateOfBirth')?.touched ) && Fi.get('dateOfBirth')?.hasError('required')">
+                                                Date of birth Is Required.
+                                            </span>
+                                                         </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Phone <span class="text-danger">*</span></label>
+                                                    <input class="form-control" name="phone"
+                                                        [(ngModel)]="family.phone" formControlName="phone4"
+                                                        [placeholder]="family.phone" type="text">
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(Fi.get('phone4')?.touched ) && Fi.get('phone4')?.hasError('required')">
+                                                Phone Is Required.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(Fi.get('phone4')?.touched ) && Fi.get('phone4')?.hasError('minlength')">
+                                                Phone length should be greater than 10.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(Fi.get('phone4')?.touched ) && Fi.get('phone4')?.hasError('maxlength')">
+                                                Phone length should be smaller than 25.
+                                            </span>
+                                            <span class="text-danger"
+                                            *ngIf="(Fi.get('phone4')?.touched ) && myForm.get('phone4')?.hasError('pattern')">
+                                            Phone Is Invalid.
+                                        </span>
+                                        <span class="text-danger"
+                                        *ngIf="(Fi.get('phone4')?.touched ) && myForm.get('phone4')?.hasError('pattern')">
+                                        Phone no above 5.
+                                    </span>
+                                            </div>
+                                            <div class="add-more">
+                                                <a (click)="addColumnForInformation('family')"><i
+                                                        class="fa fa-plus-circle"></i> Add More</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="submit-section">
+                <button class="btn btn-primary submit-btn" [disabled]="Fi.invalid"  data-dismiss="modal" (click)="addFamilyInformation()">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+<!-- /Family Info Modal -->
+
+<!-- Emergency Contact Modal -->
+<div id="emergency_contact_modal" class="modal custom-modal fade" role="dialog">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Emergency Contact</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="Ec" (ngSubmit)="addEmergencyContact()">
+
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Primary Contact</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Name <span class="text-danger">*</span></label>
+                                <input type="name" class="form-control" name="name" formControlName="name"
+                                    [(ngModel)]="emergencyContact.name">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(Ec.get('name')?.touched ) && Ec.get('name')?.hasError('required')">
+                            Name Is Required.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('name')?.touched ) && Ec.get('name')?.hasError('minlength')">
+                            Name length should be greater than 3.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('name')?.touched ) && Ec.get('name')?.hasError('maxlength')">
+                            Name length should be smaller than 25.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(Ec.get('name')?.touched ) && Ec.get('name')?.hasError('pattern')">
+                        Name is Invalid.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Ec.get('name')?.touched ) && Ec.get('name')?.hasError('pattern')">
+                    Ex:-Abcd.
+                </span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Relationship <span class="text-danger">*</span></label>
+                                <input class="form-control" type="relationship" name="relationship"formControlName="relationship"
+                                    [(ngModel)]="emergencyContact.relationship">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(Ec.get('relationship')?.touched ) && Ec.get('relationship')?.hasError('required')">
+                            Relationship Is Required.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('relationship')?.touched ) && Ec.get('relationship')?.hasError('minlength')">
+                            Relationship length should be greater than 3.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('relationship')?.touched ) && Ec.get('relationship')?.hasError('maxlength')">
+                            Relationship length should be smaller than 25.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(Ec.get('name')?.touched ) && Ec.get('name')?.hasError('pattern')">
+                        Relationship is Invalid.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Ec.get('name')?.touched ) && Ec.get('name')?.hasError('pattern')">
+                    Ex:-Mother.
+                </span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone <span class="text-danger">*</span></label>
+                                <input class="form-control" type="phone" name="phone"formControlName="phone1"
+                                    [(ngModel)]="emergencyContact.phone">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(Ec.get('phone1')?.touched ) && Ec.get('phone1')?.hasError('required')">
+                            Phone Is Required.
+                        </span>
+                       
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('phone1')?.touched ) && Ec.get('phone1')?.hasError('pattern')">
+                            Phone length should be smaller than 10.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(Ec.get('phone1')?.touched ) && Ec.get('phone1')?.hasError('pattern')">
+                        Phone Number Should Be indian above 6.
+                    </span>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone 2</label>
+                                <input class="form-control" type="phone1" name="phone1" formControlName="phone2"
+                                    [(ngModel)]="emergencyContact.phone1">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(Ec.get('phone2')?.touched ) && Ec.get('phone2')?.hasError('required')">
+                            Phone 2 Is Required.
+                        </span>
+                       
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('phone2')?.touched ) && Ec.get('phone2')?.hasError('pattern')">
+                            Phone 2 length should be smaller than 10.
+                        </span>
+                        
+                        <span class="text-danger"
+                        *ngIf="(Ec.get('phone2')?.touched ) && Ec.get('phone2')?.hasError('pattern')">
+                        Phone Number Should Be indian above 6.
+                    </span>
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Seconays Contact</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Name <span class="text-danger">*</span></label>
+                                <input type="name1" class="form-control" name="name1" formControlName="name1"
+                                    [(ngModel)]="emergencyContact.name1">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(Ec.get('name1')?.touched ) && Ec.get('name1')?.hasError('required')">
+                            Name Is Required.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('name1')?.touched ) && Ec.get('name1')?.hasError('minlength')">
+                            Name length should be greater than 3.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('name1')?.touched ) && Ec.get('name1')?.hasError('maxlength')">
+                            Name length should be smaller than 25.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(Ec.get('name1')?.touched ) && Ec.get('name1')?.hasError('pattern')">
+                        Name is Invalid.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Ec.get('name1')?.touched ) && Ec.get('name1')?.hasError('pattern')">
+                    Ex:- Abcd.
+                </span>
+                       
+                        
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Relationship <span class="text-danger">*</span></label>
+                                <input class="form-control" type="relationship1" name="relationship1" formControlName="relationship1"
+                                    [(ngModel)]="emergencyContact.relationship1">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(Ec.get('relationship1')?.touched ) && Ec.get('relationship1')?.hasError('required')">
+                            Relationship Is Required.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('relationship1')?.touched ) && Ec.get('relationship')?.hasError('minlength')">
+                            Relationship length should be greater than 3.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('relationship')?.touched ) && Ec.get('relationship')?.hasError('maxlength')">
+                            Relationship length should be smaller than 25.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(Ec.get('relationship')?.touched ) && Ec.get('relationship')?.hasError('pattern')">
+                        Name is Invalid.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Ec.get('relationship')?.touched ) && Ec.get('relationship')?.hasError('pattern')">
+                    Ex:- Xyz.
+                </span>
+                    <span class="text-danger"
+                    *ngIf="(Ec.get('relationship')?.touched ) && Ec.get('relationship')?.hasError('pattern')">
+                    Ex:-.
+                </span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone <span class="text-danger">*</span></label>
+                                <input class="form-control" type="phone2" name="phone2" formControlName="Phone3"
+                                    [(ngModel)]="emergencyContact.phone2">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(Ec.get('Phone3')?.touched ) && Ec.get('Phone3')?.hasError('required')">
+                            Phone 2 Is Required.
+                        </span>
+                       
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('Phone3')?.touched ) && Ec.get('Phone3')?.hasError('pattern')">
+                            Phone 2 length should be smaller than 10.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(myForm.get('Phone3')?.touched ) && myForm.get('Phone3')?.hasError('pattern')">
+                        Phone Number Should Be indian above 6.
+                    </span>
+
+                        </div>
+
+                      
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone 2</label>
+                                <input class="form-control" type="Phone3" name="Phone3" formControlName="phone5"
+                                    [(ngModel)]="emergencyContact.Phone3">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(Ec.get('phone5')?.touched ) && Ec.get('phone5')?.hasError('required')">
+                            Phone 2 Is Required.
+                        </span>
+                       
+                        <span class="text-danger"
+                            *ngIf="(Ec.get('phone5')?.touched ) && Ec.get('phone5')?.hasError('pattern')">
+                            Phone 2 length should be smaller than 10.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(myForm.get('phone5')?.touched ) && myForm.get('phone5')?.hasError('pattern')">
+                        Phone Number Should Be indian above 6.
+                    </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="submit-section">
+                <button class="btn btn-primary submit-btn" data-dismiss="modal" [disabled]="Ec.invalid" (click)="addEmergencyContact()">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+<!-- /Emergency Contact Modal -->
+
+
+<!-- Education Modal -->
+<div id="education_info" class="modal custom-modal fade" role="dialog">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"> Education Informations</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="Ei" (ngSubmit)="addEducationInFormationDetails()">
+            <div class="form-scroll">
+                <table class="table table-nowrap">
+
+                    <tbody>
+                        
+
+                        <tr *ngFor="let edi of educationInformationList;let i=index">
+                            <td [ngClass]="{'custom-color-class': edi.isDelete}">
+                                <div>
+                                    <div class="card-body">
+                                        <h3 class="card-title">{{i+1}}. Education Informations <a
+                                                (click)="removeItemList(i,'education')"
+                                                class="delete-icon"><i class="fa fa-trash-o"></i></a></h3>
+                                        <div class="row">
+                                            <div class="col-md-6">
+
+                                                <div class="form-group">
+                                                    <label class="focus-label">Institution</label>
+                                                    <input type="text" name="institution"
+                                                        [(ngModel)]="edi.institution"
+                                                        [placeholder]="edi.institution" formControlName="institution"
+                                                        class="form-control floating">
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(Ei.get('institution')?.touched ) && Ei.get('institution')?.hasError('required')">
+                                                Institution Is Required.
+                                            </span>
+
+                                            <span class="text-danger"
+                                            *ngIf="(Ei.get('institution')?.touched ) && Ei.get('institution')?.hasError('minlength')">
+                                            Institution length should be greater than 3.
+                                        </span>
+                                        <span class="text-danger"
+                                            *ngIf="(Ei.get('institution')?.touched ) && Ei.get('institution')?.hasError('maxlength')">
+                                            Institution length should be smaller than 25.
+                                        </span>
+                                        <span class="text-danger"
+                                        *ngIf="(Ei.get('institution')?.touched ) && Ei.get('institution')?.hasError('pattern')">
+                                        Institution is Invalid.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(Ei.get('institution')?.touched ) && Ei.get('institution')?.hasError('pattern')">
+                                    Ex:- Rgpv.
+                                </span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="focus-label">Subject</label>
+                                                    <input type="text" name="subject"
+                                                        [(ngModel)]="edi.subject"
+                                                        [placeholder]="edi.subject" formControlName="subject"
+                                                        class="form-control floating">
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(Ei.get('subject')?.touched ) && Ei.get('subject')?.hasError('required')">
+                                                Subject Is Required.
+                                            </span>
+
+                                            <span class="text-danger"
+                            *ngIf="(Ei.get('subject')?.touched ) && Ei.get('subject')?.hasError('minlength')">
+                            Subject length should be greater than 3.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(Ei.get('subject')?.touched ) && Ei.get('subject')?.hasError('maxlength')">
+                            Subject length should be smaller than 25.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(Ei.get('subject')?.touched ) && Ei.get('subject')?.hasError('pattern')">
+                        Subject is Invalid.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(Ei.get('subject')?.touched ) && Ei.get('subject')?.hasError('pattern')">
+                    Ex:- Mathe.
+                </span>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    
+                                                        <label class="focus-label">Starting Date</label>
+                                                        <input type="date" name="startingDate" [max]="todayDate" (keydown)="false"
+                                                            [(ngModel)]="edi.startingDate" formControlName="startingDate"
+                                                            [placeholder]="edi.startingDate"
+                                                            class="form-control floating datetimepicker">
+                                                                                                    </div>
+                                                                                                    <span class="text-danger"
+                                                *ngIf="(Ei.get('startingDate')?.touched ) && Ei.get('startingDate')?.hasError('required')">
+                                                Starting Date Is Required.
+                                            </span>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="col-form-label">Complete Date
+                                                        <span class="text-danger">*</span></label>
+                                                    <input class="form-control " (keydown)="false" [min]="edi.startingDate" [max]="todayDate" id="selectedDate" formControlName="completeDate"
+                                                        name="completeDate" [(ngModel)]="edi.completeDate"
+                                                        [placeholder]="edi.completeDate" type="date"
+                                                        name="dob">
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(Ei.get('completeDate')?.touched ) && Ei.get('completeDate')?.hasError('required')">
+                                                Complete Date Is Required.
+                                            </span>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="focus-label">Degree</label>
+                                                    <div >
+                                                        <input type="text" name="degree"
+                                                            [(ngModel)]="edi.degree"
+                                                            [placeholder]="edi.degree" formControlName="degree"
+                                                            class="form-control floating datetimepicker">
+                                                    </div>
+                                                    <span class="text-danger"
+                                                *ngIf="(Ei.get('degree')?.touched ) && Ei.get('degree')?.hasError('required')">
+                                                Degree Is Required.
+                                            </span>
+                                            <span class="text-danger"
+                                            *ngIf="(Ei.get('degree')?.touched ) && Ei.get('degree')?.hasError('required')">
+                                        Ex:- B.tech
+                                        </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="focus-label">Grade</label>
+                                                    <input type="text" name="grade" [(ngModel)]="edi.grade"
+                                                        [placeholder]="edi.grade" formControlName="grade"
+                                                        class="form-control floating">
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(Ei.get('grade')?.touched ) && Ei.get('grade')?.hasError('required')">
+                                                Grade Is Required.
+                                            </span>
+                                            <span class="text-danger"
+                                            *ngIf="(Ei.get('grade')?.touched ) && Ei.get('grade')?.hasError('pattern')">
+                                            Grade Is Invalid.
+                                        </span>
+                                        <span class="text-danger"
+                                        *ngIf="(Ei.get('grade')?.touched ) && Ei.get('grade')?.hasError('pattern')">
+                                        Ex:- A.
+                                    </span>
+                                            </div>
+                                        </div>
+                                        <div class="add-more">
+                                            <a (click)="addColumnForInformation('education')"><i
+                                                    class="fa fa-plus-circle"></i> Add More</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="submit-section">
+                <button class="btn btn-primary submit-btn" (click)="addEducationInFormationDetails()"[disabled]="Ei.invalid" data-dismiss="modal">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+<!-- /Education Modal -->
+
+<!-- Experience Modal -->
+<div id="experience_info" class="modal custom-modal fade" role="dialog">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Experience Informations</h5>
+        <button type="button" class="close"data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="E"  (ngSubmit)="addExperienceInformation()">
+            <div class="form-scroll">
+                <table class="table table-nowrap">
+                    <thead>
+
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let experience of experienceInformationList;let i=index">
+                            <td>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h3 class="card-title">{{i+1}}. Experience Informations <a
+                                                (click)="removeItemList(i,'experience')"
+                                                class="delete-icon"><i class="fa fa-trash-o"></i></a></h3>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                   
+                                                    <label class="focus-label">Company Name</label>
+                                                    <input type="text" class="form-control floating"
+                                                        name="companyName"
+                                                        formControlName="companyName"     [(ngModel)]="experience.companyName"
+                                                        [placeholder]="experience.companyName">
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(E.get('companyName')?.touched ) && E.get('companyName')?.hasError('required')">
+                                                CompanyName Is Required.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(E.get('companyName')?.touched ) && E.get('companyName')?.hasError('minlength')">
+                                                CompanyName length should be greater than 3.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(E.get('companyName')?.touched ) && E.get('companyName')?.hasError('maxlength')">
+                                                CompanyName length should be smaller than 25.
+                                            </span>
+            
+                                            <span class="text-danger"
+                                            *ngIf="(E.get('companyName')?.touched ) && E.get('companyName')?.hasError('pattern')">
+                                            CompanyName Is invalid.
+                                        </span>
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('companyName')?.touched ) && E.get('companyName')?.hasError('pattern')">
+                                        Ex:-Dollop.
+                                    </span>
+    
+        
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    
+                                                    <label class="focus-label">Location</label>
+                                                    <input type="text" class="form-control floating"
+                                                    formControlName="location"        name="location" [(ngModel)]="experience.location"
+                                                        [placeholder]="experience.location"> 
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(E.get('location')?.touched ) && E.get('location')?.hasError('required')">
+                                                Location Is Required.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(E.get('location')?.touched ) && E.get('location')?.hasError('minlength')">
+                                                Location length should be greater than 3.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(E.get('location')?.touched ) && E.get('location')?.hasError('maxlength')">
+                                                Location length should be smaller than 50.
+                                            </span>
+                                            <span class="text-danger"
+                                            *ngIf="(E.get('location')?.touched ) && E.get('location')?.hasError('pattern')">
+                                            Location Is Invalid.
+                                        </span>
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('location')?.touched ) && E.get('location')?.hasError('pattern')">
+                                        Ex:- Indro.
+                                    </span>
+        
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    
+                                                    <label class="focus-label">Job Position</label>
+                                                    <input type="text" class="form-control floating"
+                                                        name="jobPosition"    formControlName="jobPosition"
+                                                        [(ngModel)]="experience.jobPosition"
+                                                        [placeholder]="experience.jobPosition">
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(E.get('jobPosition')?.touched ) && E.get('jobPosition')?.hasError('required')">
+                                                Job Position Is Required.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(E.get('jobPosition')?.touched ) && E.get('jobPosition')?.hasError('minlength')">
+                                                Job Position length should be greater than 3.
+                                            </span>
+                                            <span class="text-danger"
+                                                *ngIf="(E.get('jobPosition')?.touched ) && E.get('jobPosition')?.hasError('maxlength')">
+                                                Job Position length should be smaller than 25.
+                                            </span>
+                                            <span class="text-danger"
+                                            *ngIf="(E.get('jobPosition')?.touched ) && E.get('jobPosition')?.hasError('pattern')">
+                                            Job Position Is Invalid.
+                                        </span>
+                                        <span class="text-danger"
+                                            *ngIf="(E.get('jobPosition')?.touched ) && E.get('jobPosition')?.hasError('pattern')">
+                                            Java Back End.
+                                        </span>
+         
+            
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="col-form-label">Period From <span
+                                                            class="text-danger">*</span></label>
+                                                    <input class="form-control " id="selectedDate"
+                                                        name="periodFrom"    formControlName="periodFrom"(keydown)="false" [max]="todayDate"
+                                                        [(ngModel)]="experience.periodFrom"
+                                                        [placeholder]="experience.periodFrom" type="date">
+                                                </div>
+                                                <span class="text-danger"
+                                                *ngIf="(E.get('periodFrom')?.touched ) && E.get('periodFrom')?.hasError('required')">
+                                                Period From Is Required.
+                                            </span>
+                                           
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <!-- <div class="form-group"> -->
+                                                <div class="form-group">
+
+                                                    <label class="col-form-label">Period To <span
+                                                        class="text-danger">*</span></label>
+                                                <input class="form-control " formControlName="periodTo" (keydown)="false" [min]="experience.periodFrom" [max]="todayDate"
+                                                    name="periodTo" [(ngModel)]="experience.periodTo"
+                                                    [placeholder]="experience.periodTo" type="date">
+                                            </div>
+                                            <span class="text-danger"
+                                            *ngIf="(E.get('periodTo')?.touched ) && E.get('periodTo')?.hasError('required')">
+                                            Period To  Is Required.
+                                        </span>
+                                     
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="add-more">
+                                    <a (click)="addColumnForInformation('experience')"><i
+                                            class="fa fa-plus-circle"></i> Add More</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="submit-section">
+            <button class="btn btn-primary submit-btn" [disabled]="E.invalid"  (click)="addExperienceInformation()"  data-dismiss="modal" >Submit</button>
+        </div>
+    </form>
+</div>
+</div>
+</div>
+</div>
+<!-- /Experience Modal -->
+
+<!-- Add User Role Modal
+<div id="add_user_roles" class="modal custom-modal fade" role="dialog">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal-content">
+<div class="modal-header">
+    <h5 class="modal-title">Add User Role</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form [formGroup]="myForm" (ngSubmit)="addUserRole()">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="col-form-label">Select Role </label>
+                    <input class="form-control" placeholder="Select Type" formControlName="roleId"
+                        [(ngModel)]="userRole.roleId" id="roleId" list="roles" name="roleId" />
+                    <datalist id="roles">
+                        <option *ngFor="let role of roles" [value]="role.id">{{role.title}}</option>
+
+                    </datalist>
+                </div>
+                <div class="text-danger"
+                    *ngIf="(myForm.get('roleId')?.touched ) && myForm.get('roleId')?.hasError('required')">
+                    Role is Required.
+                </div>
+            </div>
+        </div>
+        <div class="form-group text-center">
+            <button class="btn btn-primary account-btn" type="submit">Add</button>
+        </div>
+    </form>
+</div>
+</div>
+</div>
+</div> -->
+<!-- Add User Role Modal -->
+
+<!-- Edit User Role Modal -->
+
+<div id="edit_user_roles" class="modal custom-modal fade" role="dialog">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal-content">
+<div class="modal-header">
+    <h5 class="modal-title">Edit User Role</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <form [formGroup]="myForm" (ngSubmit)="updateUserRole()">
+        <div class="row">
+            {{userRole|json}}
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="col-form-label">Select Role </label>
+                    <input class="form-control" placeholder="Select Type" formControlName="roleId"
+                        [(ngModel)]="userRole.roleId" id="roleId" list="roles" name="roleId" />
+                    <datalist id="roles">
+                        <option *ngFor="let role of roles" [value]="role.id">{{role.title}}</option>
+
+                    </datalist>
+                </div>
+                <div class="text-danger"
+                    *ngIf="(myForm.get('roleId')?.touched ) && myForm.get('roleId')?.hasError('required')">
+                    Role is Required.
+                </div>
+            </div>
+        </div>
+        <div class="form-group text-center">
+            <button class="btn btn-primary account-btn" data-dismiss="modal"type="submit">save</button>
+        </div>
+    </form>
+</div>
+</div>
+</div>
+</div>
+<!-- Edit User Role Modal -->
+
+<!-- Delete Employee Modal -->
+<div class="modal custom-modal fade" id="delete_employee" role="dialog">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-body">
+    <div class="form-header">
+        <h3>Delete User Role</h3>
+        <p>Are you sure want to delete?</p>
+    </div>
+    <div class="modal-btn delete-action">
+        <div class="row">
+            <div class="col-6">
+                <a href="javascript:void(0);" (click)="deleteUserRole()" data-dismiss="modal"
+                    class="btn btn-primary continue-btn">Delete</a>
+            </div>
+            <div class="col-6">
+                <a href="javascript:void(0);" data-dismiss="modal"
+                    class="btn btn-primary cancel-btn">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+</div>
+<!-- /Delete Employee Modal -->
+</div>
+<!-- /Page Wrapper -->
+
+<!-- Emergency Contact Modal -->
+<div id="emergency_contact_modals" class="modal custom-modal fade" role="dialog">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">Profile Update </h5>
+<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+</button> -->
+</div>
+<div class="modal-body">
+    <form>
+        <div class="container">
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-6 img">
+                    <div class="profile-img-wrap">
+                        <div class="profile-img" > 
+                            <a   data-toggle="modal" ><img alt="" id="file" [src]="user.profileName" (click)="openFile(file)"></a>
+                            <span class="change-img">Change Image</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label class="col-form-label"></label>
+                            <input type="file"  id="file2" name="profile"  #file  class="d-none" aria-hidden="true" (change)="selectFile($event)" accept="image/*">
+                             
+                        </div>
+                </div>   
+                </div>
+                <div class="col-3"></div>
+            </div>               
+           <div class="row ">
+                <div class="col-12 margin-top">
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn"  data-dismiss="modal" data-dismiss="modal"(click)="updateEmployee()">Submit</button>
+                    </div>
+                </div>
+           </div>
+        </div>
+    </form>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+

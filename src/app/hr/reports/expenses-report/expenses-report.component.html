@@ -1,0 +1,133 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper" *ngIf="permissions.isReadable">
+			
+    <!-- Page Content -->
+    <div class="content container-fluid">
+    
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Expense Report</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Expense Report</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+        
+        <!-- Search Filter -->
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3 col-12">
+                <div class="form-group form-focus">
+                    <input type="text" class="form-control floating" name="title" [(ngModel)]="searching.title">
+                    <label class="focus-label">Item Name</label>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3 col-12">
+                <div class="form-group form-focus form-focus">
+                    <select class="form-control select floating" name="id"
+                        [(ngModel)]="searching.userId.id">
+                        <option *ngFor="let item of users" [value]="item.id">{{ item.firstName }}</option>
+                    </select>
+                    <label class="focus-label">Purchased By</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3 col-12">
+                <div class="form-group form-focus form-focus">
+                    <label class="focus-label">Paid By</label>
+                    <select class="form-control select floating" name="paidBy" [(ngModel)]="searching.paidBy">
+
+                        <option value="Cash" > Cash </option>
+                        <option value="Cheque"> Cheque </option>
+                    </select>
+                </div>
+            </div>
+
+
+
+   
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3 col-12">
+                <a (click)="filter()" class="btn btn-success btn-block"> Search </a>
+            </div>
+        </div>
+          <!-- /Search Filter -->
+
+          	    
+<mat-paginator #paginator
+class="demo-paginator"
+(page)="handlePageEvent($event)"
+[length]="length"
+[pageSize]="pageSize"
+[disabled]="disabled"
+[showFirstLastButtons]="showFirstLastButtons"
+[pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+[hidePageSize]="hidePageSize"
+[pageIndex]="pageIndex"
+aria-label="Select page">
+</mat-paginator>
+<!---pagination end -->
+
+
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Purchase From</th>
+                                <th>Purchase Date</th>
+                                <th>Purchased By</th>
+                                <th>Amount</th>
+                                <th>Paid By</th>
+                                <th class="text-center">Status</th>
+                            
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr  *ngFor="let expense of expenses" >
+                                <td>
+                                    <strong>{{expense.title}}</strong>
+                                </td>
+                                <td>{{expense.description}}</td>
+                                <td>{{expense.expenseDate}}</td>
+                                <td>
+                                   
+
+                                     <h2 class="table-avatar">
+                                        <a href="javascript:void(0);" class="avatar"><img
+                                              [src]="expense.userId.profileName" alt=""></a>
+                                        <a >{{expense.userId.firstName+" "+expense.userId.lastName}}
+                                          </a>
+                                    </h2>
+                                </td>
+                                <td>${{expense.amount}}</td>
+                                <td>{{expense.paidBy}}</td>
+                                <td class="text-center">
+                                        <div class="dropdown action-label">
+                                            <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i [ngClass]="'fa fa-dot-circle-o ' + (expense.status=='Approved'?'text-success':'text-danger')"></i> {{expense.status}} </a>
+                                            <div class="dropdown-menu" *ngIf="permissions.isEditable">
+                                                <a class="dropdown-item" (click)="updateStatus(expense.id,'Approved')"><i class="fa fa-dot-circle-o text-success"></i> Approved</a>
+                                                <a class="dropdown-item" (click)="updateStatus(expense.id,'Pending')"><i class="fa fa-dot-circle-o text-danger"></i> Pending</a>
+                                            </div>
+                                        </div>
+  
+                                      </td>
+                                
+                                   
+                            </tr>
+                       </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+    
+</div>
+<!-- /Page Wrapper -->

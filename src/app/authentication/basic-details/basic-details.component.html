@@ -1,0 +1,191 @@
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+    <div class="account-content">
+        <a href="job-list.html" class="btn btn-primary apply-btn">Apply Job</a>
+        <div class="container">
+
+            <!-- Account Logo -->
+            <div class="account-logo">
+                <a href="index.html"><img src="assets/img/logo2.png" alt="Dreamguy's Technologies"></a>
+            </div>
+            <!-- /Account Logo -->
+
+            <div class="account-box">
+                <div class="account-wrapper">
+                    <h3 class="account-title">Register</h3>
+                    <p class="account-subtitle">Access to our dashboard</p>
+
+                    <form  (ngSubmit)="addBasicDetails()">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="firstName" 
+                                        [(ngModel)]="userBasic.firstName">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('name')?.touched ) && myForm.get('name')?.hasError('required')">
+                                    firstName Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('name')?.touched ) && myForm.get('name')?.hasError('minlength')">
+                                    firstName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('name')?.touched ) && myForm.get('name')?.hasError('maxlength')">
+                                    firstName length should be smaller than 25.
+                                </span> -->
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Last Name</label>
+                                    <input class="form-control" type="text" name="lastName" 
+                                        [(ngModel)]="userBasic.lastName">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('required')">
+                                    lastName Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('minlength')">
+                                    lastName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('maxlength')">
+                                    lastName length should be smaller than 25.
+                                </span> -->
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Employee Profile :</label>
+                                    <input type="file" name="profile" (change)="selectFile($event)" accept="image/*">
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="email" name="email"  readonly="readonly"
+                                        [(ngModel)]="userBasic.email" placeholder="xzy@gmail.com">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('required')">
+                                    Email Is Required.
+                                </span> -->
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('email')">
+                                    Email Formate Is Wrong.
+                                </span> -->
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Address <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="address" [(ngModel)]="userBasic.address"
+                                        formControlName="address">
+                                </div>
+                            </div>
+                            <!-- <span class="text-danger"
+                                *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('required')">
+                                Address Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('minlength')">
+
+                            </span> -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Alternative Address</label>
+                                    <input class="form-control" type="text" name="alternativeAddress"
+                                        [(ngModel)]="userBasic.alternativeAddress" formControlName="alternativeAddress">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('alternativeAddress')?.touched ) && myForm.get('alternativeAddress')?.hasError('required')">
+                                    AlternativeAddress Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('alternativeAddress')?.touched ) && myForm.get('alternativeAddress')?.hasError('minlength')">
+                                    AlternativeAddress is to short.
+                                </span> -->
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Date of Birth <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control " id="selectedDate" type="date" name="dob"
+                                        [(ngModel)]="userBasic.dob" formControlName="dob">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('dob')?.touched ) && myForm.get('dob')?.hasError('required')">
+                                    dob Is Required.
+                                </span>
+                                <span class="text-danger" *ngIf="myForm.get('dob')?.hasError('invalidDate') ">
+                                    Selected date must be at least 18 years ago and not in the future.
+                                </span>
+ -->
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Phone </label>
+                                    <input class="form-control" formControlName="phone" type="text" name="phone"
+                                        [(ngModel)]="userBasic.phone">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('required')">
+                                    phoneNumber Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('pattern')">
+                                    phoneNumber Should Be Of 10 Digits.
+                                </span> -->
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Alternative Phone</label>
+                                    <input class="form-control" type="text" name="alternativePhone"
+                                        formControlName="alternativePhone" [(ngModel)]="userBasic.alternativePhone">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('alternativePhone')?.touched ) && myForm.get('alternativePhone')?.hasError('required')">
+                                    alternativePhoneNumber Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('alternativePhone')?.touched ) && myForm.get('alternativePhone')?.hasError('pattern')">
+                                    alternativephoneNumber Should Be Of 10 Digits.
+                                </span> -->
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Gender</label>
+                                    <select formControlName="gender" name="gender" [(ngModel)]="userBasic.gender">
+                                        <option value="">--select-- </option>
+                                        <option value="Male">Male </option>
+                                        <option value="Female">Female </option>
+                                        <option value="Other">Other </option>
+                                    </select>
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('gender')?.touched ) && myForm.get('gender')?.hasError('required')">
+                                    gender Is Required.
+                                </span> -->
+
+                            </div>
+                        </div>
+
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" type="submit">Submit</button>
+                        </div>
+                    </form>
+                    <!-- /Account Form -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Main Wrapper -->

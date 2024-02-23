@@ -1,0 +1,174 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Job Applicants</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Job Applicants</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+    
+        <mat-paginator #paginator
+        class="demo-paginator"
+        (page)="handlePageEvent($event)"
+        [length]="length"
+        [pageSize]="pageSize"
+        [disabled]="disabled"
+        [showFirstLastButtons]="showFirstLastButtons"
+        [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+        [hidePageSize]="hidePageSize"
+        [pageIndex]="pageIndex"
+        aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+        
+        
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Apply Date</th>
+                                <th class="text-center">Status</th>
+                                <th>Resume</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let candidate of appliedCandidates">
+                                <td>{{candidate.id}}</td>
+                                <td>{{candidate.candidateName}}</td>
+                                <td>{{candidate.candidateEmail}}</td>
+                                <td>{{candidate.mobileNo}}</td>
+                                <td>{{candidate.applyDate}}</td>
+                                <td class="text-center">
+                                    <div class="dropdown action-label">
+                                        <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false"><i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (candidate.status=='New'?'text-info':(candidate.status=='Hired'?'text-success':(candidate.status=='Interviewed'?'text-warning':'text-danger')))">
+                                            {{candidate.status}}</i> </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="#"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> New</a>
+                                            <a class="dropdown-item" href="#"><i
+                                                    class="fa fa-dot-circle-o text-success"></i> Hired</a>
+                                            <a class="dropdown-item" href="#"><i
+                                                    class="fa fa-dot-circle-o text-danger"></i> Rejected</a>
+                                            <a class="dropdown-item" href="#"><i
+                                                    class="fa fa-dot-circle-o text-danger"></i> Interviewed</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><a (click)="download(candidate.id,candidate.candidateName+'
+                                    .pdf')" class="btn btn-sm btn-primary"><i class="fa fa-download"></i> Download</a>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item"  data-toggle="modal" data-target="#add_appliedCandidate" ><i class="fa fa-clock-o m-r-5"></i>
+                                                Schedule Interview</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+    <!-- Add Overtime Modal -->
+    <div id="add_appliedCandidate" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isWriteable">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Schedule Interview</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" >
+                        <div class="form-group">
+                            <label>Interview Date <span class="text-danger">*</span></label>
+                            <div class="">
+                                <input class="form-control " formControlName="overTimeDate" max="2024-12-31"
+                                    name="overTimeDate" [(ngModel)]="overTimeDate" type="date">
+
+                            </div>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('overTimeDate')?.touched ) && myForm.get('overTimeDate')?.hasError('required')">
+                                Interview Date Is Required.
+                            </span>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Interview StartAt <span class="text-danger">*</span></label>
+                            <input class="form-control" name="overTimeHours" formControlName="overTimeHours"
+                                [(ngModel)]="overTimeHours" type="time">
+                        </div>
+
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('overTimeHours')?.touched ) && myForm.get('overTimeHours')?.hasError('required')">
+                            overTimeHours Is Must Required Field.
+                        </span>
+
+                        <div class="form-group">
+                            <label>Interview End Time <span class="text-danger">*</span></label>
+                            <input class="form-control" name="overTimeHours" formControlName="overTimeHours"
+                                [(ngModel)]="overTimeHours" type="time">
+                        </div>
+                        
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('overTimeHours')?.touched ) && myForm.get('overTimeHours')?.hasError('required')">
+                            overTimeHours Is Must Required Field.
+                        </span>
+                       
+                        <div class="submit-section">
+                            <button type="submit"  *ngIf="permissions.isWriteable"
+                                class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Overtime Modal -->
+
+    </div>
+    <!-- /Page Content -->
+
+</div>
+<!-- /Page Wrapper -->
+
+<script>
+    function validateTime() {
+        var inputTime = document.getElementById('hourInput').value;
+        var regex = /^(1[0-2]|0?[1-9]):[0-5][0-9] [APMapm]{2}$/;
+
+        if (regex.test(inputTime)) {
+            alert('Valid time format!');
+        } else {
+            alert('Invalid time format! Please use the format HH:MM AM/PM.');
+        }
+    }
+</script>

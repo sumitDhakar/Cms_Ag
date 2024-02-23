@@ -1,0 +1,748 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Assets</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Assets</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a href="#" class="btn add-btn" (click)="addForm()" data-toggle="modal" data-target="#add_asset"><i
+                            class="fa fa-plus"></i> Add Asset</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <!-- Search Filter -->
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                    <input class="form-control floating datetimepicker" type="text"
+                        [(ngModel)]="searching.assetUser.firstName" name="firstName">
+
+                    <label class="focus-label">Employee Name</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus select-focus">
+                    <select [(ngModel)]="searching.status" name="status">
+                        <option value=""> -- Select -- </option>
+                        <option value="Pending"> Pending </option>
+                        <option value="Approved"> Approved </option>
+                        <option value="Returned"> Returned </option>
+                    </select>
+                    <!-- <label class="focus-label">Status</label> -->
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group form-focus">
+
+                            <input class="form-control floating " [(ngModel)]="searching.purchaseFromDate" type="date">
+
+                            <label class="focus-label">From</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group form-focus">
+
+                            <input class="form-control floating " [(ngModel)]="searching.purchaseDate" type="date">
+
+                            <label class="focus-label">To</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <a (click)="filter()" class="btn btn-success btn-block"> Search </a>
+            </div>
+        </div>
+        <!-- /Search Filter -->
+
+
+        <!---- pagination -->
+
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>Asset User</th>
+                                <th>Asset Name</th>
+                                <th>Asset Id</th>
+                                <th>Purchase Date</th>
+                                <th>Warrenty</th>
+                                <th>Warrenty End</th>
+                                <th>Amount</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-right"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let asset of assets ">
+                                <td>{{asset.assetUser.firstName}}</td>
+                                <td>{{asset.assetName}}</td>
+                                <td>{{asset.id}}</td>
+                                <td>{{asset.purchaseFromDate}}</td>
+                                <td>{{asset.assetWarrenty}}</td>
+                                <td>{{asset.purchaseDate}}</td>
+                                <td>{{asset.amount}}</td>
+
+                                <td>
+                                    <div class="dropdown action-label">
+                                     
+                                        <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false"><i [ngClass]="'fa fa-dot-circle-o ' + (asset.status=='Pending'?'text-success':'text-danger')"> {{asset.status}} </i></a>                                       <div class="dropdown-menu">
+                                            
+                                            <a class="dropdown-item" (click)="updateAssetsStatus(asset.id,'Pending') "><i class="fa fa-dot-circle-o text-success"></i>
+                                                Pending</a>
+                                            <a class="dropdown-item" (click)="updateAssetsStatus(asset.id,'Approved') "><i class="fa fa-dot-circle-o text-danger"></i>
+                                                Approved</a>
+                                            <a class="dropdown-item" (click)="updateAssetsStatus(asset.id,'Deployed') "><i class="fa fa-dot-circle-o text-danger"></i>
+                                                Deployed</a>
+                                  .          <a class="dropdown-item"  (click)="updateAssetsStatus(asset.id,'Damaged') "><i class="fa fa-dot-circle-o text-danger"></i>
+                                                Damaged</a>
+
+                                            <!-- (click)="updateGoalListStatus(asset.id,'Active')"> -->
+                                        </div>
+                                    </div>
+
+                                </td>
+
+                                
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" (click)="setEditData(asset.id)" data-toggle="modal"
+                                                data-target="#edit_asset"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" (click)="confirm(asset.id)" data-toggle="modal"
+                                                data-target="#delete_asset"><i class="fa fa-trash-o m-r-5"></i>
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Asset Modal -->
+    <div id="add_asset" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Asset</h5>
+                    <button type="button" class="close" id="add"data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" (ngSubmit)="addAssets()">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Asset Name</label>
+                                    <input class="form-control" type="text" name="assetName"
+                                    formControlName="assetName"   [(ngModel)]="asset.assetName">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('assetName')?.touched ) && myForm.get('assetName')?.hasError('required')">
+                                Asset Name Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('assetName')?.touched ) && myForm.get('assetName')?.hasError('minlength')">
+                                Asset Name length should be greater than 3.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('assetName')?.touched ) && myForm.get('assetName')?.hasError('maxlength')">
+                                Asset Name length should be smaller than 25.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('assetName')?.touched ) && myForm.get('assetName')?.hasError('pattern')">
+                            Asset Name Is invalid .
+                        </span>
+
+
+                            </div>
+                         
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Purchase Date</label>
+                                        
+                                    <input class="form-control "   (keydown)="false" [min]="todayDate" [max]="todayDate" name="purchaseDate"
+                                    formControlName="purchaseDate"   (change)="dateUpdate()"   [(ngModel)]="asset.purchaseDate" type="date">
+
+                                
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('purchaseDate')?.touched ) && myForm.get('purchaseDate')?.hasError('required')">
+                                Purchase Date Is Required.
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Purchase From</label>
+                                    <input class="form-control "name="purchaseFromDate"
+                                    formControlName="purchaseFromDate"   (keydown)="false" [min]="todayDate"  [(ngModel)]="asset.purchaseFromDate" type="date">
+                                    <!--                                
+                                        <input class="form-control" type="purchaseFromDate" [(ngModel)]="asset.purchaseFromDate"> -->
+
+                                
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('purchaseDate')?.touched ) && myForm.get('purchaseDate')?.hasError('required')">
+                                Purchase Date Is Required.
+                            </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Manufacturer</label>
+                                    <input class="form-control" type="text" name="manufacturer"
+                                    formControlName="manufacturer"        [(ngModel)]="asset.manufacturer">
+                        
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('manufacturer')?.touched ) && myForm.get('manufacturer')?.hasError('required')">
+                                Manufacturer Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('manufacturer')?.touched ) && myForm.get('manufacturer')?.hasError('minlength')">
+                                Manufacturer length should be greater than 2.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('manufacturer')?.touched ) && myForm.get('manufacturer')?.hasError('maxlength')">
+                                Manufacturer  length should be smaller than 25.
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Model</label>
+                                    <input class="form-control"formControlName="model" type="text" name="modal" [(ngModel)]="asset.model">
+                              
+                              
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('model')?.touched ) && myForm.get('model')?.hasError('required')">
+                                model Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('minlength')">
+                                model length should be greater than 2 .
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('maxlength')">
+                                model length should be smaller than 25.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('description')?.touched ) && myForm.get('pattern')?.hasError('pattern')">
+                            model is invalid.
+                        </span>
+                    </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Serial Number</label>
+                                    <input class="form-control" formControlName="serialNumber"type="serialNumber" [(ngModel)]="asset.serialNumber">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('serialNumber')?.touched ) && myForm.get('serialNumber')?.hasError('required')">
+                                Serial Number Is Required.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('serialNumber')?.touched ) && myForm.get('serialNumber')?.hasError('minlength')">
+                            Serial Number length should be greater than 2 .
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('serialNumber')?.touched ) && myForm.get('serialNumber')?.hasError('maxlength')">
+                            Serial Number length should be smaller than 3.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(myForm.get('serialNumber')?.touched ) && myForm.get('serialNumber')?.hasError('pattern')">
+                        Serial Number is invalid.
+                    </span>
+                   
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Supplier</label>
+                                    <input class="form-control"formControlName="supplier" type="text" name="supplier"
+                                        [(ngModel)]="asset.supplier">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('supplier')?.touched ) && myForm.get('supplier')?.hasError('required')">
+                                Supplier Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('supplier')?.touched ) && myForm.get('supplier')?.hasError('minlength')">
+                                Supplier length should be greater than 10.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('supplier')?.touched ) && myForm.get('supplier')?.hasError('maxlength')">
+                                Supplier length should be smaller than 150.
+                            </span>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Condition</label>
+                                    <input class="form-control" formControlName="condition"type="text" name="condition"
+                                   formControlName="condition"     [(ngModel)]="asset.condition">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('condition')?.touched ) && myForm.get('condition')?.hasError('required')">
+                                Condition Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('condition')?.touched ) && myForm.get('condition')?.hasError('minlength')">
+                                Condition length should be greater than 3.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('condition')?.touched ) && myForm.get('condition')?.hasError('maxlength')">
+                                Condition length should be smaller than 25.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('condition')?.touched ) && myForm.get('condition')?.hasError('pattern')">
+                            Condition length should be smaller than 25.
+                        </span>
+
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Warranty</label>
+                                    <input class="form-control"formControlName="assetWarrenty" type="text" placeholder="In Months" name="assetWarrenty"
+                                        [(ngModel)]="asset.assetWarrenty">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('assetWarrenty')?.touched ) && myForm.get('assetWarrenty')?.hasError('required')">
+                                Warranty Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('assetWarrenty')?.touched ) && myForm.get('assetWarrenty')?.hasError('minlength')">
+                                Warranty length should be smaller than 1.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('assetWarrenty')?.touched ) && myForm.get('assetWarrenty')?.hasError('maxlength')">
+                                Warranty length should be greater than 2.
+                            </span>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Value</label>
+                                    <input placeholder="$1800"formControlName="amount" class="form-control" type="amount" name="amount"
+                                        [(ngModel)]="asset.amount">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('amount')?.touched ) && myForm.get('amount')?.hasError('required')">
+                                        Value Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('amount')?.touched ) && myForm.get('amount')?.hasError('minlength')">
+                                    Value length should be smaller than 4.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('amount')?.touched ) && myForm.get('amount')?.hasError('maxlength')">
+                                    Value length should be greater than 5.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('amount')?.touched ) && myForm.get('amount')?.hasError('pattern')">
+                                Value is invalid.
+                            </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <!-- <label>Asset User</label>
+                                        <select class="select"> -->
+                                    <label>Asset User <span class="text-danger">*</span></label>
+                                    <select formControlName="assetUser" [(ngModel)]="asset.assetUser.id" name="id">
+                                        <option *ngFor="let  user of users" [value]="user.id">{{ user.firstName }}
+                                        </option>
+
+                                    </select>
+                              
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('assetUser')?.touched ) && myForm.get('assetUser')?.hasError('required')">
+                                Asset User Is Required.
+                            </span>
+                            
+                        </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control" formControlName="description" type="text" name="description"
+                                        [(ngModel)]="asset.description"></textarea>
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('required')">
+                                Description Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('minlength')">
+                                Description length should be greater than 10.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('maxlength')">
+                                Description length should be smaller than 150.
+                            </span>
+
+                            </div>
+                          
+                        </div>
+                        <div class="submit-section">
+
+                            <button class="btn btn-primary submit-btn" 
+                             (click)="addAssets()">Submit</button>
+                        </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Asset Modal -->
+
+    <!-- Edit Asset Modal -->
+    <div id="edit_asset" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Asset</h5>
+                    <button type="button" class="close" id="eadit" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="E" (ngSubmit)="updateAssets()">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Asset Name</label>
+                                    <input class="form-control" type="text" name="assetName"
+                                    formControlName="assetName"   [(ngModel)]="asset.assetName">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(E.get('assetName')?.touched ) && E.get('assetName')?.hasError('required')">
+                                Asset Name Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('assetName')?.touched ) && E.get('assetName')?.hasError('minlength')">
+                                Asset Name length should be greater than 3.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('assetName')?.touched ) && E.get('assetName')?.hasError('maxlength')">
+                                Asset Name length should be smaller than 25.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(E.get('assetName')?.touched ) && E.get('assetName')?.hasError('pattern')">
+                            Asset Name Is invalid .
+                        </span>
+
+
+                            </div>
+                         
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Purchase Date</label>
+                                        
+                                    <input class="form-control "   (keydown)="false" [min]="todayDate" [max]="todayDate" name="purchaseDate"
+                                    formControlName="purchaseDate"   (change)="dateUpdate()"   [(ngModel)]="asset.purchaseDate" type="date">
+
+                                
+                                <span class="text-danger"
+                                *ngIf="(E.get('purchaseDate')?.touched ) && E.get('purchaseDate')?.hasError('required')">
+                                Purchase Date Is Required.
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Purchase From</label>
+                                    <input class="form-control "name="purchaseFromDate"
+                                    formControlName="purchaseFromDate"   (keydown)="false" [min]="todayDate"  [(ngModel)]="asset.purchaseFromDate" type="date">
+                                    <!--                                
+                                        <input class="form-control" type="purchaseFromDate" [(ngModel)]="asset.purchaseFromDate"> -->
+
+                                
+                                <span class="text-danger"
+                                *ngIf="(E.get('purchaseDate')?.touched ) && E.get('purchaseDate')?.hasError('required')">
+                                Purchase Date Is Required.
+                            </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Manufacturer</label>
+                                    <input class="form-control" type="text" name="manufacturer"
+                                    formControlName="manufacturer"        [(ngModel)]="asset.manufacturer">
+                        
+                                <span class="text-danger"
+                                *ngIf="(E.get('manufacturer')?.touched ) && E.get('manufacturer')?.hasError('required')">
+                                Manufacturer Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('manufacturer')?.touched ) && E.get('manufacturer')?.hasError('minlength')">
+                                Manufacturer length should be greater than 2.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('manufacturer')?.touched ) && E.get('manufacturer')?.hasError('maxlength')">
+                                Manufacturer  length should be smaller than 25.
+                            </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Model</label>
+                                    <input class="form-control"formControlName="model" type="text" name="modal" [(ngModel)]="asset.model">
+                              
+                              
+                                <span class="text-danger"
+                                *ngIf="(E.get('model')?.touched ) && E.get('model')?.hasError('required')">
+                                model Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('minlength')">
+                                model length should be greater than 2 .
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('maxlength')">
+                                model length should be smaller than 25.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(E.get('description')?.touched ) && E.get('pattern')?.hasError('pattern')">
+                            model is invalid.
+                        </span>
+                    </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Serial Number</label>
+                                    <input class="form-control" formControlName="serialNumber"type="serialNumber" [(ngModel)]="asset.serialNumber">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(E.get('serialNumber')?.touched ) && E.get('serialNumber')?.hasError('required')">
+                                Serial Number Is Required.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(E.get('serialNumber')?.touched ) && E.get('serialNumber')?.hasError('minlength')">
+                            Serial Number length should be greater than 2 .
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(E.get('serialNumber')?.touched ) && E.get('serialNumber')?.hasError('maxlength')">
+                            Serial Number length should be smaller than 3.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(E.get('serialNumber')?.touched ) && E.get('serialNumber')?.hasError('pattern')">
+                        Serial Number is invalid.
+                    </span>
+                   
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Supplier</label>
+                                    <input class="form-control"formControlName="supplier" type="text" name="supplier"
+                                        [(ngModel)]="asset.supplier">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(E.get('supplier')?.touched ) && E.get('supplier')?.hasError('required')">
+                                Supplier Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('supplier')?.touched ) && E.get('supplier')?.hasError('minlength')">
+                                Supplier length should be greater than 10.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('supplier')?.touched ) && E.get('supplier')?.hasError('maxlength')">
+                                Supplier length should be smaller than 150.
+                            </span>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Condition</label>
+                                    <input class="form-control" formControlName="condition"type="text" name="condition"
+                                   formControlName="condition"     [(ngModel)]="asset.condition">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(E.get('condition')?.touched ) && E.get('condition')?.hasError('required')">
+                                Condition Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('condition')?.touched ) && E.get('condition')?.hasError('minlength')">
+                                Condition length should be greater than 3.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('condition')?.touched ) && E.get('condition')?.hasError('maxlength')">
+                                Condition length should be smaller than 25.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(E.get('condition')?.touched ) && E.get('condition')?.hasError('pattern')">
+                            Condition length should be smaller than 25.
+                        </span>
+
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Warranty</label>
+                                    <input class="form-control"formControlName="assetWarrenty" type="text" placeholder="In Months" name="assetWarrenty"
+                                        [(ngModel)]="asset.assetWarrenty">
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(E.get('assetWarrenty')?.touched ) && E.get('assetWarrenty')?.hasError('required')">
+                                Warranty Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('assetWarrenty')?.touched ) && E.get('assetWarrenty')?.hasError('minlength')">
+                                Warranty length should be smaller than 1.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('assetWarrenty')?.touched ) && E.get('assetWarrenty')?.hasError('maxlength')">
+                                Warranty length should be greater than 2.
+                            </span>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Value</label>
+                                    <input placeholder="$1800"formControlName="amount" class="form-control" type="amount" name="amount"
+                                        [(ngModel)]="asset.amount">
+                                        <span class="text-danger"
+                                        *ngIf="(E.get('amount')?.touched ) && E.get('amount')?.hasError('required')">
+                                        Value Is Required.
+                                    </span>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('amount')?.touched ) && E.get('amount')?.hasError('minlength')">
+                                    Value length should be smaller than 4.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('amount')?.touched ) && E.get('amount')?.hasError('maxlength')">
+                                    Value length should be greater than 5.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(E.get('amount')?.touched ) && E.get('amount')?.hasError('pattern')">
+                                Value is invalid.
+                            </span>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <!-- <label>Asset User</label>
+                                        <select class="select"> -->
+                                    <label>Asset User <span class="text-danger">*</span></label>
+                                    <select formControlName="assetUser" [(ngModel)]="asset.assetUser.id" name="id">
+                                        <option *ngFor="let  user of users" [value]="user.id">{{ user.firstName }}
+                                        </option>
+
+                                    </select>
+                              
+                                <span class="text-danger"
+                                *ngIf="(E.get('assetUser')?.touched ) && E.get('assetUser')?.hasError('required')">
+                                Asset User Is Required.
+                            </span>
+                            
+                        </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control" formControlName="description" type="text" name="description"
+                                        [(ngModel)]="asset.description"></textarea>
+                                </div>
+                                <span class="text-danger"
+                                *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('required')">
+                                Description Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('minlength')">
+                                Description length should be greater than 10.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('maxlength')">
+                                Description length should be smaller than 150.
+                            </span>
+
+                            </div>
+                          
+                        </div>
+                                 <div class="submit-section">
+
+                            <button class="btn btn-primary submit-btn"
+                                (click)="updateAssets()">Submit</button>
+                        </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Asset Modal -->
+
+    <!-- Delete Asset Modal -->
+    <div class="modal custom-modal fade" id="delete_asset" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Asset</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a (click)="deleteAssets()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Asset Modal -->
+
+</div>
+<!-- /Page Wrapper -->

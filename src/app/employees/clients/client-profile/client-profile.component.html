@@ -1,0 +1,570 @@
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Profile</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="card mb-0">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="profile-view">
+                            <div class="profile-img-wrap">
+                                <div class="profile-img">
+                                    
+                                        <a href="#" class="edit-icon"   data-toggle="modal" class data-target="#emergency_contact_modals" class="emergency_contact_modals"> <img [src]="client.profileName" alt="">
+                                        </a>
+                          
+                                        
+                                </div>
+                            </div>
+                            <div class="profile-basic">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="profile-info-left">
+                                            <h3 class="company-role m-t-0 mb-0">{{client.firstName +"
+                                                "+client.lastName}}</h3>
+                                                <h5 class="user-name m-t-0">{{client.companyName}}</h5>
+                                           
+                                              
+                                           
+                                            
+                                            <div class="staff-id"><h3>Client ID : CLT-{{client.id}}</h3></div>
+                                            <div class="small text-align">{{client.createdAt}}</div>
+                                              
+                                            <!-- <div class="staff-msg"><a href="chat.html" class="btn btn-custom">Send
+                                                    Message</a></div> -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <ul class="personal-info">
+                                            <li>
+                                                <span class="title">Phone:-</span>
+                                                <span class="text"><a class="bg-inverse-success" href="javascript:void(0);">{{client.phone}}</a></span>
+                                            </li>
+                                            <li>
+                                                <span class="title">Email:-</span>
+                                                <span class="text"><a class="bg-inverse-success" href="javascript:void(0);">{{client.email}}</a></span>
+                                            </li>
+                                            <li>
+                                                <span class="title">Birthday:-</span>
+                                                <span class="text"><a class="bg-inverse-success" href="javascript:void(0);">{{client.dob}}</a></span>
+                                            </li>
+                                            <li>
+                                                <span class="title">Address:-</span>
+                                                <span class="text"><a class="bg-inverse-success" href="javascript:void(0);">{{client.address}}</a></span>
+                                            </li>
+                                            <li>
+                                                <span class="title">Gender:-</span>
+                                                <span class="text"><a class="bg-inverse-success" href="javascript:void(0);">{{client.gender}}</a></span>
+                                            </li>
+                                        </ul>
+                                        <div class="pro-edit"><a data-target="#profile_info" data-toggle="modal" class="edit-icon"
+                                            ><i class="fa fa-pencil"></i></a></div>
+                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card tab-box">
+            <div class="row user-tabs">
+                <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
+                    <ul class="nav nav-tabs nav-tabs-bottom">
+                        <li class="nav-item col-sm-3"><a class="nav-link active" data-toggle="tab"
+                          (click)="changeView('projects')"      href="#myprojects">Projects</a></li>
+                        <!-- <li class="nav-item col-sm-3"><a data-toggle="tab"  class="nav-link"   (click)="changeView('tasks')" href="#tasks">Tasks</a></li> -->
+                    </ul>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="tab-content profile-tab-content">
+
+                    <!-- Projects Tab -->
+                    <div id="myprojects" class="tab-pane fade show active" *ngIf="!check" >
+                        <div class="row" >
+                            <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3" *ngFor="let project of projects">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <!-- <div class="dropdown dropdown-action profile-action">
+                                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                                aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" *ngIf="permissions.isEditable"
+                                                     data-toggle="modal"
+                                                    data-target="#edit_project"><i class="fa fa-pencil m-r-5"></i>
+                                                    Edit</a>
+                                                <a class="dropdown-item" *ngIf="permissions.isDeleteable"
+                                                     data-toggle="modal"
+                                                    data-target="#delete_project"><i class="fa fa-trash-o m-r-5"></i>
+                                                    Delete</a>
+                                            </div>
+                                        </div> -->
+                                        <h4 class="project-title"><a
+                                                [routerLink]="'/dollop/projects/projects_view/'+project.id">{{project.title}}</a>
+                                        </h4>
+                                        <small class="block text-ellipsis m-b-15">
+                                            <span class="text-xs">{{project.completedTask}}</span> <span class="text-muted">open tasks, </span>
+										<span class="text-xs">{{project.leftTask}}</span> <span class="text-muted">tasks completed</span>
+								
+                                        </small>
+                                        <p class="text-muted">{{project.description}}
+                                        </p>
+                                        <div class="pro-deadline m-b-15">
+                                            <div class="sub-title">
+                                                Deadline:
+                                            </div>
+                                            <div class="text-muted">
+                                                <!-- {{project.deadline | date:'dd-MM-yyyy'}} -->
+                                                {{project.deadline|dateFormat}}
+                                            </div>
+                                        </div>
+                                        <div class="project-members m-b-15">
+                                            <div>Project Leader :</div>
+                                            <ul class="team-members">
+                                                <li *ngFor="let member of project.projectMembers; index as i">
+                                                    <a *ngIf="member.isLeader && i<5"
+                                                        [routerLink]="baseRoute+'/employee/employee_profile/'+member.userId.id"
+                                                        data-toggle="tooltip" [title]="member.userId.firstName"><img
+                                                            alt="" [src]="member.userId.profileName"></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="project-members m-b-15">
+                                            <div>Team :</div>
+                                            <ul class="team-members">
+                                                <li *ngFor="let member of project.projectMembers; index as i">
+                                                    <a *ngIf="!member.isLeader && i<5"
+                                                        [routerLink]="baseRoute+'/employee/employee_profile/'+member.userId.id"
+                                                        data-toggle="tooltip" [title]="member.userId.firstName"><img
+                                                            alt="" [src]="member.userId.profileName"></a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                        <p class="m-b-5">Progress <span class="text-success float-right">40%</span></p>
+                                        <div class="progress progress-xs mb-0">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                data-toggle="tooltip" title="40%" style="width: 40%"></div>
+                                        </div>
+                                        <!-- <div class="staff-msg"><a href="#tasks" (click)="changeView('task')"(click)="changeView('tasks')" class="nav-link" data-toggle="tab" class="btn btn-custom">View Tasks 
+                                            </a></div> -->
+
+                                            <!-- <li class="nav-item col-sm-3"><a data-toggle="tab"  class="nav-link"   (click)="changeView('tasks')" href="#tasks">Tasks</a></li> -->
+                   
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                        <!-- /Projects Tab -->
+
+                        <!-- Task Tab -->
+                        <div id="tasks" class="tab-pane fade" *ngIf="check" data-toggle="modal" >
+                            <div class="project-task">
+                                <ul class="nav nav-tabs nav-tabs-top nav-justified mb-0">
+                                    <li class="nav-item"><a class="nav-link active" href="#all_tasks" data-toggle="tab"
+                                            aria-expanded="true">All Tasks</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#pending_tasks" data-toggle="tab"
+                                            aria-expanded="false">Pending Tasks</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#completed_tasks" data-toggle="tab"
+                                            aria-expanded="false">Completed Tasks</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane show active" id="all_tasks">
+                                        <div class="task-wrapper">
+                                            <div class="task-list-container">
+                                                <div class="task-list-body">
+                                                    <ul id="task-list">
+                                                        <li class="task">
+                                                            <div class="task-container">
+                                                                <span class="task-action-btn task-check">
+                                                                    <span class="action-circle large complete-btn"
+                                                                        title="Mark Complete">
+                                                                        <i class="material-icons">check</i>
+                                                                    </span>
+                                                                </span>
+                                                                <span class="task-label" contenteditable="true">Patient
+                                                                    appointment booking</span>
+                                                                <span class="task-action-btn task-btn-right">
+                                                                    <span class="action-circle large" title="Assign">
+                                                                        <i class="material-icons">person_add</i>
+                                                                    </span>
+                                                                    <span class="action-circle large delete-btn"
+                                                                        title="Delete Task">
+                                                                        <i class="material-icons">delete</i>
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="task">
+                                                            <div class="task-container">
+                                                                <span class="task-action-btn task-check">
+                                                                    <span class="action-circle large complete-btn"
+                                                                        title="Mark Complete">
+                                                                        <i class="material-icons">check</i>
+                                                                    </span>
+                                                                </span>
+                                                                <span class="task-label"
+                                                                    contenteditable="true">Appointment booking with
+                                                                    payment gateway</span>
+                                                                <span class="task-action-btn task-btn-right">
+                                                                    <span class="action-circle large" title="Assign">
+                                                                        <i class="material-icons">person_add</i>
+                                                                    </span>
+                                                                    <span class="action-circle large delete-btn"
+                                                                        title="Delete Task">
+                                                                        <i class="material-icons">delete</i>
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="completed task">
+                                                            <div class="task-container">
+                                                                <span class="task-action-btn task-check">
+                                                                    <span class="action-circle large complete-btn"
+                                                                        title="Mark Complete">
+                                                                        <i class="material-icons">check</i>
+                                                                    </span>
+                                                                </span>
+                                                                <span class="task-label">Doctor available module</span>
+                                                                <span class="task-action-btn task-btn-right">
+                                                                    <span class="action-circle large" title="Assign">
+                                                                        <i class="material-icons">person_add</i>
+                                                                    </span>
+                                                                    <span class="action-circle large delete-btn"
+                                                                        title="Delete Task">
+                                                                        <i class="material-icons">delete</i>
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="task">
+                                                            <div class="task-container">
+                                                                <span class="task-action-btn task-check">
+                                                                    <span class="action-circle large complete-btn"
+                                                                        title="Mark Complete">
+                                                                        <i class="material-icons">check</i>
+                                                                    </span>
+                                                                </span>
+                                                                <span class="task-label" contenteditable="true">Patient
+                                                                    and Doctor video conferencing</span>
+                                                                <span class="task-action-btn task-btn-right">
+                                                                    <span class="action-circle large" title="Assign">
+                                                                        <i class="material-icons">person_add</i>
+                                                                    </span>
+                                                                    <span class="action-circle large delete-btn"
+                                                                        title="Delete Task">
+                                                                        <i class="material-icons">delete</i>
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="task">
+                                                            <div class="task-container">
+                                                                <span class="task-action-btn task-check">
+                                                                    <span class="action-circle large complete-btn"
+                                                                        title="Mark Complete">
+                                                                        <i class="material-icons">check</i>
+                                                                    </span>
+                                                                </span>
+                                                                <span class="task-label" contenteditable="true">Private
+                                                                    chat module</span>
+                                                                <span class="task-action-btn task-btn-right">
+                                                                    <span class="action-circle large" title="Assign">
+                                                                        <i class="material-icons">person_add</i>
+                                                                    </span>
+                                                                    <span class="action-circle large delete-btn"
+                                                                        title="Delete Task">
+                                                                        <i class="material-icons">delete</i>
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="task">
+                                                            <div class="task-container">
+                                                                <span class="task-action-btn task-check">
+                                                                    <span class="action-circle large complete-btn"
+                                                                        title="Mark Complete">
+                                                                        <i class="material-icons">check</i>
+                                                                    </span>
+                                                                </span>
+                                                                <span class="task-label" contenteditable="true">Patient
+                                                                    Profile add</span>
+                                                                <span class="task-action-btn task-btn-right">
+                                                                    <span class="action-circle large" title="Assign">
+                                                                        <i class="material-icons">person_add</i>
+                                                                    </span>
+                                                                    <span class="action-circle large delete-btn"
+                                                                        title="Delete Task">
+                                                                        <i class="material-icons">delete</i>
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="task-list-footer">
+                                                    <div class="new-task-wrapper">
+                                                        <textarea id="new-task"
+                                                            placeholder="Enter new task here. . ."></textarea>
+                                                        <span class="error-message hidden">You need to enter a task
+                                                            first</span>
+                                                        <span class="add-new-task-btn btn" id="add-task">Add Task</span>
+                                                        <span class="btn" id="close-task-panel">Close</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="pending_tasks"></div>
+                                    <div class="tab-pane" id="completed_tasks"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Task Tab -->
+
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+
+
+    <!-- Emergency Contact Modal -->
+<div id="emergency_contact_modals" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title">Profile Update </h5>
+    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button> -->
+    </div>
+    <div class="modal-body">
+    <form>
+        <div class="profile-img-wrap">
+            <div class="profile-img">
+                
+                <a   data-toggle="modal" ><img alt="" id="file" [src]="user.profileName" (click)="openFile(file)"></a>
+                <span class="change-img">Change Image</span>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="col-form-label"></label>
+                <input type="file"  id="file2" name="profile"  #file  class="d-none" aria-hidden="true" (change)="selectFile($event)" accept="image/*">
+                
+            </div>
+              </div>                  
+      
+                  <div class="submit-section">
+            <button class="btn btn-primary submit-btn"  data-dismiss="modal" (click)="updateClient()">Submit</button>
+        </div>
+    </form>
+    </div>
+    </div>
+    </div></div>
+        <!-- Profile Modal -->
+<div id="profile_info" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Profile Information</h5>
+                <button type="button" class="close" id="Edit" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="myForm" (ngSubmit)="updateClient()">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="firstName"
+                                formControlName="firstName"
+                                [(ngModel)]="client.firstName">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('required')">
+                            First Name Is Required.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('minlength')">
+                            First Name length should be greater than 3.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('maxlength')">
+                            First Name length should be smaller than 16.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('pattern')">
+                        First Name Is Invalid.
+                    </span>
+                    <span class="text-danger"
+                        *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('pattern')">
+                        Ex:- Abcd.
+                    </span>
+    
+    
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Last Name</label>
+                                <input class="form-control" type="text" name="lastName"
+                                formControlName="lastName"      [(ngModel)]="client.lastName">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('required')">
+                            Last Name Is Required.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('minlength')">
+                            Last Name length should be greater than 3.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('maxlength')">
+                            Last Name length should be smaller than 16.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('pattern')">
+                        Last Name Is Invalid.
+                    </span> <span class="text-danger"
+                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('pattern')">
+                    Ex:- Abcd.
+                </span>
+    
+    
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Address <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="address"
+                                formControlName="address"            [(ngModel)]="client.address">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('required')">
+                            Address Is Required.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('minlength')">
+                            Address length should be greater than 3.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('maxlength')">
+                            Address length should be smaller than 16.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('pattern')">
+                        Address Is Invalid.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('pattern')">
+                Ex:- Indor.
+                </span>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label"> Date of Birth <span
+                                        class="text-danger">*</span></label>
+                                <input class="form-control " type="date" max="2999-01-01" name="dob"
+                                formControlName="dob"       [(ngModel)]="client.dob">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('dob')?.touched ) && myForm.get('dob')?.hasError('required')">
+                            Date of Birth  Is Required.
+                        </span>
+                        <span class="text-danger" *ngIf="myForm.get('dob')?.hasError('invalidDate') ">
+                            Selected date must be at least 18 years ago and not in the future.
+                        </span>
+                        <span class="text-danger" *ngIf="myForm.get('dob')?.hasError('invalidDate') ">
+                            Ex:- 09-05-2001.
+                        </span>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Phone </label>
+                                <input class="form-control" type="text"  name="phone"
+                                formControlName="phone"             [(ngModel)]="client.phone">
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('required')">
+                            phone Is Required.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('minlength')">
+                            phone length should be greater than 10.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('maxlength')">
+                            phone length should be smaller than 11.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('pattern')">
+                        phone Is Invalid.
+                    </span>
+                    <span class="text-danger"
+                    *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('pattern')">
+                    phone no above 5.
+                </span>
+                        
+                
+    
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Gender</label>
+                                <select class="select" name="gender"   formControlName="gender"  [(ngModel)]="client.gender">
+                                    <option value="">--select-- </option>
+                  
+                                    <option value="Male">Male </option>
+                                    <option value="Female">Female </option>
+                                    <option value="Other">Other </option>
+                                </select>
+                            </div>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('gender')?.touched ) && myForm.get('gender')?.hasError('required')">
+                            Gender Is Required.
+                        </span>
+                        </div>
+    
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" 
+                       (click)="updateClient()">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+   
+    
+
+
+
+    

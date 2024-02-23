@@ -1,0 +1,300 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Create Estimate</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Create Estimate</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="row">
+            <div class="col-sm-12" *ngIf="permissions.isWriteable">
+                <form  (ngSubmit)="addInvoice()">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label>Select client: <span class="text-danger">*</span></label>
+                                <select
+                                (change)="optionSelected(inp)" #inp [(ngModel)]="client.id" id="id">
+                                    <option *ngFor="let item of clients" [value]="item.id">{{ item.companyName }}
+                                    </option>
+                                </select>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('id')?.touched ) && myForm.get('id')?.hasError('required')">
+                                    client Is Required.
+                                </span>
+                                -->
+
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label>Project <span class="text-danger">*</span></label>
+                                <select class="select"
+                                [(ngModel)]="estimate.projectId.id" name="id">
+                                    <option>Select Project</option>
+                                    <option *ngFor="let item of projects" [value]="item.id">{{ item.title }}>
+                                    </option>
+
+                                </select>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('projectId')?.touched ) && myForm.get('projectId')?.hasError('required')">
+                                    Project Is Required.
+                                </span>-->
+                            </div> 
+                        </div>
+
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label>Select taxe: <span class="text-danger">*</span></label>
+                                <select (ngModelChange)="optionselecedt($event)" #inp name="id"
+                                [(ngModel)]="id">
+                                    <option *ngFor="let item of taxes" [value]="item.id">{{ item.title }}
+                                    </option>
+                                </select>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('idT')?.touched ) && myForm.get('idT')?.hasError('required')">
+                                    Taxe Is Required.
+                                </span>
+                              -->
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input class="form-control"
+                                [(ngModel)]="estimate.clientId.email" name="email">
+                                <!-- <span class="text-danger"
+                                *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('required')">
+                                Email Is Required.
+                            </span>
+                              <span class="text-danger"
+                                *ngIf="(myForm.get('name')?.touched ) && myForm.get('name')?.hasError('pattern')">
+                                firstName is invalid.
+                            </span> -->
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label>Client Address</label>
+                                <textarea class="form-control"
+                                [(ngModel)]="estimate.clientId.address"
+                                    name='address'></textarea>
+                                    <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('required')">
+                                    Address Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('minlength')">
+                                    Address length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('maxlength')">
+                                    Address length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('pattern')">
+                                    Address is invalid.
+                                </span> -->
+
+                                </div>
+                        </div>
+                        
+
+                        <div class="col-sm-6  col-md-3">
+                            <div class="form-group">
+                                <label class="col-form-label"> Estimate date <span class="text-danger">*</span></label>
+                                <input class="form-control " type="date" name="billDate" [min]="todayDate" [max]="todayDate"
+                                
+                                [(ngModel)]="estimate.billDate">
+                               
+                               
+                                </div>
+                        </div>
+
+
+
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+
+                                <label class="col-form-label"> Due Date <span class="text-danger">*</span></label>
+                                <input class="form-control " type="date" name="dueDate" [min]="todayDate"
+                                [(ngModel)]="estimate.dueDate">
+                                <!-- <span class="text-danger"
+                                *ngIf="(myForm.get('dueDate')?.touched ) && myForm.get('dueDate')?.hasError('required')">
+                                Due Date  Is Required.
+                            </span> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="table-responsive">
+
+
+                                <table class="table table-hover table-white">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 20px">#</th>
+                                            <th class="col-sm-2">Item</th>
+                                            <th class="col-md-6">Description</th>
+                                            <th style="width:100px;">Unit Cost</th>
+                                            <th style="width:80px;">Qty</th>
+
+                                            <th> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let eil of estimateItemList; let i = index">
+                                            <td>{{i+1}}</td>
+                                            <td>
+                                                <input class="form-control" [placeholder]="eil.title"
+                                                    [(ngModel)]="eil.title" name="title" type="text"
+                                                    style="min-width:150px">
+                                            </td>
+                                            <td>
+                                                <input class="form-control" [placeholder]="eil.description"
+                                                
+                                                [(ngModel)]="eil.description" name="description" type="text"
+                                                    style="min-width:150px">
+                                                    <!-- <span class="text-danger"
+                                                    *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('required')">
+                                                    description Is Required.
+                                                </span> -->
+                                            </td>
+                                            <td>
+                                                <input class="form-control" [placeholder]="eil.unitCost"
+                                                    style="width:100px"
+                                                    [(ngModel)]="eil.unitCost" name="unitCost"
+                                                    type="text">
+                                                    <!-- <span class="text-danger"
+                                                    *ngIf="(myForm.get('unitCost')?.touched ) && myForm.get('unitCost')?.hasError('required')">
+                                                    Unit Cost Is Required.
+                                                </span> -->
+                                               
+                                                </td>
+                                            <td>
+                                                <input class="form-control"
+                                                [(ngModel)]="eil.quantity"
+                                                    [placeholder]="eil.quantity" name="quantity" [min]="1" quantity="quantity"
+                                                    style="width:80px" type="text">
+                                                    <!-- <span class="text-danger"
+                                                    *ngIf="(myForm.get('quantity')?.touched ) && myForm.get('quantity')?.hasError('required')">
+                                                    quantity Is Required.
+                                                </span> -->
+                                               
+                                                </td>
+                                            <!-- <td>
+                                                <input class="form-control" [(ngModel)]="eil.total" name="total"
+                                                    [placeholder]="eil.total" readonly style="width:120px" type="text">
+                                            </td> -->
+                                            <td><a *ngIf="!confirm" (click)="addinvoiceItemList()"
+                                                    class="text-success font-18" title="Add"><i
+                                                        class="fa fa-plus"></i></a></td>
+                                            <td><a *ngIf="!confirm" (click)="removeItemList(i)"
+                                                    class="text-danger font-18" title="Remove"><i
+                                                        class="fa fa-trash-o"></i></a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-white">
+                                    <tbody>
+                                        <tr *ngIf="confirm2">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td class="text-right">Total </td>
+                                            <td
+                                                style="text-align: right; padding-right: 30px; font-weight: bold; font-size: 16px;width: 230px">
+                                                Rs. {{estimate.total}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="confirm">
+                                            <td colspan="5" style="text-align: right; font-weight: bold">
+                                                Tax : ({{estimate.taxeId.percentage}} %)
+                                            </td>
+                                            <td
+                                                style="text-align: right; padding-right: 30px; font-weight: bold; font-size: 16px;width: 230px">
+                                                Rs. {{estimate.taxCost}}
+                                            </td>
+                                        </tr>
+                                        <tr >
+                                            <tr >
+                                                <td colspan="5" style="text-align: right; font-weight: bold">
+                                                    Discount : ({{estimate.discountPercentage}} %)
+                                                </td>
+                                            <td style="text-align: right; padding-right: 30px;width: 230px">
+                                                <input class="form-control text-right"
+                                                    (change)="ItemListAdded(discount)"
+                                                  
+                                                    [(ngModel)]="discount" name="discount" type="number">
+                                                   
+                
+                                                </td>
+                                        </tr>
+                                        <tr *ngIf="confirm">
+                                            <td colspan="5" style="text-align: right; font-weight: bold">
+                                                Grand Total
+                                
+
+                                            </td>
+                                            <td
+                                                style="text-align: right; padding-right: 30px; font-weight: bold; font-size: 16px;width: 230px">
+                                                Rs. {{estimate.grandTotal}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row" *ngIf="confirm">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Other Information</label>
+                                        <textarea class="form-control"
+                                        [(ngModel)]="estimate.note"
+                                            name="note"></textarea>
+                                        
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="submit-section" *ngIf="confirm">
+                        <button *ngIf="false" class="btn btn-primary submit-btn m-r-10" type="submit">Save &
+                            Send</button>
+                        <button  type="submit"   class="btn btn-primary submit-btn">Save</button>
+                    </div>
+
+                    <div class="submit-section" *ngIf="!confirm">
+                        <button class="btn btn-primary submit-btn m-r-10" (click)="ItemListAdded()">Go One Step
+                            Forward</button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->

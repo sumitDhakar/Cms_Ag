@@ -1,0 +1,378 @@
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Overtime</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Overtime</li>
+                    </ul>
+                </div>
+                <!-- <div class="col-auto float-right ml-auto">
+                    <a (click)="addForm()" class="btn add-btn" data-toggle="modal" data-target="#add_overtime"><i
+                            *ngIf="permissions.isWriteable" class="fa fa-plus"></i> Add Overtime</a>
+                </div> -->
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <!-- Overtime Statistics -->
+        <div class="row" *ngIf="totalOverTime">
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="stats-info">
+                    <h6>Overtime Employee</h6>
+                    <h4>{{totalOverTime[1]}} <span>this month</span></h4>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="stats-info">
+                    <h6>Overtime Hours</h6>
+                    <h4>{{totalOverTime[0]}} <span>this month</span></h4>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="stats-info">
+                    <h6>Pending Request</h6>
+                    <h4>{{totalOverTime[2]}}</h4>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3" *ngIf="totalOverTime[3]">
+                <div class="stats-info">
+                    <h6>Rejected</h6>
+                    <h4>{{totalOverTime[3]}}</h4>
+                </div>
+            </div>
+        </div>
+        <!-- /Overtime Statistics -->
+         <!---- pagination -->
+
+         <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+         [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+         [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+         [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+        <div class="row">
+            <div class="col-md-12"  *ngIf="permissions" >
+                <div class="table-responsive"  *ngIf="permissions.isReadable">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>OT Date</th>
+                                <th class="text-center">OT Hours</th>
+                                <th>OT Type</th>
+                                <th>Description</th>
+                                <th class="text-center">Status</th>
+                                <!-- <th>Approved by</th> -->
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let ot of overtimeData;let i = index">
+                                <td>{{sequence+i+1}}</td>
+                                <td>
+                                    <h2 class="table-avatar blue-link">
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+ot.userId.id" class="avatar"><img alt=""
+                                                [src]="ot.userId.profileName"></a>
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+ot.userId.id">{{ot.userId.firstName }}</a>
+                                    </h2>
+                                </td>
+                                <td>{{ot.overTimeDate}}</td>
+                                <td>{{ot.overTimeHours}} </td>
+                                <td>{{ot.overTimeType}}</td>
+                                <td>{{ot.description}}</td>
+                                <td *ngIf="permissions.isEditable&&!(ot.status=='Approved'||ot.status=='Rejected')"> 
+                                    <div class="dropdown action-label" >
+                                        <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false"><i
+                                                [ngClass]="'fa fa-dot-circle-o ' + ((ot.status=='Pending'?'text-info':(ot.status=='Rejected'?'text-danger':(ot.status=='Approved'?'text-success':'text-success'))))">
+                                            {{ot.status}}</i> </a>
+                                        <div class="dropdown-menu">
+                                            <a  *ngIf="permissions.isEditable" class="dropdown-item" (click)="updateOverTimeByStatus(ot.id,'Approved')"><i
+                                                class="fa fa-dot-circle-o text-success"></i> Approved</a>
+                                        <a *ngIf="permissions.isEditable" class="dropdown-item" (click)="updateOverTimeByStatus(ot.id,'Rejected')"><i
+                                                    class="fa fa-dot-circle-o text-danger"></i> Rejected</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center" *ngIf="(ot.status=='Approved'||ot.status=='Rejected')" >
+                                    <div class="action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                            <i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (ot.status=='Rejected'?'text-danger':(ot.status=='Approved'?'text-success':(ot.status=='Pending'?'text-info':'text-purple')))"></i>
+                                            {{ot.status}}
+                                        </a>
+                                    </div>
+                                </td>
+                                <!-- <td>
+                                    <h2 class="form-header">
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+ot.approvedBy.id" class="avatar avatar-xs"><img
+                                             [src]="ot.approvedBy.profileName" alt=""></a>
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+ot.approvedBy.id">{{ot.approvedBy.firstName}}</a>
+                                    </h2>
+                                </td> -->
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <!-- <a *ngIf="permissions.isEditable" class="dropdown-item" (click)="setEditData(ot.id)" data-toggle="modal"
+                                                data-target="#edit_overtime"><i class="fa fa-pencil m-r-5"></i> Edit</a> -->
+                                            <a *ngIf="permissions.isDeleteable" class="dropdown-item" (click)="confirm(ot.id)" data-toggle="modal"
+                                                data-target="#delete_overtime"><i class="fa fa-trash-o m-r-5"></i>
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Overtime Modal -->
+    <div id="add_overtime" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isWriteable">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Overtime</h5>
+                    <button type="button" class="close" id="add" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" (ngSubmit)="addOverTime()">
+                        <div class="form-group">
+                            <label>Select Employee : <span class="text-danger">*</span></label>
+                            <select  [(ngModel)]="overTimeEmployee.userId" formControlName="userId" name="userId">  
+                                <option *ngFor="let item of employees" [value]="item.id">{{ item.firstName }}
+                                </option>
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Overtime Date <span class="text-danger">*</span></label>
+                            <div class="">
+                                <input class="form-control " formControlName="overTimeDate" max="2024-12-31"
+                                    name="overTimeDate" [(ngModel)]="overTimeEmployee.overTimeDate" type="date">
+
+                            </div>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('overTimeDate')?.touched ) && myForm.get('overTimeDate')?.hasError('required')">
+                                OverTime Date Is Required.
+                            </span>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Overtime Hours <span class="text-danger">*</span></label>
+                            <input class="form-control" name="overTimeHours" formControlName="overTimeHours"
+                                [(ngModel)]="overTimeEmployee.overTimeHours" type="number">
+                        </div>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('overTimeHours')?.touched ) && myForm.get('overTimeHours')?.hasError('required')">
+                            overTimeHours Is Must Required Field.
+                        </span>
+                        <div class="form-group">
+                            <label>Select OverTimeType <span class="text-danger">*</span></label>
+                            <select #inp [(ngModel)]="overTimeEmployee.overTimeType" name="overTimeType"
+                                formControlName="overTimeType">
+                                <option value="For extra Work">For Work</option>
+                                <option value="For Extra money">For Money</option>
+                                <option value="For task">For Task</option>
+                                <option value="For Free">For Free</option>
+                            </select>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('overTimeType')?.touched ) && myForm.get('overTimeType')?.hasError('required')">
+                                overTimeType is Empty.
+                            </span>
+                        </div>
+                        <!-- <div class="form-group">
+                            <label>Status <span class="text-danger">*</span></label>
+                            <select [(ngModel)]="overTimeEmployee.status" name="status" formControlName="status">
+                                <option value="Approved">Approved</option>
+                                <option value="New">New</option>
+                                <option value="Rejected">Rejected</option>
+                                <option value="Pending">Pending</option>
+                            </select>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('status')?.touched ) && myForm.get('status')?.hasError('required')">
+                                status should not be empty.
+                            </span>
+
+                        </div> -->
+                        <!-- <div class="form-group">
+                            <label>Approved By : <span class="text-danger">*</span></label>
+                            <select #inp [(ngModel)]="overTimeEmployee.approvedBy" formControlName="approvedBy"   name="approvedBy">
+                                <option *ngFor="let item of admins" [value]="item.id">{{ item.firstName +item.lastName }}
+                                </option>
+                            </select>
+
+                        </div> -->
+
+                        <div class="form-group">
+                            <label>Description <span class="text-danger">*</span></label>
+                            <textarea rows="4" name="description" required formControlName="description"
+                                [(ngModel)]="overTimeEmployee.description" class="form-control"></textarea>
+                        </div>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('required')">
+                            description can not be empty.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('minlength')">
+                            description length should be greater than 10 .
+                        </span>
+                        <div class="submit-section">
+                            <button type="submit"  *ngIf="permissions.isWriteable"
+                                class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Overtime Modal -->
+
+    <!-- Edit Overtime Modal -->
+    <div id="edit_overtime" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isEditable">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Overtime</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form [formGroup]="myForm" (ngSubmit)="updateOverTime()">
+                        <div class="form-group">
+                            <label>Select Employee : <span class="text-danger">*</span></label>
+                            <!-- <select  [(ngModel)]="overTime.userId" formControlName="userId" name="userId">  
+                                <option *ngFor="let item of employees" [value]="item">{{ item.firstName }}
+                                </option>
+                            </select> -->
+                            <input class="form-control" type="text" [placeholder]="overTime.userId.firstName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Overtime Date <span class="text-danger">*</span></label>
+                            <div class="">
+                                <input class="form-control " formControlName="overTimeDate" 
+                                    name="overTimeDate" [(ngModel)]="overTimeEmployee.overTimeDate" type="date">
+
+                            </div>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('overTimeDate')?.touched ) && myForm.get('overTimeDate')?.hasError('required')">
+                                OverTime Date Is Required.
+                            </span>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Overtime Hours <span class="text-danger">*</span></label>
+                            <input class="form-control" name="overTimeHours" formControlName="overTimeHours"
+                                [(ngModel)]="overTimeEmployee.overTimeHours" type="number">
+                        </div>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('overTimeHours')?.touched ) && myForm.get('overTimeHours')?.hasError('required')">
+                            overTimeHours Is Must Required Field.
+                        </span>
+                        <div class="form-group">
+                            <label>Select OverTimeType <span class="text-danger">*</span></label>
+                            <select #inp [(ngModel)]="overTimeEmployee.overTimeType" name="overTimeType"
+                                formControlName="overTimeType">
+                                <option value="For extra Work">For Work</option>
+                                <option value="For Extra money">For Money</option>
+                                <option value="For task">For Task</option>
+                                <option value="For Free">For Free</option>
+                            </select>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('overTimeType')?.touched ) && myForm.get('overTimeType')?.hasError('required')">
+                                overTimeType is Empty.
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label>Status <span class="text-danger">*</span></label>
+                            <select [(ngModel)]="overTimeEmployee.status" name="status" formControlName="status">
+                                <option value="Approved">Approved</option>
+                               <option value="Rejected">Rejected</option>
+                                <option value="Pending">Pending</option>
+                            </select>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('status')?.touched ) && myForm.get('status')?.hasError('required')">
+                                status should not be empty.
+                            </span>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Approved By : <span class="text-danger">*</span></label>
+                            <!-- <select #inp [(ngModel)]="overTime.approvedBy" formControlName="approvedBy"   name="approvedBy">
+                                <option *ngFor="let item of users" [value]="item">{{ item.firstName }}
+                                </option>
+                            </select> -->
+                            <input class="form-control" type="text" [placeholder]="overTime.approvedBy.firstName" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description <span class="text-danger">*</span></label>
+                            <textarea rows="4" name="description" required formControlName="description"
+                                [(ngModel)]="overTimeEmployee.description" class="form-control"></textarea>
+                        </div>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('required')">
+                            description can not be empty.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('minlength')">
+                            description length should be greater than 10 .
+                        </span>
+                        <div class="submit-section">
+                            <button type="submit"  *ngIf="permissions.isEditable"
+                                class="btn btn-primary submit-btn">Update</button>
+                        </div>
+                    </form>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Overtime Modal -->
+
+    <!-- Delete Overtime Modal -->
+    <div class="modal custom-modal fade" id="delete_overtime" role="dialog" *ngIf="permissions.isDeleteable">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Overtime</h3>
+                        <p>Are you sure want to Cancel this?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a (click)="deleteOverTime()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal" *ngIf="permissions.isDeleteable"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Overtime Modal -->
+
+</div>
+<!-- /Page Wrapper -->

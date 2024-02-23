@@ -1,0 +1,800 @@
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+				
+			
+
+<!-- Page Content -->
+    <div class="content container-fluid" *ngIf="permissions.isReadable" >
+				
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">{{project.title}}</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Project</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a href="#"  class="btn add-btn" data-toggle="modal" *ngIf="permissions.isEditable" data-target="#edit_project"><i class="fa fa-plus"></i> Edit Project</a>
+                    <!-- <a [routerLink]="'/employees/taskBoard/'+0" class="btn btn-white float-right m-r-10" data-toggle="tooltip" title="Task Board"><i class="fa fa-bars"></i></a> -->
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+        
+        <div class="row">
+            <div class="col-lg-8 col-xl-9">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="project-title">
+                            <h5 class="card-title">{{project.title}}</h5>
+                            <small class="block text-ellipsis m-b-15"><span class="text-xs">{{project.completedTask}}</span> <span class="text-muted">open tasks, </span><span class="text-xs">{{project.leftTask}}</span> <span class="text-muted">tasks completed</span></small>
+                        </div>
+                        <div class="blog-post" [innerHtml]="project.description"></div>
+                        <!-- <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel elit neque. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum sollicitudin libero vitae est consectetur, a molestie tortor consectetur. Aenean tincidunt interdum ipsum, id pellentesque diam suscipit ut. Vivamus massa mi, fermentum eget neque eget, imperdiet tristique lectus. Proin at purus ut sem pellentesque tempor sit amet ut lectus. Sed orci augue, placerat et pretium ac, hendrerit in felis. Integer scelerisque libero non metus commodo, et hendrerit diam aliquet. Proin tincidunt porttitor ligula, a tincidunt orci pellentesque nec. Ut ultricies maximus nulla id consequat. Fusce eu consequat mi, eu euismod ligula. Aliquam porttitor neque id massa porttitor, a pretium velit vehicula. Morbi volutpat tincidunt urna, vel ullamcorper ligula fermentum at. </p> -->
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title m-b-20">Uploaded image files</h5>
+                        <div class="row">
+                            
+                            <div class="col-md-3 col-sm-4 col-lg-4 col-xl-3" *ngFor="let image of project.images ">
+                                <ul class="files-action">
+                                    <li class="dropdown dropdown-action">
+                                        <a href="" class="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_horiz</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" [href]="image.fileName">Download</a>
+                                            <!-- <a class="dropdown-item" href="#" data-toggle="modal" data-target="#share_files">Share</a> -->
+                                            <a class="dropdown-item" data-toggle="modal" data-target="#delete_project" (click)="confirm(image.id)">Delete</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="uploaded-box" >
+                                    
+                                    <div class="uploaded-img">
+                                       
+                                        <img [src]="image.fileName" class="img-fluid" alt="">
+                                        
+                                   
+                                    </div>
+                                    <div class="uploaded-img-name">
+                                        {{image.uploadedBy.firstName}}
+                                          
+                                   </div>
+                                    
+                                </div>
+
+                            </div>
+                            <div class="col-md-3 col-sm-4 col-lg-4 col-xl-3">
+                                                         </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body" >
+                        <h5 class="card-title m-b-20">Uploaded files   <button type="button"  class="float-right btn btn-primary btn-sm" data-toggle="modal" data-target="#add_files"><i class="fa fa-plus"></i> Add</button></h5>
+                        <ul class="files-list">
+                            <li *ngFor="let file of project.projectFiles">
+                                <div class="files-cont" >
+                                    <div class="file-type">
+                                        <span class="files-icon"><i class="fa fa-file-pdf-o"></i></span>
+                                    </div>
+                                    <div class="files-info" >
+                                        <span class="file-name text-ellipsis"><a href="#">{{file.originalName}}</a></span>
+                                        <span class="file-author" *ngIf="file.uploadedBy"><a [routerLink]="'/employees/profile/'+file.uploadedBy.id">{{file.uploadedBy.firstName+" "+file.uploadedBy.lastName}}</a></span> <span class="file-date">{{ " "+file.createdAt | date:'dd-MM-yyyy At hh:mm a'}}</span>
+                                        <div class="file-size">{{file.fileSize | filesize}}</div>
+                                    </div>
+                                    <ul class="files-action">
+                                        <li class="dropdown dropdown-action">
+                                            <a href="" class="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_horiz</i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" [href]="file.fileName">Download</a>
+                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#share_files">Share</a>
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#delete_project" (click)="confirm(file.id)">Delete</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <!-- <li>
+                                <div class="files-cont">
+                                    <div class="file-type">
+                                        <span class="files-icon"><i class="fa fa-file-pdf-o"></i></span>
+                                    </div>
+                                    <div class="files-info">
+                                        <span class="file-name text-ellipsis"><a href="#">AHA Selfcare Mobile Application Test-Cases.xls</a></span>
+                                        <span class="file-author"><a href="#">Richard Miles</a></span> <span class="file-date">May 31st at 6:53 PM</span>
+                                        <div class="file-size">Size: 14.8Mb</div>
+                                    </div>
+                                    <ul class="files-action">
+                                        <li class="dropdown dropdown-action">
+                                            <a href="" class="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_horiz</i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="javascript:void(0)">Download</a>
+                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#share_files">Share</a>
+                                                <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li> -->
+                        </ul>
+                    </div>
+                </div>
+                
+                <h5 class="card-title m-b-20">Uploaded files   <button type="button"  class="float-right btn btn-primary btn-sm" [routerLink]="'/dollop/projects/tasks/'+project.id" data-toggle="modal" data-target="#add_files"><i class="fa fa-plus"></i> Add</button></h5>
+                <div class="progress" *ngIf="fileStatus.status==='Progress' && fileStatus.percent!=100">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" [style.width.%]="fileStatus.percent">  {{fileStatus.requestType}} {{fileStatus.percent}}%</div>
+                  </div>
+                <div class="project-task">
+                    <ul class="nav nav-tabs nav-tabs-top nav-justified mb-0">
+                       
+                        <li class="nav-item"><a class="nav-link active" href="#all_tasks" (click)="getAllTaskByProjectId()"  data-toggle="tab" aria-expanded="true">All Tasks</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#pending_tasks"  (click)="getAllTaskByProjectIdAndStatus('Todo')" data-toggle="tab" aria-expanded="false">Pending Tasks</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#completed_tasks" data-toggle="tab" aria-expanded="false"  (click)="getAllTaskByProjectIdAndStatus('Completed')">Completed Tasks</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane show active" id="all_tasks">
+                            <div class="task-wrapper">
+                                 <!-- <div class="dropdown dropdown-action text-right">
+                                    <span class="action-circle large delete-btn"
+                                    title="Delete Task" data-toggle="modal"
+                                  (click)="deleteProjectMember(member.userId.id,member.userId.firstName)"
+                                    data-target="#">
+                                    <i class="material-icons">delete</i>
+                                </span>
+                                </div> -->
+                                <div class="task-list-container">
+                                    <div class="task-list-body">
+                                        <ul id="task-list">
+                                            <li class="task" *ngFor="let t of tasks">
+                                                <div class="task-container">
+                                                  
+                                                    <span class="task-label" contenteditable="true">{{t.title}}</span>
+                                                  
+                                                </div>
+                                            </li>
+                                        
+                                        </ul>
+                                        <ul id="task-list" *ngIf="tasks.length<1">
+                                            <li class="task" >
+                                                <div class="task-container">
+                                                    
+                                                    <span class="task-label" contenteditable="true">No Task available</span>
+                                                  
+                                                </div>
+                                            </li>
+                                        
+                                        </ul>
+                                    </div>
+                                    <div class="task-list-footer">
+                                        <div class="new-task-wrapper">
+                                            <textarea  id="new-task" placeholder="Enter new task here. . ."></textarea>
+                                            <span class="error-message hidden">You need to enter a task first</span>
+                                            <span class="add-new-task-btn btn" id="add-task">Add Task</span>
+                                            <span class="btn" id="close-task-panel">Close</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="pending_tasks">
+                            <div class="task-wrapper">
+                                <!-- <div class="dropdown dropdown-action text-right">
+                                   <span class="action-circle large delete-btn"
+                                   title="Delete Task" data-toggle="modal"
+                                 (click)="deleteProjectMember(member.userId.id,member.userId.firstName)"
+                                   data-target="#">
+                                   <i class="material-icons">delete</i>
+                               </span>
+                               </div> -->
+                               <div class="task-list-container">
+                                   <div class="task-list-body">
+                                       <ul id="task-list">
+                                           <li class="task" *ngFor="let t of tasks">
+                                               <div class="task-container">
+                                                 
+                                                   <span class="task-label" contenteditable="true">{{t.title}}</span>
+                                                 
+                                               </div>
+                                           </li>
+                                       
+                                       </ul>
+                                       <ul id="task-list" *ngIf="tasks.length<1">
+                                        <li class="task">
+                                            <div class="task-container">
+                                                <span class="task-action-btn task-check">
+                                                    <span class="action-circle large complete-btn" title="Mark Complete">
+                                                        <i class="material-icons">check</i>
+                                                    </span>
+                                                </span>
+                                                <span class="task-label" contenteditable="true">No Tasks available</span>
+                                              
+                                            </div>
+                                        </li>
+                                    
+                                    </ul>
+                                   </div>
+                                   <div class="task-list-footer">
+                                       <div class="new-task-wrapper">
+                                           <textarea  id="new-task" placeholder="Enter new task here. . ."></textarea>
+                                           <span class="error-message hidden">You need to enter a task first</span>
+                                           <span class="add-new-task-btn btn" id="add-task">Add Task</span>
+                                           <span class="btn" id="close-task-panel">Close</span>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                        </div>
+                        <div class="tab-pane" id="completed_tasks">
+                            <div class="task-wrapper">
+                                <!-- <div class="dropdown dropdown-action text-right">
+                                   <span class="action-circle large delete-btn"
+                                   title="Delete Task" data-toggle="modal"
+                                 (click)="deleteProjectMember(member.userId.id,member.userId.firstName)"
+                                   data-target="#">
+                                   <i class="material-icons">delete</i>
+                               </span>
+                               </div> -->
+                               <div class="task-list-container">
+                                   <div class="task-list-body">
+                                       <ul id="task-list">
+                                           <li class="task" *ngFor="let t of tasks">
+                                               <div class="task-container">
+                                                 
+                                                   <span class="task-label" contenteditable="true">{{t.title}}</span>
+                                                 
+                                               </div>
+                                           </li>
+                                       
+                                       </ul>
+                                       <ul id="task-list" *ngIf="tasks.length<1">
+                                        <li class="task" >
+                                            <div class="task-container">
+                                              
+                                                <span class="task-label" contenteditable="true">No Tasks available</span>
+                                              
+                                            </div>
+                                        </li>
+                                    
+                                    </ul>
+                                   </div>
+                                   <div class="task-list-footer">
+                                       <div class="new-task-wrapper">
+                                           <textarea  id="new-task" placeholder="Enter new task here. . ."></textarea>
+                                           <span class="error-message hidden">You need to enter a task first</span>
+                                           <span class="add-new-task-btn btn" id="add-task">Add Task</span>
+                                           <span class="btn" id="close-task-panel">Close</span>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-xl-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title m-b-15">Project details</h6>
+                        <table class="table table-striped table-border">
+                            <tbody>
+                                <tr>
+                                    <td>Cost:</td>
+                                    <td class="text-right">${{project.price}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Hours:</td>
+                                    <td class="text-right">{{totalHoursForProject}} Hours</td>
+                                </tr>
+                                <tr>
+                                    <td>Created:</td>
+                                    <td class="text-right">{{project.startDate | date:'dd-MM-yyyy'}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Deadline:</td>
+                                    <td class="text-right">{{project.deadline | date :'dd-MM-yyyy'}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Priority:</td>
+                                    <td class="text-right">
+                                        <div class="btn-group">
+                                            <a href="" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i [ngClass]="'fa fa-dot-circle-o '+(project.priority=='Low'?'text-success':'text-danger')">{{project.priority}} </i></a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item"*ngIf="permissions.isEditable" (click)="updateStatusPriority(project.id,'High','priority') "><i class="fa fa-dot-circle-o text-danger"></i> High</a>
+                                                <a class="dropdown-item"*ngIf="permissions.isEditable"(click)="updateStatusPriority(project.id,'Medium','priority') "><i class="fa fa-dot-circle-o text-warning"></i> Medium</a>
+                                                <a class="dropdown-item" *ngIf="permissions.isEditable"(click)="updateStatusPriority(project.id,'Low','priority') "><i class="fa fa-dot-circle-o text-success"></i> Low</a>
+                                            </div>
+                                        </div>
+                                    </td>
+
+
+                                   
+											
+                                <tr>
+                                    <td>Created by:</td>
+                                    <td class="text-right"><a href="javascript:void(0);">{{project.createdBy.firstName + project.createdBy.lastName}}</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Status:</td>
+                                    <td class="text-right">{{project.status}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="m-b-5">Progress <span class="text-success float-right">40%</span></p>
+                        <div class="progress progress-xs mb-0">
+                            <div class="progress-bar bg-success" role="progressbar" data-toggle="tooltip" title="40%" style="width: 40%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card project-user">
+                    <div class="card-body">
+                        <h6 class="card-title m-b-20">Assigned Leader <button type="button"  class="float-right btn btn-primary btn-sm" data-toggle="modal" data-target="#assign_leader"><i class="fa fa-plus"></i> Add</button></h6>
+                        <ul class="list-box">
+                            <li *ngFor="let member of projectMembers">
+                                <a *ngIf="member.isLeader">
+                                    <div class="list-item">
+                                        <div class="list-left">
+                                            <span class="avatar"><img alt="" [routerLink]="'/dollop/employee/employee_profile/'+member.userId.id"  [src]="member.userId.profileName"></span>
+                                        </div>
+                                        <div class="list-body">
+                                            <span class="message-author" [routerLink]="'/dollop/employee/employee_profile/'+member.userId.id" >{{member.userId.firstName+" "+member.userId.lastName}}</span>
+                                            <div class="clearfix"></div>
+                                            <span class="message-content">Team Leader</span>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown dropdown-action text-right">
+                                        <span class="action-circle large delete-btn"
+                                        title="Delete Task" data-toggle="modal"
+                                      (click)="deleteProjectMember(member.id,member.userId.firstName)"
+                                        data-target="#">
+                                        <i class="material-icons">delete</i>
+                                    </span>
+                                    </div>
+                                </a>
+                            </li>
+                           
+                        </ul>
+                    </div>
+                </div>
+                <div class="card project-user">
+                    <div class="card-body">
+                        <h6 class="card-title m-b-20">
+                            Assigned users 
+                            <button type="button"  class="float-right btn btn-primary btn-sm" data-toggle="modal" data-target="#assign_user"><i class="fa fa-plus"></i> Add</button>
+                        </h6>
+                        <ul class="list-box">
+                            <li *ngFor="let member of projectMembers" >
+                                <a *ngIf="!member.isLeader">
+                                    <div class="list-item">
+                                        <div class="list-left" [routerLink]="'/dollop/employee/employee_profile/'+member.userId.id" >
+                                            <span class="avatar"><img alt=""  [src]="member.userId.profileName"></span>
+                                        </div>
+                                        <div class="list-body" [routerLink]="'/dollop/employee/employee_profile/'+member.userId.id" >
+                                            <span class="message-author">{{member.userId.firstName+" "+member.userId.lastName}}</span>
+                                            <div class="clearfix"></div>
+                                            <span class="message-content" *ngIf="member.userId.designation">{{member.userId.designation.title}}</span>
+                                        </div>
+                                    </div>
+                                      
+                                <div class="dropdown dropdown-action text-right">
+                                    <span class="action-circle large delete-btn"
+                                    title="Delete Task" data-toggle="modal"
+                                  (click)="deleteProjectMember(member.id,member.userId.firstName)"
+                                    data-target="#">
+                                    <i class="material-icons">delete</i>
+                                </span>
+                                </div>
+                                </a>
+                              
+                      
+                            </li>
+                           
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+    
+    <!-- Assign Leader Modal -->
+    <div id="assign_leader" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Leader to this project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span> 
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group m-b-30">
+                        <input placeholder="Search to add a leader" (keyup)="searching()" [(ngModel)]="label" name="label" class="form-control search-input" type="text">
+                        <span class="input-group-append">
+                            <button class="btn btn-primary">Search</button>
+                        </span>
+                    </div>
+                    <div>
+                        <ul class="chat-user-list">
+                            <div class="title" *ngIf="selectedProjectMembers">
+                                 <h3>Selected</h3>
+                            <li *ngFor="let members of selectedProjectMembers | keyvalue">
+                                <a  [ngClass]="">
+                                    <div class="media">
+                                        <span class="avatar"><img alt=""  [src]="members.key.profileName"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name" (click)="selectProjectMember(members.key,true)" *ngIf="members.key.isLeader" >{{members.key.firstName+" "+members.key.lastName}}</div>
+                                            <span class="designation" *ngIf="members.key.designation">{{members.key.designation.title}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </div>
+                            <hr class="hr hr-blurry" />
+                            <h3>Employees</h3>
+                            <li *ngFor="let employee of employees">
+                                <a  [ngClass]="" *ngIf="employee">
+                                    <div class="media">
+                                        <span class="avatar"><img alt=""  [src]="employee.profileName"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name" (click)="selectProjectMember(employee,true)">{{employee.firstName+" "+employee.lastName}}</div>
+                                            <span class="designation" *ngIf="employee.designation">{{employee.designation.title}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="media">
+                                        <span class="avatar"><img alt="" src="assets/img/profiles/avatar-10.jpg"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name">John Smith</div>
+                                            <span class="designation">Android Developer</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="media">
+                                        <span class="avatar">
+                                            <img alt="" src="assets/img/profiles/avatar-16.jpg">
+                                        </span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name">Jeffery Lalor</div>
+                                            <span class="designation">Team Leader</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" data-dismiss="modal" (click)="addProjectMember()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Assign Leader Modal -->
+    
+    <!-- Assign User Modal -->
+    <div id="assign_user" class="modal custom-modal fade" role="dialog" >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign the user to this project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group m-b-30">
+                        <input placeholder="Search a user to assign" (keyup)="searching()" [(ngModel)]="label" name="label" class="form-control search-input" type="text">
+                        <span class="input-group-append">
+                            <button class="btn btn-primary">Search</button>
+                        </span>
+                    </div>
+                    <div>
+                        <ul class="chat-user-list">
+                            <div class="title" *ngIf="selectedProjectMembers">
+                                <h3>Selected</h3>
+                           <li *ngFor="let members of selectedProjectMembers | keyvalue">
+                               <a  [ngClass]="">
+                                   <div class="media">
+                                       <span class="avatar"><img alt=""  [src]="members.key.profileName"></span>
+                                       <div class="media-body align-self-center text-nowrap">
+                                           <div class="user-name" (click)="selectProjectMember(members.key,true)">{{members.key.firstName+" "+members.key.lastName}}</div>
+                                           <span class="designation" *ngIf="members.key.designation">{{members.key.designation.title}}</span>
+                                       </div>
+                                   </div>
+                               </a>
+                           </li>
+                       </div>
+                       <hr class="hr hr-blurry" />
+                            <li *ngFor="let employee of employees">
+                                <a >
+                                    <div class="media">
+                                        <span class="avatar"><img alt=""  [src]="employee.profileName"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name" (click)="selectProjectMember(employee,false)">{{employee.firstName+" "+employee.lastName}}</div>
+                                            <span class="designation" *ngIf="employee.designation">{{employee.designation.title}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="media">
+                                        <span class="avatar"><img alt="" src="assets/img/profiles/avatar-10.jpg"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name">John Smith</div>
+                                            <span class="designation">Android Developer</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="media">
+                                        <span class="avatar">
+                                            <img alt="" src="assets/img/profiles/avatar-16.jpg">
+                                        </span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name">Jeffery Lalor</div>
+                                            <span class="designation">Team Leader</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" data-dismiss="modal" (click)="addProjectMember()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Assign User Modal -->
+
+  <!-- Add File Modal -->
+  <div id="add_files" class="modal custom-modal fade" role="dialog" >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Files to this project</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group">
+                        <label>Upload Files</label>
+[											<input class="form-control"  type="file" (change)="selectedFile($event)">
+]										</div>
+                </div>
+                
+                    <h3>Files Selected : </h3>
+                    
+                
+                <div class="card-body" *ngIf="project.files.length>0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr >
+                                    <th>File Name</th>
+                                    <th>Size</th>
+                                    <th >Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr  *ngFor="let file of project.files ; index as i" >
+                                    <td>{{file.name}}</td>
+                                    <td>{{file.size | filesize}}</td>
+                                    <td  (click)="removeFile(file,'file')"> <div style="cursor: pointer !important; "><i  class="fa fa-remove" style="font-size:18px;color:rgb(217, 60, 60)"></i></div></td>
+                                </tr>
+                                
+                                
+                            </tbody>
+                        </table>
+                    </div>
+            
+            </div>
+                <div class="submit-section">
+                    <button class="btn btn-primary submit-btn" data-dismiss="modal" (click)="addProjectFile()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add  File Modal -->
+
+
+
+
+
+
+
+
+    
+    <!-- Edit Project Modal -->
+    <div id="edit_project" class="modal custom-modal fade" role="dialog" >
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input class="form-control" type="text" name="title"  [(ngModel)]="project.title">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Project Type</label>
+                                        <input class="form-control" placeholder="Select Type"   list="project" name="projectType" [(ngModel)]="project.projectType"/>
+                                        <datalist id="project">
+                                          <option value="Client Project"></option>
+                                          <option value="Intern Project"></option>
+                                    </datalist>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Client</label>
+                                        <input class="form-control" placeholder="Select clients"  list="clients" name="id" [(ngModel)]="project.clientId.id" />
+                                        <datalist id="clients">
+                                          <option *ngFor="let client of clients" [value]="client.id">{{client.companyName}}</option>
+                                          <option ></option>
+                                    </datalist>
+                                </div>
+                            </div>
+                            
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Price</label>
+                                        <input placeholder="$50" class="form-control" type="text" name="price" [(ngModel)]="project.price">
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <ckeditor [editor]="Editor" placeholder="<p>Write Description!</p>" name="description" [(ngModel)]="project.description" ></ckeditor>
+                            <!-- <span class="text-danger"
+                            *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('required')">
+                            Description Is Required.
+                        </span>      -->
+                     </div> 
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    
+                                        <input class="form-control " type="date" name="startDate" [(ngModel)]="project.startDate">
+                                    
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    
+                                        <input class="form-control " type="date" name="deadline" [(ngModel)]="project.deadline" >
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Labels</label>
+                                    <input class="form-control" placeholder="Select clients"  name="label" (ngModelChange)="addLabels(inp)"  [(ngModel)]="label" #inp list="labels"  />
+                                        <datalist id="labels" >
+                                          <option *ngFor="let label of labels" [value]="label" >{{label}}</option>
+                                          <option  >Priority</option>
+                                    </datalist>
+                                </div>
+                            </div>
+                            <!-- <div class="row">
+                                <div class="form-group">
+                                    <label>Upload Files</label>
+[											<input class="form-control"  type="file" (change)="selectedFile($event)">
+]										</div>
+                            </div>
+                            
+                                <h3>Files Selected : </h3>
+                                
+                            
+                            <div class="card-body" *ngIf="project.projectFiles.length!=0">
+                                <div class="table-responsive">
+                                    <table class="table table-striped mb-0">
+                                        <thead>
+                                            <tr >
+                                                <th>File Name</th>
+                                                <th>Size</th>
+                                                <th >Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr  *ngFor="let file of project.projectFiles ; index as i" >
+                                                <td>{{file.originalName}}</td>
+                                                <td>{{file.fileSize | filesize}}</td>
+                                                <td  (click)="removeFile(file,'projectFile')"> <div style="cursor: pointer !important; "><i  class="fa fa-remove" style="font-size:18px;color:rgb(217, 60, 60)"></i></div></td>
+                                            </tr>
+                                            <tr  *ngFor="let file of project.images ; index as i" >
+                                                <td>{{file.originalName}}</td>
+                                                <td>{{file.fileSize | filesize}}</td>
+                                                <td  (click)="removeFile(file,'image')"> <div style="cursor: pointer !important; "><i  class="fa fa-remove" style="font-size:18px;color:rgb(217, 60, 60)"></i></div></td>
+                                            </tr>
+                                            <div *ngIf="project.files">
+                                            <tr  *ngFor="let file of project.files ; index as i" >
+                                                <td>{{file.name}}</td>
+                                                <td>{{file.size | filesize}}</td>
+                                                <td  (click)="removeFile(file,'file')"> <div style="cursor: pointer !important; "><i  class="fa fa-remove" style="font-size:18px;color:rgb(217, 60, 60)"></i></div></td>
+                                            </tr>
+                                            </div>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                        
+                        </div> -->
+                        </div>
+                        <div class="submit-section">
+                            <button (click)="updateProject()" data-dismiss="modal" class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Project Modal -->
+    
+<!-- Delete Project Modal -->
+<div class="modal custom-modal fade" id="delete_project" role="dialog" >
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Delete Project</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a (click)="deleteProjectFile()"  data-dismiss="modal" class="btn btn-primary continue-btn">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Delete Project Modal -->
+
+
+
+<!-- /Page Wrapper -->
+</div>

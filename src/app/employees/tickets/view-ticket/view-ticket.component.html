@@ -1,0 +1,700 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper" style="min-height: 657px;">
+	<div class="chat-main-row">
+		<div class="chat-main-wrapper">
+			<div class="col-lg-8 message-view task-view">
+				<div class="chat-window">
+					<div class="fixed-header">
+						<div class="navbar">
+							<div class="float-left ticket-view-details" *ngIf="permissions.isReadable" >
+								<div class="ticket-header">
+									<span>Status: </span> <span class="badge badge-warning">{{ticket.status}}</span>
+									<span class="m-l-15 text-muted">Client: </span>
+									<a href="#">{{ticket.client.companyName}}</a>
+									<span class="m-l-15 text-muted">Created: </span>
+									<span>{{ticket.createdAt| date:'dd-MMM-yyyy hh:mm a'}} </span>
+									<span class="m-l-15 text-muted">Created by:</span>
+									<span><a href="profile.html">{{ticket.createdBy.firstName}}
+											{{ticket.createdBy.lastName}}</a></span>
+								</div>
+							</div>
+							<a class="task-chat profile-rightbar float-right" id="task_chat" href="#task_window"><i
+									class="fa fa fa-comment"></i></a>
+						</div>
+					</div>
+					<div class="chat-contents">
+						<div class="chat-content-wrap">
+							<div class="chat-wrap-inner">
+								<div class="chat-box">
+									<div class="task-wrapper">
+										<div class="card">
+											<div class="card-body">
+												<div class="project-title">
+													<div class="m-b-20">
+
+														<span class="h5 card-title ">{{ticket.title}}</span>
+														<div class="float-right ticket-priority">
+															<span>Priority:</span>
+															<div class="btn-group">
+																<a href="#" class="badge badge-danger dropdown-toggle"
+																	data-toggle="dropdown">{{ticket.labels}} </a>
+																<div class="dropdown-menu dropdown-menu-right">
+
+																	<a class="dropdown-item"
+																	(click)="updateTicketsStatus(ticket.id,'HighPriority','priority')"><i
+																		class="fa fa-dot-circle-o text-danger"></i> HighPriority</a>
+																<a class="dropdown-item"
+																	(click)="updateTicketsStatus(ticket.id,'MediumPriority','priority')"><i
+																		class="fa fa-dot-circle-o text-warning"></i> MediumPriority</a>
+																<a class="dropdown-item"
+																	(click)="updateTicketsStatus(ticket.id,'LowPriority','priority')"><i
+																		class="fa fa-dot-circle-o text-blue"></i> LowPriority</a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<p> {{ticket.description}}</p>
+											</div>
+										</div>
+										<div class="card">
+											<div class="card-body">
+												<h5 class="card-title m-b-20">Uploaded image files</h5>
+												<div class="row">
+
+													<div class="col-md-3 col-sm-6"
+														*ngFor="let image of imageData | keyvalue">
+														<div class="uploaded-box">
+															<div class="uploaded-img">
+																<img [src]="image.value" class="img-fluid" alt="">
+															</div>
+															<div class="uploaded-img-name">
+																{{image.key}}
+															</div>
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6">
+														<div class="uploaded-box">
+															<div class="uploaded-img">
+																<img src="assets/img/placeholder.jpg" class="img-fluid"
+																	alt="">
+															</div>
+															<div class="uploaded-img-name">
+																demo.png
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="card">
+											<div class="card-body">
+												<h5 class="card-title m-b-20">Uploaded files <button type="button"
+														class="float-right btn btn-primary btn-sm" data-toggle="modal"
+														data-target="#add_files"><i class="fa fa-plus"></i> Add</button>
+												</h5>
+												<span *ngIf="ticket.ticketsFiles.length==0">No File Uploaded</span>
+												<ul class="files-list" *ngIf="ticket.ticketsFiles.length>0" >
+													<li *ngFor="let file of ticket.ticketsFiles">
+														<div class="files-cont">
+															<div class="file-type">
+																<span class="files-icon"><i
+																		class="fa fa-file-pdf-o"></i></span>
+															</div>
+															<div class="files-info">
+																<span class="file-name text-ellipsis"><a
+																		href="#">{{file.originalName}}</a></span>
+																<span class="file-author"><a
+																		[routerLink]="baseRoute+'/employee/employee_profile/'+file.uploadedBy.id">{{file.uploadedBy.firstName+"
+																		"+file.uploadedBy.lastName}}</a></span> <span
+																	class="file-date">{{ " "+file.createdAt |
+																	date:'dd-MM-yyyy At hh:mm a'}}</span>
+																<div class="file-size">{{file.fileSize | filesize}}
+																</div>
+															</div>
+															<ul class="files-action">
+																<li class="dropdown dropdown-action">
+																	<a href="" class="dropdown-toggle btn btn-link"
+																		data-toggle="dropdown" aria-expanded="false"><i
+																			class="material-icons">more_horiz</i></a>
+																	<div class="dropdown-menu dropdown-menu-right">
+																		<a class="dropdown-item"
+																			(click)="download(file.id,file.originalName)">Download</a>
+																		<a class="dropdown-item" href="#"
+																			data-toggle="modal"
+																			data-target="#share_files">Share</a>
+																		<a class="dropdown-item" data-toggle="modal"
+																			(click)="deleteTicketFile(file.id)">Delete</a>
+																	</div>
+																</li>
+															</ul>
+														</div>
+													</li>
+												</ul>
+											</div>
+										</div>
+										<div class="progress"
+											*ngIf="fileStatus.status==='Progress' && fileStatus.percent!=100">
+
+											<div class="progress-bar progress-bar-striped progress-bar-animated"
+												role="progressbar" aria-valuenow="0" aria-valuemin="0"
+												aria-valuemax="100" [style.width.%]="fileStatus.percent">
+												{{fileStatus.requestType}} {{fileStatus.percent}}%</div>
+										</div>
+									</div>
+									<div class="notification-popup hide">
+										<p>
+											<span class="task"></span>
+											<span class="notification-text"></span>
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-4 message-view task-chat-view ticket-chat-view" id="task_window">
+				<div class="chat-window">
+					<div class="fixed-header">
+						<div class="navbar">
+							<div class="project-members task-followers"  >
+								<span class="assign-title">Assigned to </span>
+								<div   >
+								<a  *ngIf="ticket.requestedBy" [routerLink]="baseRoute+'/employee/employee_profile/'+ticket.requestedBy.id" data-toggle="tooltip" class="avatar" title="John Doe"><img alt="" [src]="ticket.requestedBy.profileName" ></a>
+								</div>
+								<!-- <a href="#" class="followers-add" title="Add Assignee" data-toggle="modal"
+								data-target="#assign_leader"><i class="material-icons">add</i></a> -->
+							</div>
+							<ul class="nav float-right custom-menu">
+								<li class="nav-item dropdown dropdown-action">
+									<a href="" class="nav-link dropdown-toggle" data-toggle="dropdown"
+										aria-expanded="false"><i class="material-icons">more_vert</i></a>
+									<div class="dropdown-menu">
+										<a class="dropdown-item" href="#" data-toggle="modal" *ngIf="permissions.isEditable"
+											data-target="#edit_ticket">Edit Ticket</a>
+										<a class="dropdown-item" href="#" data-toggle="modal" *ngIf="permissions.isDeleteable"
+											(click)="deleteTicket(ticket.id)">Delete Ticket</a>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="chat-contents task-chat-contents">
+						<div class="chat-content-wrap">
+							<div class="chat-wrap-inner">
+								<div class="chat-box">
+									<div class="chats">
+										<div class="chat chat-left">
+											<div class="chat-avatar">
+												<a href="profile.html" class="avatar">
+													<img src="assets/img/profiles/avatar-02.jpg" alt="">
+												</a>
+											</div>
+											<div class="chat-body">
+												<div class="chat-bubble">
+													<div class="chat-content">
+														<span class="task-chat-user">John Doe</span> <span
+															class="chat-time">8:35 am</span>
+														<p>I'm just looking around.</p>
+														<p>Will you tell me something about yourself? </p>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="completed-task-msg">
+											<span class="task-success">
+												<a href="#">John Doe</a> closed this ticket.
+											</span>
+											<span class="task-time">Today at 9:27am</span>
+										</div>
+										<div class="chat chat-left">
+											<div class="chat-avatar">
+												<a href="profile.html" class="avatar">
+													<img src="assets/img/profiles/avatar-02.jpg" alt="">
+												</a>
+											</div>
+											<div class="chat-body">
+												<div class="chat-bubble">
+													<div class="chat-content">
+														<span class="task-chat-user">John Doe</span>
+														<span class="file-attached">attached 3 files <i
+																class="fa fa-paperclip"></i></span>
+														<span class="chat-time">Feb 17, 2019 at 4:32am</span>
+														<ul class="attach-list">
+															<li><i class="fa fa-file"></i> <a
+																	href="#">project_document.avi</a></li>
+															<li><i class="fa fa-file"></i> <a
+																	href="#">video_conferencing.psd</a></li>
+															<li><i class="fa fa-file"></i> <a
+																	href="#">landing_page.psd</a></li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="chat chat-left">
+											<div class="chat-avatar">
+												<a href="profile.html" class="avatar">
+													<img src="assets/img/profiles/avatar-09.jpg" alt="">
+												</a>
+											</div>
+											<div class="chat-body">
+												<div class="chat-bubble">
+													<div class="chat-content">
+														<span class="task-chat-user">Jeffery Lalor</span>
+														<span class="file-attached">attached file <i
+																class="fa fa-paperclip"></i></span>
+														<span class="chat-time">Yesterday at 9:16pm</span>
+														<ul class="attach-list">
+															<li class="pdf-file"><i class="fa fa-file-pdf-o"></i> <a
+																	href="#">Document_2016.pdf</a></li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="chat chat-left">
+											<div class="chat-avatar">
+												<a href="profile.html" class="avatar">
+													<img src="assets/img/profiles/avatar-09.jpg" alt="">
+												</a>
+											</div>
+											<div class="chat-body">
+												<div class="chat-bubble">
+													<div class="chat-content">
+														<span class="task-chat-user">Jeffery Lalor</span>
+														<span class="file-attached">attached file <i
+																class="fa fa-paperclip"></i></span>
+														<span class="chat-time">Today at 12:42pm</span>
+														<ul class="attach-list">
+															<li class="img-file">
+																<div class="attach-img-download"><a
+																		href="#">avatar-1.jpg</a></div>
+																<div class="task-attach-img"><img
+																		src="assets/img/user.jpg" alt=""></div>
+															</li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="task-information">
+											<span class="task-info-line">
+												<a class="task-user" href="#">John Doe</a>
+												<span class="task-info-subject">marked ticket as reopened</span>
+											</span>
+											<div class="task-time">1:16pm</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="chat-footer">
+						<div class="message-bar">
+							<div class="message-inner">
+								<a class="link attach-icon" href="#"><img src="assets/img/attachment.png" alt=""></a>
+								<div class="message-area">
+									<div class="input-group">
+										<textarea class="form-control" placeholder="Type message..."></textarea>
+										<span class="input-group-append">
+											<button class="btn btn-primary" type="button"><i
+													class="fa fa-send"></i></button>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="project-members task-followers"  >
+							<span class="followers-title">Followers</span>
+							<div  *ngFor="let tm of ticketsMembers ;let i = index" >
+								<a  *ngIf="!tm.isLeader && i<4" [routerLink]="baseRoute+'/employee/employee_profile/'+tm.followers.id" data-toggle="tooltip" class="avatar" title="John Doe"><img alt="" [src]="tm.followers.profileName" ></a><a *ngIf="i==4" class="all-users dropdown-toggle" data-toggle="dropdown" aria-expanded="false">+{{ticketsMembers.length-3}}</a>
+							</div>
+
+							<a href="#" class="followers-add" data-toggle="modal" data-target="#assign_user"><i
+									class="material-icons">add</i></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Edit Ticket Modal -->
+	<div id="edit_ticket" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Ticket</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Ticket Subject</label>
+									<input class="form-control" type="text" value="Laptop Issue">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Ticket Id</label>
+									<input class="form-control" type="text" readonly value="TKT-0001">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Assign Staff</label>
+									<select class="select">
+										<option>-</option>
+										<option selected>Mike Litorus</option>
+										<option>John Smith</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Client</label>
+									<select class="select">
+										<option>-</option>
+										<option>Delta Infotech</option>
+										<option selected>International Software Inc</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Priority</label>
+									<select class="select">
+										<option>High</option>
+										<option selected>Medium</option>
+										<option>Low</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>CC</label>
+									<input class="form-control" type="text">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Assign</label>
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Ticket Assignee</label>
+									<div class="project-members">
+										<a title="John Smith" data-toggle="tooltip" href="#">
+											<img src="assets/img/profiles/avatar-10.jpg" alt="">
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Add Followers</label>
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Ticket Followers</label>
+									<div class="project-members">
+										<a title="Richard Miles" data-toggle="tooltip" href="#" class="avatar">
+											<img src="assets/img/profiles/avatar-09.jpg" alt="">
+										</a>
+										<a title="John Smith" data-toggle="tooltip" href="#" class="avatar">
+											<img src="assets/img/profiles/avatar-10.jpg" alt="">
+										</a>
+										<a title="Mike Litorus" data-toggle="tooltip" href="#" class="avatar">
+											<img src="assets/img/profiles/avatar-05.jpg" alt="">
+										</a>
+										<a title="Wilmer Deluna" data-toggle="tooltip" href="#" class="avatar">
+											<img src="assets/img/profiles/avatar-11.jpg" alt="">
+										</a>
+										<span class="all-team">+2</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label>Description</label>
+									<textarea class="form-control" rows="4"></textarea>
+								</div>
+								<div class="form-group">
+									<label>Upload Files</label>
+									<input class="form-control" type="file">
+								</div>
+							</div>
+						</div>
+						<div class="submit-section">
+							<button class="btn btn-primary submit-btn">Save</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Edit Ticket Modal -->
+
+	<!-- Delete Ticket Modal -->
+	<div class="modal custom-modal fade" id="delete_ticket" role="dialog">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="form-header">
+						<h3>Delete Ticket</h3>
+						<p>Are you sure want to delete?</p>
+					</div>
+					<div class="modal-btn delete-action">
+						<div class="row">
+							<div class="col-6">
+								<a href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
+							</div>
+							<div class="col-6">
+								<a href="javascript:void(0);" data-dismiss="modal"
+									class="btn btn-primary cancel-btn">Cancel</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Delete Ticket Modal -->
+
+	<!-- Assignee Modal -->
+	  <!-- Assign Leader Modal -->
+	  <div id="assign_leader" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Leader to this project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span> 
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group m-b-30">
+                        <input placeholder="Search to add a leader" (keyup)="searching()" [(ngModel)]="label" name="label" class="form-control search-input" type="text">
+                        <span class="input-group-append">
+                            <button class="btn btn-primary">Search</button>
+                        </span>
+                    </div>
+                    <div>
+                        <ul class="chat-user-list">
+                            <div class="title" *ngIf="selectedTicketsMembers">
+                                 <h3>Selected</h3>
+                            <li *ngFor="let members of selectedTicketsMembers | keyvalue">
+                                <a  [ngClass]="">
+                                    <div class="media">
+                                        <span class="avatar"><img alt=""  [src]="members.key.profileName"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name" (click)="selectTicketsMember(members.key,true)" *ngIf="members.key.isLeader" >{{members.key.firstName+" "+members.key.lastName}}</div>
+                                            <span class="designation" *ngIf="members.key.designation">{{members.key.designation.title}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </div>
+                            <hr class="hr hr-blurry" />
+                            <h3>Employees</h3>
+                            <li *ngFor="let employee of employees">
+                                <a  [ngClass]="" *ngIf="employee">
+                                    <div class="media">
+                                        <span class="avatar"><img alt=""  [src]="employee.profileName"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name" (click)="selectTicketsMember(employee,true)">{{employee.firstName+" "+employee.lastName}}</div>
+                                            <span class="designation" *ngIf="employee.designation">{{employee.designation.title}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="media">
+                                        <span class="avatar"><img alt="" src="assets/img/profiles/avatar-10.jpg"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name">John Smith</div>
+                                            <span class="designation">Android Developer</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="media">
+                                        <span class="avatar">
+                                            <img alt="" src="assets/img/profiles/avatar-16.jpg">
+                                        </span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name">Jeffery Lalor</div>
+                                            <span class="designation">Team Leader</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" data-dismiss="modal" (click)="addTicketsMember()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Assign Leader Modal -->
+    
+    <!-- Assign User Modal -->
+    <div id="assign_user" class="modal custom-modal fade" role="dialog" >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign the user to this project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group m-b-30">
+                        <input placeholder="Search a user to assign" (keyup)="searching()" [(ngModel)]="label" name="label" class="form-control search-input" type="text">
+                        <span class="input-group-append">
+                            <button class="btn btn-primary">Search</button>
+                        </span>
+                    </div>
+                    <div>
+                        <ul class="chat-user-list">
+                            <div class="title" *ngIf="selectedTicketsMembers">
+                                <h3>Selected</h3>
+                           <li *ngFor="let members of selectedTicketsMembers | keyvalue">
+                               <a  [ngClass]="">
+                                   <div class="media">
+                                       <span class="avatar"><img alt=""  [src]="members.key.profileName"></span>
+                                       <div class="media-body align-self-center text-nowrap">
+                                           <div class="user-name" (click)="selectTicketsMember(members.key,true)">{{members.key.firstName+" "+members.key.lastName}}</div>
+                                           <span class="designation" *ngIf="members.key.designation">{{members.key.designation.title}}</span>
+                                       </div>
+                                   </div>
+                               </a>
+                           </li>
+                       </div>
+                       <hr class="hr hr-blurry" />
+                            <li *ngFor="let employee of employees">
+                                <a >
+                                    <div class="media">
+                                        <span class="avatar"><img alt=""  [src]="employee.profileName"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name" (click)="selectTicketsMember(employee,false)">{{employee.firstName+" "+employee.lastName}}</div>
+                                            <span class="designation" *ngIf="employee.designation">{{employee.designation.title}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="media">
+                                        <span class="avatar"><img alt="" src="assets/img/profiles/avatar-10.jpg"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name">John Smith</div>
+                                            <span class="designation">Android Developer</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <div class="media">
+                                        <span class="avatar">
+                                            <img alt="" src="assets/img/profiles/avatar-16.jpg">
+                                        </span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name">Jeffery Lalor</div>
+                                            <span class="designation">Team Leader</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" data-dismiss="modal" (click)="addTicketsMember()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Assign User Modal -->
+	<!-- /Task Followers Modal -->
+<!-- Add File Modal -->
+<div id="add_files" class="modal custom-modal fade" role="dialog" >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Files to this Ticket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group">
+                        <label>Upload Files</label>
+[											<input class="form-control"  type="file" (change)="selectedFile($event)">
+]										</div>
+                </div>
+                
+                    <h3>Files Selected : </h3>
+                    
+                
+                <div class="card-body" *ngIf="ticket.files.length>0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr >
+                                    <th>File Name</th>
+                                    <th>Size</th>
+                                    <th >Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr  *ngFor="let file of ticket.files ; index as i" >
+                                    <td>{{file.name}}</td>
+                                    <td>{{file.size | filesize}}</td>
+                                    <td  (click)="removeFile(file)"> <div style="cursor: pointer !important; "><i  class="fa fa-remove" style="font-size:18px;color:rgb(217, 60, 60)"></i></div></td>
+                                </tr>
+                                
+                                
+                            </tbody>
+                        </table>
+                    </div>
+            
+            </div>
+                <div class="submit-section">
+                    <button class="btn btn-primary submit-btn" data-dismiss="modal" (click)="addTicketFiles()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add  File Modal -->
+
+</div>
+<!-- /Page Wrapper -->

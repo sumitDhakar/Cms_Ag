@@ -1,0 +1,339 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">payments</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a [routerLink]="baseRoute">Dashboard</a></li>
+                        <li class="breadcrumb-item active">payments >
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a href="#" class="btn add-btn" data-toggle="modal" *ngIf="permissions.isWriteable"
+                        data-target="#add_pf"><i class="fa fa-plus"></i>
+                        Invoice Payments</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive" *ngIf="permissions.isReadable">
+                    <table class="table table-striped custom-table datatable mb-0">
+                        <thead>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <th>Client</th>
+                                <th>Payment Type</th>
+                                <th>Paid Date</th>
+                                <th>Due mount</th>
+                                <th>Paid Amount</th>
+                                <th>Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                            <tr *ngFor="let ip of invoicePayments;let i=index">
+                                <td><a [routerLink]="'/dollop/accounts/invoices_view/'+ip.invoiceId.id"> <strong>
+                                            #INV-000{{ip.id}}</strong></a></td>
+
+                                <td>{{ip.invoiceId.clientId.companyName}}</td>
+                                <td>{{ip.status}}</td>
+
+                                <td>{{ip.paymentDate}}</td>
+                                <td>{{ip.invoiceId.grandTotal -ip.amount}}</td>
+                                <td>{{ip.amount}}</td>
+                                <td><span class="badge bg-inverse-success"
+                                        *ngIf="ip.invoiceId.paidAmount>0 && ip.invoiceId.paidAmount!=ip.invoiceId.grandTotal"
+                                        [ngClass]="'badge ' +'bg-inverse-warning'">PartiallyPaid</span>
+
+                                    <span class="badge bg-inverse-success"
+                                        *ngIf="ip.invoiceId.paidAmount==ip.invoiceId.grandTotal"
+                                        [ngClass]="'badge ' +'bg-inverse-success'">Fully Paid</span>
+                                    <span class="badge bg-inverse-success"
+                                        *ngIf="ip.invoiceId.paidAmount==0&&ip.invoiceId.paidAmount>today"
+                                        [ngClass]="'badge ' +'bg-inverse-info'">Sent <br> </span>
+                                    <span class="badge bg-inverse-success" *ngIf="ip.invoiceId.paidAmount<today"
+                                        [ngClass]="'badge ' +'bg-inverse-danger'">Sent <br>
+                                        OverDue</span>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <!-- <a class="dropdown-item" href="#" *ngIf="permissions.isEditable"
+                                                data-toggle="modal" data-target="#edit_pf"><i
+                                                    class="fa fa-pencil m-r-5"></i> Edit</a> -->
+                                            <a class="dropdown-item" data-toggle="modal" (click)="confirm(ip.id)"
+                                                *ngIf="permissions.isDeleteable" data-target="#delete_pf"><i
+                                                    class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+
+                            </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+    <!-- /Page Content -->
+
+    <!-- Add PF Modal -->
+    <div id="add_pf" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isWriteable">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add payment</h5>
+                    <button type="button" class="close" id="add" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" (ngSubmit)="addInvoicePayments()">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Invoice <span class="text-danger">*</span></label>
+                                    <select formControlName="id" (change)="optionSelected(inp)" #inp
+                                        [(ngModel)]="invoice.id" name="id">
+                                        <option value="" selected>--Select--</option>
+                                        <option *ngFor="let item of invoices;let i = index" [value]="item.id">
+                                            #INV-000{{item.id}}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('id')?.touched ) && myForm.get('id')?.hasError('required')">
+                                        Invoice should not be empty.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('id')?.touched ) && myForm.get('id')?.hasError('required')">
+                                        Invoice is invalid.
+                                    </span>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Payment Type</label>
+                                    <select class="form-control select" formControlName="status"
+                                        [(ngModel)]="invoicePayment.status" name="status">
+                                        <option value="">--Select--</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Credit Cards">Credit Cards</option>
+                                        <option value="Debit card">Debit card</option>
+                                        <option value="online">online</option>
+                                    </select>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('status')?.touched ) && myForm.get('status')?.hasError('required')">
+                                        Payment Type should not be empty.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('status')?.touched ) && myForm.get('status')?.hasError('required')">
+                                        Payment Type is invalid.
+                                    </span>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="show-fixed-amount">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+
+                                                <label class="col-form-label">payment date<span
+                                                        class="text-danger">*</span></label>
+                                                <input class="form-control " formControlName="paymentDate" [min]="today" [max]="today"
+                                                    [(ngModel)]="invoicePayment.paymentDate" name="paymentDate"
+                                                    type="date">
+                                                <span class="text-danger"
+                                                    *ngIf="(myForm.get('paymentDate')?.touched ) && myForm.get('paymentDate')?.hasError('required')">
+                                                    payment date should not be empty.
+                                                </span>
+                                                <span class="text-danger"
+                                                    *ngIf="(myForm.get('paymentDate')?.touched ) && myForm.get('paymentDate')?.hasError('required')">
+                                                    payment date is invalid.
+                                                </span>
+
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Amount</label>
+                                                <input class="form-control"formControlName="amount" [max]="invoicePayment.amount" [(ngModel)]="invoicePayment.amount"
+                                                    name='amount'>
+                                                    <span class="text-danger"
+                                                    *ngIf="(myForm.get('amount')?.touched ) && myForm.get('amount')?.hasError('required')">
+                                                    Amount should not be empty.
+                                                </span>
+                                                <span class="text-danger"
+                                                *ngIf="(myForm.get('amount')?.touched ) && myForm.get('amount')?.hasError('min')">
+                                                minimum amount 1.
+                                            </span>
+                    
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control" rows="4" formControlName="note"
+                                        [(ngModel)]="invoicePayment.note"></textarea>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('note')?.touched ) && myForm.get('note')?.hasError('required')">
+                                        Description should not be empty.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('note')?.touched ) && myForm.get('note')?.hasError('required')">
+                                        Description is invalid.
+                                    </span>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add PF Modal -->
+
+    <!-- Edit PF Modal -->
+    <div id="edit_pf" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isEditable">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Provident Fund</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Invoice <span class="text-danger">*</span></label>
+                                    <select (change)="optionSelected(inp)" #inp name="id">
+                                        <option *ngFor="let item of invoices; let i = index" [value]="item.id">
+                                            #INV-000{{i+1}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Payment Type</label>
+                                    <select class="form-control select" [(ngModel)]="invoicePayment.status"
+                                        name="status">
+                                        <option value="">--Select--</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Credit Cards">Credit Cards</option>
+                                        <option value="Debit card">Debit card</option>
+                                        <option value="online">online</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="show-fixed-amount">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+
+                                                <label class="col-form-label">payment date<span
+                                                        class="text-danger">*</span></label>
+                                                <input class="form-control " [(ngModel)]="invoicePayment.paymentDate"
+                                                    name="paymentDate" type="date">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Amount</label>
+                                                <input class="form-control" [(ngModel)]="invoicePayment.amount"
+                                                    name='amount'>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control" rows="4"
+                                        [(ngModel)]="invoicePayment.note"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" data-dismiss="modal"
+                                (click)="updateInvoicePayments()">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit PF Modal -->
+
+    <!-- Delete PF Modal -->
+    <div class="modal custom-modal fade" id="delete_pf" role="dialog" *ngIf="permissions.isDeleteable">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Provident Fund</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="javascript:void(0);" (click)="deleteInvoicePayments()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete PF Modal -->
+
+</div>
+<!-- /Page Wrapper -->

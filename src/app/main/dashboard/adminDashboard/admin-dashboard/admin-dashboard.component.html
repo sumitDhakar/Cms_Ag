@@ -1,0 +1,577 @@
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header mb-3">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!-- <h3 class="page-title">Welcome Admin!</h3> -->
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="row">
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="card dash-widget">
+                    <div class="card-body" [routerLink]="baseRoute+'/projects/projects'" > 
+                        <span class="dash-widget-icon" >
+                            <img src="assets/img/projects.svg" width="27px" />
+                         </span>
+                        <div class="dash-widget-info">
+                            <h3>{{dashBoard.totalProjects}}</h3>
+                            <span>Projects</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="card dash-widget">
+                    <div class="card-body" [routerLink]="baseRoute+'/clients'">
+                        <span class="dash-widget-icon" >
+                            <img src="assets/img/client.svg" width="27px" />
+                        </span>
+                        <div class="dash-widget-info">
+                            <h3>{{dashBoard.totalClients}}</h3>
+                            <span>Clients</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="card dash-widget">
+                    <div class="card-body">
+                        <span class="dash-widget-icon" [routerLink]="baseRoute+'/projects/tasks/'+0">
+                            <img src="assets/img/task.svg" width="27px" />
+                        </span>
+                        <div class="dash-widget-info">
+                            <h3>{{dashBoard.totalTasks}}</h3>
+                            <span>Tasks</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="card dash-widget">
+                    <div class="card-body">
+                        <span class="dash-widget-icon" [routerLink]="baseRoute+'/employee/allEmployee'">
+                            <img src="assets/img/team.svg" width="27px" />
+                        </span>
+                        <div class="dash-widget-info">
+                            <h3>{{dashBoard.totalEmployees}}</h3>
+                            <span>Employees</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-group m-b-30">
+                    <div class="card" *ngIf="ms" >
+                        <div class="card-body">
+                            <!-- {{ms|json}} -->
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <span class="d-block">New Employees</span>
+                                </div>
+                                <div>
+                                    <span  [ngClass]="employeeProgress>-1 ? 'badge bg-inverse-success' : 'badge bg-inverse-danger'">{{employeeProgress}}%</span>
+                                </div>
+                            </div>
+                          
+                            <h3 class="mb-3">{{ms[1]}}</h3>
+                            <div class="progress mb-2" style="height: 5px;">
+                                <div class="progress-bar bg-primary" role="progressbar"  [style]="'width:'+ employeeProgress + '%'"
+                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="mb-0">Overall Employees {{dashBoard.totalEmployees}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card" *ngIf="ms">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <span class="d-block">Earnings</span>
+                                </div>
+                                <div>
+                                    <span  [ngClass]="earningsProgress>-1 ? 'badge bg-inverse-success' : 'badge bg-inverse-danger'">{{earningsProgress}}%</span>
+                                </div>
+                            </div>
+                            <h3 class="mb-3">${{ms[3]}}</h3>
+                            <div class="progress mb-2" style="height: 5px;">
+                                <div class="progress-bar bg-secondary" role="progressbar"  [style]="'width:'+ earningsProgress + '%'"
+                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="mb-0">Previous Month <span class="text-muted">${{ms[2]}}</span></p>
+                        </div>
+                    </div>
+
+                    <div class="card" *ngIf="ms" >
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <span class="d-block">Expenses</span>
+                                </div>
+                                <div>
+                                    <span [ngClass]="expencesProgress>-1 ? 'badge bg-inverse-success' : 'badge bg-inverse-danger'"  >{{expencesProgress}}%</span>
+                                </div>
+                            </div>
+                            <h3 class="mb-3">${{ms[5]}}</h3>
+                            <div class="progress mb-2" style="height: 5px;">
+                                <div class="progress-bar bg-info" role="progressbar"  [style]="'width:'+ expencesProgress + '%'"
+                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="mb-0">Previous Month <span class="text-muted">${{ms[4]}}</span></p>
+                        </div>
+                    </div>
+
+                    <!-- <div class="card" *ngIf="ms" >
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <span class="d-block">Profit</span>
+                                </div>
+                                <div>
+                                    <span class="text-danger">-75%</span>
+                                </div>
+                            </div>
+                            <h3 class="mb-3">$1,12,000</h3>
+                            <div class="progress mb-2" style="height: 5px;">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 70%;"
+                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="mb-0">Previous Month <span class="text-muted">$1,42,000</span></p>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Total revenue -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Total Revenue</h3>
+                                  <div id="bar-charts">
+                                    <apx-chart
+                                        [series]="chartOptions.series"
+                                        [chart]="chartOptions.chart"
+                                        [dataLabels]="chartOptions.dataLabels"
+                                        [plotOptions]="chartOptions.plotOptions"
+                                        [yaxis]="chartOptions.yaxis"
+                                        [legend]="chartOptions.legend"
+                                        [fill]="chartOptions.fill"
+                                        [stroke]="chartOptions.stroke"
+                                        [tooltip]="chartOptions.tooltip"
+                                        [xaxis]="chartOptions.xaxis"
+                                    ></apx-chart>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Sales Overview</h3>
+                                <div id="line-charts">
+                                    <apx-chart
+                                    [series]="chartOptions2.series"
+                                    [chart]="chartOptions2.chart"
+                                    [xaxis]="chartOptions2.xaxis"
+                                    [stroke]="chartOptions2.stroke"
+                                    [tooltip]="chartOptions2.tooltip"
+                                    [dataLabels]="chartOptions2.dataLabels"
+                                    [legend]="chartOptions2.legend"
+                                    [markers]="chartOptions2.markers"
+                                    [grid]="chartOptions2.grid"
+                                    [yaxis]="chartOptions2.yaxis"
+                                    [title]="chartOptions2.title"
+                                  ></apx-chart>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Widget -->
+        <div class="row" *ngIf="dashBoard.staticsOfCompany">
+            <div class="col-md-12 col-lg-12 col-xl-4 d-flex">
+                <div class="card flex-fill dash-statistics">
+                    <div class="card-body" *ngIf="dashBoard.staticsOfCompany">
+                        <h5 class="card-title">Statistics</h5>
+                        <div class="stats-list">
+                            <div class="stats-info">
+                                <p>Today Present <strong>{{dashBoard.staticsOfCompany[4][2]}} <small>/
+                                            {{dashBoard.totalEmployees}}</small></strong></p>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" role="progressbar"
+                                        [style]="'width:'+ todayPresent + '%'" aria-valuenow="31" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="stats-info">
+                                <p>Pending Invoice <strong>{{dashBoard.staticsOfCompany[1][2]}} <small>/
+                                            {{dashBoard.staticsOfCompany[1][1]}}</small></strong></p>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar"
+                                        [style]="'width:'+ pendingTasks + '%'" aria-valuenow="31" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="stats-info">
+                                <p>Completed Projects <strong>{{dashBoard.staticsOfCompany[0][2]}} <small>/
+                                            {{dashBoard.staticsOfCompany[0][1]}}</small></strong></p>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                        [style]="'width:'+ CompletedProjects + '%'" aria-valuenow="62" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="stats-info">
+                                <p>Open Tickets <strong>{{dashBoard.staticsOfCompany[2][2]}} <small>/
+                                            {{dashBoard.staticsOfCompany[2][1]}}</small></strong></p>
+                                <div class="progress">
+                                    <div class="progress-bar bg-danger" role="progressbar"
+                                        [style]="'width:'+ opentickets + '%'" aria-valuenow="62" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="stats-info">
+                                <p>Closed Tickets <strong>{{dashBoard.staticsOfCompany[3][2]}} <small>/
+                                            {{dashBoard.staticsOfCompany[3][1]}}</small></strong></p>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" role="progressbar"
+                                        [style]="'width:'+ closedTickets + '%'" aria-valuenow="22" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-lg-6 col-xl-4 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body" *ngIf="totalTaskDetails">
+                        <h4 class="card-title">Task Statistics</h4>
+                        <div class="statistics">
+                            <div class="row">
+                                <div class="col-md-6 col-6 text-center">
+                                    <div class="stats-box mb-4">
+                                        <p>Total Tasks</p>
+                                        <h3>{{totalTaskDetails[0]}}</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-6 text-center">
+                                    <div class="stats-box mb-4">
+                                        <p>Overdue Tasks</p>
+                                        <h3>{{totalTaskDetails[1]}}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress mb-4">
+                            <div class="progress-bar bg-purple" role="progressbar" [style]="'width:'+ progress1 + '%'"
+                                aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">{{progress1}}%</div>
+                            <div class="progress-bar bg-warning" role="progressbar" [style]="'width:'+ progress2 + '%'"
+                                aria-valuenow="18" aria-valuemin="0" aria-valuemax="100">{{progress2}}%</div>
+                            <div class="progress-bar bg-success" role="progressbar" [style]="'width:'+ progress3 + '%'"
+                                aria-valuenow="12" aria-valuemin="0" aria-valuemax="100">{{progress3}}%</div>
+                            <div class="progress-bar bg-info" role="progressbar" [style]="'width:'+ progress5 + '%'"
+                                aria-valuenow="14" aria-valuemin="0" aria-valuemax="100">{{progress5}}%</div>
+                            <div class="progress-bar bg-danger" role="progressbar" [style]="'width:'+ progress4 + '%'"
+                                aria-valuenow="14" aria-valuemin="0" aria-valuemax="100">{{progress4}}%</div>
+                        </div>
+                        <div>
+                            <p><i class="fa fa-dot-circle-o text-purple mr-2"></i>Completed Tasks <span
+                                    class="float-right">{{totalTaskDetails[2]}}</span></p>
+                            <p><i class="fa fa-dot-circle-o text-warning mr-2"></i>Inprogress Tasks <span
+                                    class="float-right">{{totalTaskDetails[3]}}</span></p>
+                            <p><i class="fa fa-dot-circle-o text-success mr-2"></i>On Hold Tasks <span
+                                    class="float-right">{{totalTaskDetails[4]}}</span></p>
+                            <p><i class="fa fa-dot-circle-o text-danger mr-2"></i>Pending Tasks <span
+                                    class="float-right">{{totalTaskDetails[5]}}</span></p>
+                            <p class="mb-0"><i class="fa fa-dot-circle-o text-info mr-2"></i>Review Tasks <span
+                                    class="float-right">{{totalTaskDetails[6]}}</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-lg-6 col-xl-4 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body">
+                        <h4 class="card-title">Today Leaves <span class="badge bg-inverse-danger ml-2">5</span></h4>
+                        <div class="leave-info-box"  *ngFor="let leaves of leaveApplications">
+                            <div class="media align-items-center">
+                                <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
+                                <div class="media-body">
+                                    <div class="text-sm my-0">{{leaves.applicantId.firstName
+                                        +" "+leaves.applicantId.lastName
+                                        }}<span>{{leaves.applicantId.jobTitle}}</span></div>
+                                </div>
+                            </div>
+                            <div class="row align-items-center mt-3">
+                                <div class="col-6">
+                                    <h6 class="mb-0">{{leaves.startDate | date}}</h6>
+                                    <span class="text-sm text-muted">Leave Date</span>
+                                </div>
+                                <div class="col-6 text-right">
+                                   
+                                    <span class="badge"
+                                    [ngClass]="(leaves.status =='New') ? 'bg-inverse-info' : (leaves.status =='Pending') ? 'bg-inverse-warn' : (leaves.status =='Approved') ? 'bg-inverse-success' : (leaves.status =='Declined') ? 'bg-inverse-danger' : 'bg-inverse-success'">{{leaves.status}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="load-more text-center">
+                            <a class="text-dark" [routerLink]="baseRoute+'/employee/leaves_employee'">Load More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Statistics Widget -->
+
+        <div class="row">
+            <div class="col-md-6 d-flex">
+                <div class="card card-table flex-fill">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Invoices</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-nowrap custom-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice ID</th>
+                                        <th>Client</th>
+                                        <th>Due Date</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let il of invoiceList;let i =index">
+                                        <td><a
+                                                [routerLink]="'/dollop/accounts/invoices_view/'+il.id">#INV-000{{i+1}}</a>
+                                        </td>
+                                        <td>
+                                            <h2><a href="#"> {{il.clientId.companyName}} </a></h2>
+                                        </td>
+                                        <td>{{il.dueDate}}</td>
+                                        <td>Rs.{{il.grandTotal}} </td>
+                                        <td>
+                                            <!-- <span class="badge bg-inverse-warning">{{il.status}}</span> -->
+                                            <span class="badge bg-inverse-success"
+                                                *ngIf="il.paidAmount>0 && il.paidAmount!=il.grandTotal"
+                                                [ngClass]="'badge ' +'bg-inverse-warning'">PartiallyPaid</span>
+
+                                            <span class="badge bg-inverse-success" *ngIf="il.paidAmount==il.grandTotal"
+                                                [ngClass]="'badge ' +'bg-inverse-success'">Fully Paid</span>
+                                            <span class="badge bg-inverse-success" *ngIf="il.paidAmount==0&&il.dueDate>today"
+                                                [ngClass]="'badge ' +'bg-inverse-info'">Sent <br> </span>
+
+                                                <span class="badge bg-inverse-success" *ngIf="il.dueDate<today&&!(il.paidAmount>0 && il.paidAmount==il.grandTotal)"
+                                                    [ngClass]="'badge ' +'bg-inverse-danger'">Sent <br>
+                                                    OverDue</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a [routerLink]="baseRoute+'/accounts/invoices'">View all invoices</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex">
+                <div class="card card-table flex-fill">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Payments</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table custom-table table-nowrap mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice ID</th>
+                                        <th>Client</th>
+                                        <th>Payment Type</th>
+                                        <th>LastPaid Date</th>
+                                        <th>Paid Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let ipl of invoicePayments;let i =index">
+                                        <td><a [routerLink]="'/dollop/accounts/invoices_view/'+ipl.invoiceId.id">#INV-000{{i+1}}
+                                            </a></td>
+                                        <td>
+                                            <h2><a href="#">{{ipl.invoiceId.clientId.companyName}}</a></h2>
+                                              </td>
+
+                                        <td><i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (ipl.status=='Approved'?'text-success':'text-danger')">{{ipl.status}}</i>
+                                        </td>
+                                        <td>{{ipl.paymentDate}}</td>
+                                        <td>{{ipl.amount}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a [routerLink]="baseRoute+'/accounts/payments'">View all payments</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 d-flex">
+                <div class="card card-table flex-fill">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Clients</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table custom-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th class="text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let client of clientsList">
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                <a href="#" class="avatar"><img alt=""
+                                                        [src]="client.profileName"></a>
+                                                <a [routerLink]="baseRoute+'/clients/client_view/'+client.id">{{client.firstName}}{{client.lastName}}
+                                                    </a>
+                                            </h2>
+                                        </td>
+                                        <td>{{client.website}}</td>
+                                        <td>
+                                            <div class="dropdown action-label">
+                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#"
+                                                    data-toggle="dropdown" aria-expanded="false">
+                                                    <i
+                                                        [ngClass]="'fa fa-dot-circle-o ' + (client.status=='Active'?'text-success':'text-danger')">{{client.status}}</i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item"
+                                                        (click)="updateClientStatus(client.id,'Active')"><i
+                                                            class="fa fa-dot-circle-o text-success"></i> Active</a>
+                                                    <a class="dropdown-item"
+                                                        (click)="updateClientStatus(client.id,'InActive')"><i
+                                                            class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                                    aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" [routerLink]="baseRoute+'/clients'"><i
+                                                            class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item"
+                                                        (click)="deleteClientOrProjet(client.id,'client')"><i
+                                                            class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a [routerLink]="baseRoute+'/clients'">View all clients</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex">
+                <div class="card card-table flex-fill">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Recent Projects</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table custom-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Project Name </th>
+                                        <th>Progress</th>
+                                        <th class="text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let pl of projectsList">
+                                        <td>
+                                            <h2><a
+                                                    [routerLink]="'/dollop/projects/projects_view/'+pl.id">{{pl.title}}</a>
+                                            </h2>
+                                            <small class="block text-ellipsis">
+                                                <span class="text-xs">{{pl.completedTask}}</span> <span class="text-muted">open tasks, </span>
+                                                <span class="text-xs">{{pl.leftTask}}</span> <span class="text-muted">tasks completed</span>
+                                          </small>
+                                        </td>
+                                        <td>
+                                            <div class="progress progress-xs progress-striped">
+                                                <div class="progress-bar" role="progressbar" data-toggle="tooltip"
+                                                    title="65%" style="width: 65%"></div>
+                                            </div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                                    aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item"
+                                                        [routerLink]="'/dollop/projects/projects_view/'+pl.id"><i
+                                                            class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item"
+                                                        (click)="deleteClientOrProjet(pl.id,'project')"><i
+                                                            class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a [routerLink]="baseRoute+'/projects/projects'">View all projects</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /Page Content -->
+
+</div>
+<!-- /Page Wrapper -->
+
+
+<!-- /Main Wrapper -->

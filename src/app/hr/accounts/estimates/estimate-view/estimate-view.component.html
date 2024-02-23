@@ -1,0 +1,147 @@
+	
+			<!-- Page Wrapper -->
+            <div class="page-wrapper" *ngIf="permissions.isReadable">
+			
+				<!-- Page Content -->
+                <div class="content container-fluid">
+				
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row align-items-center">
+							<div class="col">
+								<h3 class="page-title">Estimate</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+									<li class="breadcrumb-item active">Estimate</li>
+								</ul>
+							</div>
+							<div class="col-auto float-right ml-auto">
+								<div class="btn-group btn-group-sm">
+									<button class="btn btn-white" (click)="exportToCSV()">CSV</button>
+									<button class="btn btn-white" (click)="generatePDF()">PDF</button>
+									<button class="btn btn-white"><i class="fa fa-print fa-lg"></i> Print</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+					
+					<div class="row"  #content>
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-sm-6 m-b-20">
+											<img src="assets/img/logo2.png" class="inv-logo" alt="">
+				 							<ul class="list-unstyled">
+												<li>Dollop Infotech pvt,Ltd</li>
+												<li>Indore (Madhya Pradesh),</li>
+												<li>Kamal Gupta, CA, 42001</li>
+												<li>GST No:XXXXXXXX1212</li>
+											</ul>
+										</div>
+										<div class="col-sm-6 m-b-20">
+											<div class="invoice-details">
+												<h3 class="text-uppercase">Estimate {{estimate.id}}</h3>
+												<ul class="list-unstyled">
+													<li>Date: <span>{{estimate.billDate}} </span></li>
+													<li>Due date: <span>{{estimate.dueDate}}</span></li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-6 col-lg-7 col-xl-8 m-b-20">
+											<h5>Invoice to:</h5>
+				 							<ul class="list-unstyled">
+												<li><h5><strong>{{estimate.clientId.firstName}}  {{estimate.clientId.lastName}}</strong></h5></li>
+												<li><span>{{estimate.clientId.companyName}}</span></li>
+												<li>5754 Airport Rd</li>
+												<li>Coosada, AL, 36020</li>
+												<li>United States</li>
+												<li>888-777-6655</li>
+												<li><a href="#">{{estimate.clientId.email}}</a></li>
+											</ul>
+										</div>
+										<div class="col-sm-6 col-lg-5 col-xl-4 m-b-20">
+											<span class="text-muted">Payment Details:</span>
+											<ul class="list-unstyled invoice-payment-details">
+												<li><h5>Total Due: <span class="text-right">$8,750</span></h5></li>
+												<li>Bank name: <span>Profit Bank Europe</span></li>
+												<li>Country: <span>United Kingdom</span></li>
+												<li>City: <span>London E1 8BF</span></li>
+												<li>Address: <span>3 Goodman Street</span></li>
+												<li>IBAN: <span>KFH37784028476740</span></li>
+												<li>SWIFT code: <span>BPT4E</span></li>
+											</ul>
+										</div>
+									</div>
+									<div class="table-responsive">
+										<table class="table table-striped table-hover">
+											<thead>
+												<tr>
+													<th>#</th>
+													<th>ITEM</th>
+													<th class="d-none d-sm-table-cell">DESCRIPTION</th>
+													<th>UNIT COST</th>
+													<th>QUANTITY</th>
+													<th class="text-right">TOTAL</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr *ngFor="let invoiveItem of estimateItemList; let i = index">
+													<td>{{i+1}}</td>
+													<td>{{invoiveItem.title}}</td>
+													<td class="d-none d-sm-table-cell">{{invoiveItem.description}}</td>
+													<td>Rs: {{invoiveItem.unitCost}}</td>
+													<td>{{invoiveItem.quantity}}</td>
+													<td class="text-right">Rs: {{invoiveItem.total}}</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div>
+										<div class="row invoice-payment">
+											<div class="col-sm-7">
+											</div>
+											<div class="col-sm-5">
+												<div class="m-b-20">
+													<div class="table-responsive no-border">
+														<table class="table mb-0">
+															<tbody>
+																<tr>
+																	<th>Subtotal:</th>
+																	<td class="text-right">Rs : {{estimate.total}}</td>
+																</tr>
+																<tr>
+																	<th>Tax: <span class="text-regular">({{estimate.taxeId.percentage}}%)</span></th>
+																	<td class="text-right">Rs : {{estimate.taxCost}}</td>
+																</tr>
+																<tr>
+																	<th>Discount: <span class="text-regular">({{estimate.discountPercentage}}%)</span></th>
+																	<td class="text-right">Rs : {{estimate.discount}}</td>
+																</tr>
+																<tr>
+																	<th>Total:</th>
+																	<td class="text-right text-primary"><h5>Rs : {{estimate.grandTotal}}</h5></td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="estimate-info">
+											<h5>Other information</h5>
+											<p class="text-muted">{{estimate.note}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+				<!-- /Page Content -->
+				
+            </div>
+			<!-- /Page Wrapper -->

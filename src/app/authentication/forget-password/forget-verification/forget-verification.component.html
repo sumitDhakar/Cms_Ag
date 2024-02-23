@@ -1,0 +1,68 @@
+	<!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <div class="account-content">
+            <a href="job-list.html" class="btn btn-primary apply-btn">Apply Job</a>
+            <div class="container">
+            
+                <!-- Account Logo -->
+                <div class="account-logo">
+                    <a href="index.html"><img src="assets/img/logo2.png" alt="Dreamguy's Technologies"></a>
+                </div>
+                <!-- /Account Logo -->
+                
+                <div class="account-box">
+                    <div class="account-wrapper">
+                        <h3 class="account-title">OTP</h3>
+                        <p class="account-subtitle">Enter New Password ?</p>
+                        
+                        <!-- Account Form -->
+                        <form  [formGroup]="myForm" (ngSubmit)="changeForgetPassword()" >
+                          
+                            <div class="form-group">
+                                <label>New password</label>
+                                <input type="password" class="form-control" formControlName="password" name="password"
+                                    [(ngModel)]="auth.password">
+                            </div>
+                            <div class="text-danger"
+                                *ngIf="(myForm.get('password')?.touched ) && (myForm.get('password')?.hasError('pattern')&&myForm.get('password')?.hasError('minlength'))">
+                                password Should Contain UpperCase And LowerCase With Numbers.
+                            </div>
+                            <div class="text-danger"
+                                *ngIf="(myForm.get('password')?.touched ) && myForm.get('password')?.hasError('minlength')">
+                                password Length Must Be More Than 7.
+                            </div>
+                            <div class="text-danger"
+                                *ngIf="(myForm.get('password')?.touched ) && myForm.get('password')?.hasError('required')">
+                                password Is Required.
+                            </div>
+        
+                            <div class="form-group">
+                                <label>Confirm password</label>
+                                <input type="password" class="form-control" formControlName="confirmPassword" name="confirmPassword"
+                                    [(ngModel)]="confirmPassword">
+                            </div>
+                            <div class="text-danger"
+                                *ngIf="(myForm.get('confirmPassword')?.touched && !myForm.get('password')?.hasError('minlength')) && myForm.get('confirmPassword')?.hasError('required')">
+                                confirmPassword Is Required.
+                            </div>
+                            <div class="text-danger"
+                                *ngIf="(myForm.get('confirmPassword')?.touched &&!myForm.get('password')?.hasError('minlength')) && myForm?.hasError('passwordMatch')">
+                                Password and confirmPassword Must Be Same.
+                            </div>
+        
+                            <div class="form-group text-center">
+                                <button class="btn btn-primary account-btn"  type="submit">Enter</button>
+                            </div>
+                            <div class="account-footer">
+                                <p>go to login? <a style="cursor: pointer; color: rgb(255, 142, 35);" routerLink="/login">login</a></p>
+                            </div>
+                        </form>
+                        <!-- /Account Form -->
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Main Wrapper -->
+    

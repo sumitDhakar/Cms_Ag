@@ -1,0 +1,369 @@
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Timesheet</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Timesheet</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a href="#" *ngIf="permissions.isWriteable" (click)="addForm()" class="btn add-btn"
+                        data-toggle="modal" data-target="#add_todaywork"><i class="fa fa-plus"></i> Add Today Work</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+        [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+        [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+        [pageIndex]="pageIndex" aria-label="Select page">
+       </mat-paginator>
+   
+        <div class="row">
+            <div class="col-md-12" *ngIf="permissions.isReadable">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Date</th>
+                                <th>Projects</th>
+                                <th class="text-center">Assigned Hours</th>
+                                <th class="text-center">Hours</th>
+                                <th class="d-none d-sm-table-cell">Description</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let ts of timeSheets">
+
+                                <td>
+                                    <h2 class="table-avatar blue-link">
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+ts.user.id"
+                                            class="avatar"><img alt="" [src]="ts.user.profileName"></a>
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+ts.user.id">{{ts.user.firstName
+                                            }}{{ts.user.lastName}}</a>
+                                    </h2>
+                                </td>
+
+                                <td>{{ts.timeSheetDate}}</td>
+                                <td>
+                                    {{ts.projectId.title}}
+                                </td>
+                                <td class="text-center">{{ts.taskId.assignedHours}}</td>
+                                <td class="text-center">{{ts.hours}}</td>
+                                <td>{{ts.description}}</td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" (click)="deleteTimeSheet(ts.id)"
+                                                *ngIf="permissions.isDeleteable" data-toggle="modal"
+                                                data-target="#delete_workdetail"><i class="fa fa-trash-o m-r-5"></i>
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Today Work Modal -->
+    <div id="add_todaywork" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isWriteable">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Today Work details</h5>
+                    <button type="button" class="close" id="add" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" (ngSubmit)="addTimeSheets()">
+
+                        <!-- <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label>Select client: <span class="text-danger">*</span></label>
+                                <select (ngModelChange)="optionSelected(inp)" #inp [(ngModel)]="client.id" name="id">
+                                    <option *ngFor="let item of clients" [value]="item.id">{{ item.companyName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div> -->
+
+
+
+
+
+
+
+                        <div class="row">
+                            <div class="col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <label>Select Project <span class="text-danger">*</span></label>
+                                    <select class="form-control" (change)="onProjectSelect(inp)" #inp
+                                        formControlName="projectId" [(ngModel)]="project.id" name="id">
+                                        <option>Select Project</option>
+                                        <option *ngFor="let item of projects" [value]="item.id">{{ item.title }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('projectId')?.touched ) && myForm.get('projectId')?.hasError('required')">
+                                        Project Is Required.
+                                    </span>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <div class="col-sm-6 col-md-6" *ngIf="this.tasksList.length>0">
+                                <div class="form-group">
+                                    <label>Select tasks <span class="text-danger">*</span></label>
+                                    <select class="form-control" (ngModelChange)="onTaskSelect(inp)" #inp 
+                                        formControlName="taskId" [(ngModel)]="task.id" name="id">
+                                        <option>Select Task</option>
+                                        <option *ngFor="let item of tasksList" [value]="item.id">{{ item.title }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('taskId')?.touched ) && myForm.get('taskId')?.hasError('required')">
+                                        tasks Is Required.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="form-group col-sm-4">
+                                <label class="col-form-label">Deadline </label>
+                                <div>
+                                    <input class="form-control" type="date" name="deadline" formControlName="deadline"
+                                        readonly [(ngModel)]="task.deadline">
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('deadline')?.touched ) && myForm.get('deadline')?.hasError('required')">
+                                        End Date Is Required.
+                                    </span>
+
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label>Total Hours <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="assignedHour"
+                                    formControlName="assignedHour" readonly
+                                    [(ngModel)]="timeSheet.taskId.assignedHours">
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('assignedHour')?.touched ) && myForm.get('assignedHour')?.hasError('required')">
+                                    Total Hours Is Required.
+                                </span>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label>Remaining Hours <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="remaningHours" formControlName="remaningHours" readonly
+                                    [(ngModel)]="task.remaningHours">
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('remaningHours')?.touched ) && myForm.get('remaningHours')?.hasError('required')">
+                                End Date Is Required.
+                            </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label>Date <span class="text-danger">*</span></label>
+                                <div>
+                                    <input class="form-control" type="date"
+                                      formControlName="timeSheetDate" name="timeSheetDate" [min]="todayDate" [max]="task.deadline"
+                                        [(ngModel)]="timeSheet.timeSheetDate">
+                                    {{'hello :: '+timeSheet.timeSheetDate}}
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('timeSheetDate')?.touched ) && myForm.get('timeSheetDate')?.hasError('required')">
+                                        Date Is Required.
+                                    </span>
+                                </div>
+
+
+
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Hours <span class="text-danger">*</span></label>
+                                <input class="form-control" type="number"
+                                    (disabled)="timeSheet.taskId.remaningHours==timeSheet.hours" name="hours"
+                                    formControlName="hours" [(ngModel)]="timeSheet.hours"><span class="text-danger"
+                                    *ngIf="(myForm.get('hours')?.touched ) && myForm.get('hours')?.hasError('required')">
+                                    Hours Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('hours')?.touched ) && myForm.get('hours')?.hasError('pattern')">
+                                    Hours Is should be 1.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description <span class="text-danger">*</span></label>
+                            <textarea rows="4" class="form-control" name="description" formControlName="description"
+                                [(ngModel)]="timeSheet.description"></textarea>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('required')">
+                                description Is Required.
+                            </span>
+                        </div>
+                        <div class="submit-section">
+                            <button *ngIf="permissions.isWriteable" class="btn btn-primary submit-btn"
+                                type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Today Work Modal -->
+
+    <!-- Edit Today Work Modal -->
+    <div id="edit_todaywork" class="modal custom-modal fade" role="dialog" n *ngIf="permissions.isEditable">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Work Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+
+
+                        <div class="row">
+                            <div class="col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <label>Select Project <span class="text-danger">*</span></label>
+                                    <select class="form-control" (change)="onProjectSelect(inp)" #inp
+                                        [(ngModel)]="project.id" name="id">
+                                        <option>Select Project</option>
+                                        <option *ngFor="let item of projects" [value]="item.id">{{ item.title }}
+                                        </option>
+
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <div class="col-sm-6 col-md-6" *ngIf="this.tasksList.length>0">
+                                <div class="form-group">
+                                    <label>Select tasks <span class="text-danger">*</span></label>
+                                    <select class="form-control" (ngModelChange)="onTaskSelect(inp)" #inp
+                                        [(ngModel)]="timeSheet.taskId.id" name="id">
+                                        <option>Select Task</option>
+                                        <option *ngFor="let item of tasksList" [value]="item.id">{{ item.title }}
+                                        </option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="form-group col-sm-4">
+                                <label class="col-form-label">Deadline </label>
+                                <div>
+                                    <input class="form-control" type="date" name="deadline" readonly
+                                        [(ngModel)]="timeSheet.taskId.deadline">
+
+
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label>Total Hours <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="assignedHour" readonly
+                                    [(ngModel)]="task.assignedHours">
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label>Remaining Hours <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="remaningHours"
+                                    [(ngModel)]="task.remaningHours">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label>Date <span class="text-danger">*</span></label>
+                                <div>
+                                    <input class="form-control" type="date" name="timeSheetDate"
+                                        [(ngModel)]="timeSheet.timeSheetDate">
+                                </div>
+
+
+
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Hours <span class="text-danger">*</span></label>
+                                <input class="form-control" type="number"
+                                    (disabled)="timeSheet.taskId.remaningHours == timeSheet.hours" name="hours"
+                                    [(ngModel)]="timeSheet.hours">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description <span class="text-danger">*</span></label>
+                            <textarea rows="4" class="form-control" name="description"
+                                [(ngModel)]="timeSheet.description"></textarea>
+                        </div>
+                        <div class="submit-section">
+                            <button *ngIf="permissions.isEditable" class="btn btn-primary submit-btn"
+                                (click)="updateTimeSheet()">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Today Work Modal -->
+
+    <!-- Delete Today Work Modal -->
+    <div class="modal custom-modal fade" id="delete_workdetail" role="dialog" *ngIf="permissions.isDeleteable">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Work Details</h3>
+                        <p>Are you sure want to delete?</p>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" *ngIf="permissions.isDeleteable" data-dismiss="modal"
+                                        class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a *ngIf="permissions.isDeleteable" href="javascript:void(0);" data-dismiss="modal"
+                                        class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Delete Today Work Modal -->
+
+    </div>
+    <!-- /Page Wrapper -->

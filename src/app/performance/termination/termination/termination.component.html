@@ -1,0 +1,271 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Termination</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active">Termination</li>
+					</ul>
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a class="btn add-btn" *ngIf="permissions.isWriteable" data-toggle="modal"
+						data-target="#add_termination"><i class="fa fa-plus"></i> Add Termination</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+
+		<!---- pagination -->
+
+		<mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+			[pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+			[pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+			[pageIndex]="pageIndex" aria-label="Select page">
+		</mat-paginator>
+		<!---pagination end -->
+
+
+
+
+		<div class="row" *ngIf="permissions.isReadable">
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table mb-0 datatable">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Terminated Employee </th>
+								<th>Department</th>
+								<th>Termination Type </th>
+								<th>Termination Date </th>
+								<th>Reason</th>
+								<th>Notice Date </th>
+								<th class="text-right">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let tr of terminations let i = index">
+                                <td>{{sequence+i+1}}</td>
+								<td>
+
+									
+									<h2 class="table-avatar blue-link">
+										<a [routerLink]="['/dollop/employee/employee_profile/'+tr.employee.id]"
+											class="avatar"><img alt="" src="assets/img/profiles/avatar-02.jpg"></a>
+										<a [routerLink]="['/dollop/employee/employee_profile/'+tr.employee.id]">{{tr.employee.firstName}}
+											{{tr.employee.lastName}}</a>
+									</h2>
+								</td>
+								<td>{{tr.employee.designation.department.title}}</td>
+								<td>{{tr.terminationType.terminationType}}</td>
+								<td>{{tr.terminationDate}}</td>
+								<td>{{tr.reason}}</td>
+								<td> {{tr.noticeDate}}</td>
+
+								<td class="text-right">
+									<div class="dropdown dropdown-action">
+										<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+											aria-expanded="false"><i class="material-icons">more_vert</i></a>
+										<div class="dropdown-menu dropdown-menu-right">
+											<a class="dropdown-item" *ngIf="permissions.isEditable" href="#"
+												data-toggle="modal" (click)="setEditData(tr.id)"
+												data-target="#edit_termination"><i class="fa fa-pencil m-r-5"></i>
+												Edit</a>
+											<a class="dropdown-item" href="#" data-toggle="modal"
+												*ngIf="permissions.isDeleteable" (click)="confirm
+														(tr.id)" data-target="#delete_termination"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Content -->
+
+	<!-- Add Termination Modal -->
+	<div id="add_termination" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isWriteable">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content" *ngIf="!changePage">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Termination</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					{{termination|json}}
+					<form *ngIf="users">
+						
+						<div class="form-group">
+							<label>Resignation For <span class="text-danger">*</span></label>
+
+							<select #inp [(ngModel)]="termination.employee.id" name="id">
+								<option *ngFor="let item of users" [value]="item.id">{{ item.firstName +" "+
+									item.lastName }}</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>Termination Type <span class="text-danger">*</span></label>
+							<div class="add-group-btn">
+								<select #inp [(ngModel)]="termination.terminationType.id" name="id">
+									<option *ngFor="let item of terminationTypeS" [value]="item.id">{{
+										item.terminationType }}</option>
+								</select>
+								<a class="btn btn-primary" (click)="change()"><i class="fa fa-plus"></i> Add</a>
+							</div>
+						</div>
+						<div class="form-group">
+							<label>Termination Date <span class="text-danger">*</span></label>
+							<div class="">
+								<input class="form-control " name="terminationDate" [min]="todayDate" [max]="todayDate"
+									[(ngModel)]="termination.terminationDate" type="date">
+							</div>
+						</div>
+						<div class="form-group">
+							<label>Reason <span class="text-danger">*</span></label>
+							<textarea class="form-control" name="reason" [(ngModel)]="termination.reason"
+								rows="4"></textarea>
+						</div>
+						<div class="">
+							<label>Notice Date <span class="text-danger">*</span></label>
+							<div class="">
+								<input class="form-control " max="2024-12-31" name="noticeDate"
+									[(ngModel)]="termination.noticeDate" type="date">
+
+							</div>
+						</div>
+						<div class="submit-section">
+							<button (click)="addTermination()" data-dismiss="modal"
+								class="btn btn-primary submit-btn">Submit</button>
+						</div>
+					</form>
+
+
+				</div>
+			</div>
+			<div class="modal-content" *ngIf="changePage">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Termination Type</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label> Termination Type <span class="text-danger">*</span></label>
+							<textarea class="form-control" name="terminationType"
+								[(ngModel)]="terminationType.terminationType" rows="1"></textarea>
+						</div>
+						<div class="submit-section">
+							<button (click)="addTerminationType()" class="btn btn-primary submit-btn">Submit</button>
+						</div>
+					</form>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Add Termination Modal -->
+
+	<!-- Edit Termination Modal -->
+	<div id="edit_termination" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isEditable">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Termination</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label>Resignation For <span class="text-danger">*</span></label>
+							<input class="form-control " name="employee" [value]="termination.employee.firstName+''+termination.employee.lastName"
+								[(ngModel)]="termination.employee.firstName" readonly
+								type="text">
+
+						</div>
+						<div class="form-group">
+							<label>Termination Type <span class="text-danger">*</span></label>
+							<div class="add-group-btn">
+								<select #inp [(ngModel)]="termination.terminationType.id" name="id">
+									<option *ngFor="let item of terminationTypeS" [value]="item.id">{{
+										item.terminationType }}</option>
+								</select>
+								<a class="btn btn-primary"><i class="fa fa-plus"></i> Add</a>
+							</div>
+						</div>
+						<div class="form-group">
+							<label>Termination Date <span class="text-danger">*</span></label>
+							<div class="">
+								<input class="form-control " name="terminationDate"
+									[(ngModel)]="termination.terminationDate" type="date">
+							</div>
+						</div>
+						<div class="form-group">
+							<label>Reason <span class="text-danger">*</span></label>
+							<textarea class="form-control" name="reason" [(ngModel)]="termination.reason"
+								rows="4"></textarea>
+						</div>
+						<div class="">
+							<label>Notice Date <span class="text-danger">*</span></label>
+							<div class="">
+								<input class="form-control " max="2024-12-31" name="noticeDate"
+									[(ngModel)]="termination.noticeDate" type="date">
+
+							</div>
+						</div>
+						<div class="submit-section">
+							<button (click)="updateTermination()" data-dismiss="modal"
+								class="btn btn-primary submit-btn">Submit</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Edit Termination Modal -->
+
+	<!-- Delete Termination Modal -->
+	<div class="modal custom-modal fade" id="delete_termination" role="dialog" *ngIf="permissions.isDeleteable">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="form-header">
+						<h3>Delete Termination</h3>
+						<p>Are you sure want to delete?</p>
+					</div>
+					<div class="modal-btn delete-action">
+						<div class="row">
+							<div class="col-6">
+								<a (click)="deleteTermination()" data-dismiss="modal"
+									class="btn btn-primary continue-btn">Delete</a>
+							</div>
+							<div class="col-6">
+								<a href="javascript:void(0);" data-dismiss="modal"
+									class="btn btn-primary cancel-btn">Cancel</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Delete Termination Modal -->
+
+</div>
+<!-- /Page Wrapper -->

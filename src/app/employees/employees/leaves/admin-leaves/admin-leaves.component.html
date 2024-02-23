@@ -1,0 +1,362 @@
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Leaves</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Leaves</li>
+                    </ul>
+                </div>
+                <!-- <div class="col-auto float-right ml-auto">
+                    <a href="#" *ngIf="permissions.isWriteable" class="btn add-btn" data-toggle="modal"
+                        data-target="#add_leave"><i class="fa fa-plus"></i> Add Leave</a>
+                </div> -->
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <!-- Leave Statistics -->
+        <div class="row" *ngIf="leaveStatics">
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>Today Presents</h6>
+                    <h4>{{leaveStatics.totalPresent}} / {{leaveStatics.totalEmployee}} </h4>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>Planned Leaves</h6>
+                    <h4>{{leaveStatics.plannedLeaves}} <span>Today</span></h4>
+                </div>
+            </div>  
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>Unplanned Leaves</h6>
+                    <h4>{{leaveStatics.unplannedLeaved}} <span>Today</span></h4>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>Pending Requests</h6>
+                    <h4>{{leaveStatics.pendingRequests}} </h4>
+                </div>
+            </div>
+        </div>
+        <!-- /Leave Statistics -->
+
+        <!-- Search Filter -->
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <input type="text" class="form-control floating" name="firstName"
+                        [(ngModel)]="search.applicantId.firstName">
+                    <label class="focus-label">Employee Name</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="" name="id" [(ngModel)]="search.leaveTypeId.id">
+                        <option [value]="0"> -- Select -- </option>
+                        <option [value]="type.id" *ngFor="let type of leaveTypes">{{type.title}}</option>
+
+
+                    </select>
+                    <label class="focus-label">Leave Type</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="" name="status" [(ngModel)]="search.status">
+                        <option value=""> -- Select -- </option>
+                        <option value="Pending"> Pending </option>
+                        <option value="Approved"> Approved </option>
+                        <option value="Declined"> Declined </option>
+                    </select>
+                    <label class="focus-label">Leave Status</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="">
+                        <input class="form-control floating " type="date" name="startDate"
+                            [(ngModel)]="search.startDate">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div>
+                        <input class="form-control floating " type="date" name="endDate" [(ngModel)]="search.endDate">
+                    </div>
+                    <label class="focus-label">To</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12" *ngIf="permissions.isReadable">
+                <a (click)="searching()" class="btn btn-success btn-block"> Search </a>
+            </div>
+        </div>
+        <!-- /Search Filter -->
+
+        <!---- pagination -->
+
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+
+        <!---- listing -->
+        <div class="row">
+            <div class="col-md-12" *ngIf="permissions">
+                <div class="table-responsive" *ngIf="permissions.isReadable">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Leave Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>No of Days</th>
+                                <th>Reason</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let leaveApplication of leaveApplications">
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+leaveApplication.applicantId.id"
+                                            class="avatar"><img alt=""
+                                                [src]="leaveApplication.applicantId.profileName"></a>
+                                        <a
+                                            [routerLink]="baseRoute+'/employee/employee_profile/'+leaveApplication.applicantId.id">{{leaveApplication.applicantId.firstName
+                                            +" "+leaveApplication.applicantId.lastName
+                                            }}<span>{{leaveApplication.applicantId.jobTitle}}</span></a>
+                                    </h2>
+                                </td>
+                                <td>{{leaveApplication.leaveTypeId.title}}</td>
+                                <td>{{leaveApplication.startDate | date}}</td>
+                                <td>{{leaveApplication.endDate | date}}</td>
+                                <td>{{leaveApplication.totalHours
+                                    <1?leaveApplication.totalDays:(leaveApplication.totalHours+" hrs")}}</td>
+                                <td>{{leaveApplication.reason}}</td>
+                                <td class="text-center" *ngIf="!(leaveApplication.status == 'Approved'||leaveApplication.status == 'Declined')">
+                                    <div class="dropdown action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false">
+                                            <i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (leaveApplication.status=='Declined'?'text-danger':(leaveApplication.status=='Approved'?'text-success':(leaveApplication.status=='Pending'?'text-info':'text-purple')))"></i>{{leaveApplication.status}}
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right" *ngIf="permissions.isEditable">
+                                            <a class="dropdown-item" (click)="setStatus('Pending',leaveApplication.id)"><i class="fa fa-dot-circle-o text-info"></i> Pending</a> 
+                                            <a class="dropdown-item" (click)="setStatus('Approved',leaveApplication.id)"
+                                                data-toggle="modal" data-target="#approve_leave"><i
+                                                    class="fa fa-dot-circle-o text-success"></i> Approved</a>
+                                            <a class="dropdown-item"(click)="setStatus('Declined',leaveApplication.id)"><i class="fa fa-dot-circle-o text-danger"></i> Declined</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center" *ngIf="(leaveApplication.status=='Approved'||leaveApplication.status=='Declined')" >
+                                    <div class="action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                            <i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (leaveApplication.status=='Declined'?'text-danger':(leaveApplication.status=='Approved'?'text-success':(leaveApplication.status=='Pending'?'text-info':'text-purple')))"></i>
+                                            {{leaveApplication.status}}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <!-- <a class="dropdown-item" data-toggle="modal" data-target="#edit_leave"
+                                                *ngIf="permissions.isEditable"><i class="fa fa-pencil m-r-5"></i>
+                                                Edit</a> -->
+                                            <a class="dropdown-item" (click)="confirm(leaveApplication.id)"
+                                                *ngIf="permissions.isDeleteable" data-toggle="modal"
+                                                data-target="#delete_approve"><i class="fa fa-trash-o m-r-5"></i>
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Leave Modal -->
+    <div id="add_leave" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Leave</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Leave Type <span class="text-danger">*</span></label>
+                            <select class="select">
+                                <option>Medical Leave</option>
+                                <option>Loss of Pay</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>From <span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>To <span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of days <span class="text-danger">*</span></label>
+                            <input class="form-control" readonly type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>Remaining Leaves <span class="text-danger">*</span></label>
+                            <input class="form-control" readonly value="12" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>Leave Reason <span class="text-danger">*</span></label>
+                            <textarea rows="4" class="form-control"></textarea>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Leave Modal -->
+
+    <!-- Edit Leave Modal -->
+    <div id="edit_leave" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Leave</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Leave Type <span class="text-danger">*</span></label>
+                            <select class="select">
+                                <option>Select Leave Type</option>
+                                <option>Casual Leave 12 Days</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>From <span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" value="01-01-2019" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>To <span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" value="01-01-2019" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of days <span class="text-danger">*</span></label>
+                            <input class="form-control" readonly type="text" value="2">
+                        </div>
+                        <div class="form-group">
+                            <label>Remaining Leaves <span class="text-danger">*</span></label>
+                            <input class="form-control" readonly value="12" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>Leave Reason <span class="text-danger">*</span></label>
+                            <textarea rows="4" class="form-control">Going to hospital</textarea>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Leave Modal -->
+
+    <!-- Approve Leave Modal -->
+    <div class="modal custom-modal fade" id="approve_leave" role="dialog" *ngIf="permissions.isEditable">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Leave Approve</h3>
+                        <p>Are you sure want to approve for this leave?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a (click)="updateStatus()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Approve</a>
+                            </div>
+                            <div class="col-6">
+                                <a data-dismiss="modal" class="btn btn-primary cancel-btn">Decline</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Approve Leave Modal -->
+
+    <!-- Delete Leave Modal -->
+    <div class="modal custom-modal fade" id="delete_approve" role="dialog" *ngIf="permissions.isDeleteable">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Leave</h3>
+                        <p>Are you sure want to delete this leave?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="javascript:void(0);" (click)="deleteLeave()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Leave Modal -->
+
+</div>
+<!-- /Page Wrapper -->

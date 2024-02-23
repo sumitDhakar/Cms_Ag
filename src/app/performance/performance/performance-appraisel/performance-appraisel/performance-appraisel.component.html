@@ -1,0 +1,976 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Performance Appraisal</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Performance</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a class="btn add-btn" *ngIf="permissions.isWriteable" data-toggle="modal"
+                        data-target="#add_appraisal"><i class="fa fa-plus"></i>
+                        Add New</a>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!---- pagination -->
+
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+
+
+
+        <!-- /Page Header -->
+        <div class="row" *ngIf="permissions.isReadable">
+            <div class="col-md-12">
+                <div class="table-responsive">
+
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px;">#</th>
+                                <th>Employee</th>
+                                <th>Designation</th>
+                                <th>Department</th>
+                                <th>Appraisal Date</th>
+                                <th>Status</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let paL of performanceAppraisalList">
+                                <td>{{paL.id}} </td>
+                                <td>
+
+
+                                    <h2 class="table-avatar">
+                                        <a href="javascript:void(0);" class="avatar"><img
+                                                [src]="paL.user.profileName" alt=""></a>
+                                        <a>{{paL.user.firstName+" "+paL.user.lastName}}
+                                        </a>
+                                    </h2>
+
+
+                                </td>
+                                <td>{{paL.user.designation.title}}</td>
+                                <td>{{paL.user.designation.department.title}}</td>
+                                <td>
+                                    {{paL.createdAt}}
+                                </td>
+
+
+                                <td>
+                                    <div class="dropdown action-label">
+                                        <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false"><i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (paL.status=='Active'?'text-success':'text-danger')">
+                                                {{paL.status}} </i></a>
+                                        <div class="dropdown-menu" *ngIf="permissions.isEditable">
+                                            <a class="dropdown-item"
+                                                (click)="updateperformanceAppraisalStatus(paL.id,'Active')"><i
+                                                    class="fa fa-dot-circle-o text-success"></i> Active</a>
+                                            <a class="dropdown-item"
+                                                (click)="updateperformanceAppraisalStatus(paL.id,'InActive')"><i
+                                                    class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+                                        </div>
+                                    </div>
+
+                                </td>
+
+
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" (click)="setEditData(paL.id)" data-toggle="modal"
+                                                *ngIf="permissions.isEditable" data-target="#edit_appraisal"><i
+                                                    class="fa fa-pencil m-r-5"></i>
+                                                Edit</a>
+                                            <a class="dropdown-item" (click)="confirm(paL.id)" data-toggle="modal"
+                                                *ngIf="permissions.isDeleteable" data-target="#delete_appraisal"><i
+                                                    class="fa fa-trash-o m-r-5"></i>
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Performance Appraisal Modal -->
+    <div id="add_appraisal" class="modal custom-modal fade" *ngIf="permissions.isWriteable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Give Performance Appraisal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- {{appraisal|json}} -->
+
+                    <form [formGroup]="E" (ngSubmit)="addPerformanceAppraisal()">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Employee</label>
+                                    <select formControlName="user" (ngModelChange)="selectedEmployee(inp)" #inp
+                                        name="id" [(ngModel)]="appraisal.user.id">
+                                        <option [value]="">Select Employee</option>
+                                        <option *ngFor="let item of users" [value]="item.id"> {{item.firstName}}
+                                            {{item.lastName}} </option>
+                                    </select>
+                                    <span class="text-danger"
+                                        *ngIf="(E.get('user')?.touched ) && E.get('user')?.hasError('required')">
+                                        Employee Is Required.
+                                    </span>
+
+                                </div>
+                                <div class="form-group">
+                                    <label>Select Date <span class="text-danger">*</span></label>
+                                    <div class="cal-icon"><input name="date" [(ngModel)]="appraisal.createdAt"
+                                            formControlName="createdAt" type="date"></div>
+
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('createdAt')?.touched ) && E.get('createdAt')?.hasError('required')">
+                                    Select Date Is Required.
+                                </span>
+
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="tab-box">
+                                            <div class="row user-tabs">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
+                                                    <ul class="nav nav-tabs nav-tabs-solid">
+                                                        <li class="nav-item"><a href="#appr_technical" data-toggle="tab"
+                                                                class="nav-link active"
+                                                                (click)="manageFormValidation('technical')">Technical</a>
+                                                        </li>
+                                                        <li class="nav-item"><a href="#appr_organizational"
+                                                                data-toggle="tab" class="nav-link"
+                                                                (click)="manageFormValidation('organizational')">Organizational</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div id="appr_technical" class="pro-overview tab-pane fade show active"
+                                                *ngIf="formType=='technical'">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="bg-white">
+                                                            <table class="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th colspan="5">Technical Competencies</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th colspan="2">Indicator</th>
+                                                                        <th colspan="2">Expected Value</th>
+                                                                        <th>Set Value</th>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Customer Experience
+                                                                        </td>
+                                                                        <td colspan="2">Intermediate</td>
+                                                                        <td><select name="customerExperience"
+                                                                                formControlName="customerExperience"
+                                                                                [(ngModel)]="appraisal.customerExperience"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <span class="text-danger"
+                                                                            *ngIf="(E.get('customerExperience')?.touched ) && E.get('customerExperience')?.hasError('required')">
+                                                                            Intermediate Is Required.
+                                                                        </span>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Marketing</td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td><select name="marketing"
+                                                                                formControlName="marketing"
+                                                                                [(ngModel)]="appraisal.marketing"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td> <span class="text-danger"
+                                                                            *ngIf="(E.get('marketing')?.touched ) && E.get('marketing')?.hasError('required')">
+                                                                            Marketing Is Required.
+                                                                        </span>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Management</td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td><select name="management"
+                                                                                formControlName="management"
+                                                                                [(ngModel)]="appraisal.management"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td> <span class="text-danger"
+                                                                            *ngIf="(E.get('management')?.touched ) && E.get('management')?.hasError('required')">
+                                                                            Management Is Required.
+                                                                        </span>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Administration</td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td><select name="administration"
+                                                                                formControlName="administration"
+                                                                                [(ngModel)]="appraisal.administration"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td> <span class="text-danger"
+                                                                            *ngIf="(E.get('administration')?.touched ) && E.get('administration')?.hasError('required')">
+                                                                            Administration Is Required.
+                                                                        </span>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Presentation Skill
+                                                                        </td>
+                                                                        <td colspan="2">Expert / Leader</td>
+                                                                        <td><select name="presentationSkill"
+                                                                                formControlName="presentationSkill"
+                                                                                [(ngModel)]="appraisal.presentationSkill"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td> <span class="text-danger"
+                                                                            *ngIf="(E.get('presentationSkill')?.touched ) && E.get('presentationSkill')?.hasError('required')">
+                                                                            PresentationSkill Is Required.
+                                                                        </span>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Quality Of Work</td>
+                                                                        <td colspan="2">Expert / Leader</td>
+                                                                        <td><select name="qualityOfWork"
+                                                                                formControlName="qualityOfWork"
+                                                                                [(ngModel)]="appraisal.qualityOfWork"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td> <span class="text-danger"
+                                                                            *ngIf="(E.get('qualityOfWork')?.touched ) && E.get('qualityOfWork')?.hasError('required')">
+                                                                            QualityOfWork Is Required.
+                                                                        </span>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Efficiency</td>
+                                                                        <td colspan="2">Expert / Leader</td>
+                                                                        <td><select name="efficiency"
+                                                                                formControlName="efficiency"
+                                                                                [(ngModel)]="appraisal.efficiency"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td> <span class="text-danger"
+                                                                            *ngIf="(E.get('efficiency')?.touched ) && E.get('efficiency')?.hasError('required')">
+                                                                            Efficiency Is Required.
+                                                                        </span>
+
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="appr_organizational"
+                                                *ngIf="formType=='organizational'">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="bg-white">
+                                                            <table class="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th colspan="5">Organizational Competencies</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th colspan="2">Indicator</th>
+                                                                        <th colspan="2">Expected Value</th>
+                                                                        <th>Set Value</th>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Integrity</td>
+                                                                        <td colspan="2">Beginner</td>
+                                                                        <td>
+                                                                            <select name="integrity"
+                                                                                formControlName="integrity"
+                                                                                [(ngModel)]="appraisal.integrity"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <span class="text-danger"
+                                                                            *ngIf="(E.get('integrity')?.touched ) && E.get('integrity')?.hasError('required')">
+                                                                            Efficiency Is Required.
+                                                                        </span>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Professionalism</td>
+                                                                        <td colspan="2">Beginner</td>
+                                                                        <td>
+                                                                            <select name="professionalism"
+                                                                                formControlName="professionalism"
+                                                                                [(ngModel)]="appraisal.professionalism"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <span class="text-danger"
+                                                                            *ngIf="(E.get('professionalism')?.touched ) && E.get('professionalism')?.hasError('required')">
+                                                                            Efficiency Is Required.
+                                                                        </span>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Team Work</td>
+                                                                        <td colspan="2">Intermediate</td>
+                                                                        <td>
+                                                                            <select name="teamWork"
+                                                                                formControlName="teamWork"
+                                                                                [(ngModel)]="appraisal.teamWork"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <span class="text-danger"
+                                                                            *ngIf="(E.get('teamWork')?.touched ) && E.get('teamWork')?.hasError('required')">
+                                                                            TeamWork Is Required.
+                                                                        </span>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Critical Thinking
+                                                                        </td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td>
+                                                                            <select name="criticalThinking"
+                                                                                formControlName="criticalThinking"
+                                                                                [(ngModel)]="appraisal.criticalThinking"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <span class="text-danger"
+                                                                            *ngIf="(E.get('criticalThinking')?.touched ) && E.get('criticalThinking')?.hasError('required')">
+                                                                            Critical Thinking Is Required.
+                                                                        </span>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Conflict Management
+                                                                        </td>
+                                                                        <td colspan="2">Intermediate</td>
+                                                                        <td>
+                                                                            <select name="conflictManagement"
+                                                                                formControlName="conflictManagement"
+                                                                                [(ngModel)]="appraisal.conflictManagement"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <span class="text-danger"
+                                                                            *ngIf="(E.get('conflictManagement')?.touched ) && E.get('conflictManagement')?.hasError('required')">
+                                                                            Conflict Management Is Required.
+                                                                        </span>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Attendance</td>
+                                                                        <td colspan="2">Intermediate</td>
+                                                                        <td>
+                                                                            <select name="attendance"
+                                                                                formControlName="attendance"
+                                                                                [(ngModel)]="appraisal.attendance"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <span class="text-danger"
+                                                                            *ngIf="(E.get('attendance')?.touched ) && E.get('attendance')?.hasError('required')">
+                                                                            Attendance Is Required.
+                                                                        </span>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Ability To Meet
+                                                                            Deadline</td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td>
+                                                                            <select name="abilityToMeetDeadline"
+                                                                                formControlName="abilityToMeetDeadline"
+                                                                                [(ngModel)]="appraisal.abilityToMeetDeadline"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <span class="text-danger"
+                                                                            *ngIf="(E.get('abilityToMeetDeadline')?.touched ) && E.get('abilityToMeetDeadline')?.hasError('required')">
+                                                                            Ability To Meet Deadline Is Required.
+                                                                        </span>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn"
+                                (click)="addPerformanceAppraisal()">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Performance Appraisal Modal -->
+
+    <!-- Edit Performance Appraisal Modal -->
+    <div id="edit_appraisal" class="modal custom-modal fade" *ngIf="permissions.isEditable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Performance Appraisal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form (click)="updatePerformanceAppraisal()">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Employee</label>
+                                    <select name="id" [(ngModel)]="appraisal.user.id">
+                                        <option [value]="">Select Employee</option>
+                                        <option *ngFor="let item of users" [value]="item.id"> {{item.firstName}}
+                                            {{item.lastName}} </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Select Date <span class="text-danger">*</span></label>
+                                    <div class="cal-icon"><input name="date" [(ngModel)]="appraisal.createdAt"
+                                            type="date"></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="tab-box">
+                                            <div class="row user-tabs">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
+                                                    <ul class="nav nav-tabs nav-tabs-solid">
+                                                        <li class="nav-item"><a href="#appr_technical" data-toggle="tab"
+                                                                class="nav-link active">Technical</a></li>
+                                                        <li class="nav-item"><a href="#appr_organizational"
+                                                                data-toggle="tab" class="nav-link">Organizational</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div id="appr_technical" class="pro-overview tab-pane fade show active">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="bg-white">
+                                                            <table class="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th colspan="5">Technical Competencies</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th colspan="2">Indicator</th>
+                                                                        <th colspan="2">Expected Value</th>
+                                                                        <th>Set Value</th>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Customer Experience
+                                                                        </td>
+                                                                        <td colspan="2">Intermediate</td>
+                                                                        <td><select name="customerExperience"
+                                                                                [(ngModel)]="appraisal.customerExperience"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Marketing</td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td><select name="marketing"
+                                                                                [(ngModel)]="appraisal.marketing"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Management</td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td><select name="management"
+                                                                                [(ngModel)]="appraisal.management"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Administration</td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td><select name="administration"
+                                                                                [(ngModel)]="appraisal.administration"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Presentation Skill
+                                                                        </td>
+                                                                        <td colspan="2">Expert / Leader</td>
+                                                                        <td><select name="presentationSkill"
+                                                                                [(ngModel)]="appraisal.presentationSkill"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Quality Of Work</td>
+                                                                        <td colspan="2">Expert / Leader</td>
+                                                                        <td><select name="qualityOfWork"
+                                                                                [(ngModel)]="appraisal.qualityOfWork"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Efficiency</td>
+                                                                        <td colspan="2">Expert / Leader</td>
+                                                                        <td><select name="efficiency"
+                                                                                [(ngModel)]="appraisal.efficiency"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="appr_organizational">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="bg-white">
+                                                            <table class="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th colspan="5">Organizational Competencies</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th colspan="2">Indicator</th>
+                                                                        <th colspan="2">Expected Value</th>
+                                                                        <th>Set Value</th>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Integrity</td>
+                                                                        <td colspan="2">Beginner</td>
+                                                                        <td>
+                                                                            <select name="integrity"
+                                                                                [(ngModel)]="appraisal.integrity"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Professionalism</td>
+                                                                        <td colspan="2">Beginner</td>
+                                                                        <td>
+                                                                            <select name="professionalism"
+                                                                                [(ngModel)]="appraisal.professionalism"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Team Work</td>
+                                                                        <td colspan="2">Intermediate</td>
+                                                                        <td>
+                                                                            <select name="teamWork"
+                                                                                [(ngModel)]="appraisal.teamWork"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Critical Thinking
+                                                                        </td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td>
+                                                                            <select name="criticalThinking"
+                                                                                [(ngModel)]="appraisal.criticalThinking"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Conflict Management
+                                                                        </td>
+                                                                        <td colspan="2">Intermediate</td>
+                                                                        <td>
+                                                                            <select name="conflictManagement"
+                                                                                [(ngModel)]="appraisal.conflictManagement"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Attendance</td>
+                                                                        <td colspan="2">Intermediate</td>
+                                                                        <td>
+                                                                            <select name="attendance"
+                                                                                [(ngModel)]="appraisal.attendance"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row" colspan="2">Ability To Meet
+                                                                            Deadline</td>
+                                                                        <td colspan="2">Advanced</td>
+                                                                        <td>
+                                                                            <select name="abilityToMeetDeadline"
+                                                                                [(ngModel)]="appraisal.abilityToMeetDeadline"
+                                                                                class="form-control">
+                                                                                <option [value]="">None</option>
+                                                                                <option value="Beginner"> Beginner
+                                                                                </option>
+                                                                                <option value="Intermediate">
+                                                                                    Intermediate</option>
+                                                                                <option value="Advanced"> Advanced
+                                                                                </option>
+                                                                                <option value="Expert"> Expert / Leader
+                                                                                </option>
+                                                                            </select>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Status</label>
+                                    <select class="select" name="status" [(ngModel)]="appraisal.status">
+                                        <option>Active</option>
+                                        <option>Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Performance Appraisal Modal -->
+
+    <!-- Delete Performance Appraisal Modal -->
+    <div class="modal custom-modal fade" id="delete_appraisal" *ngIf="permissions.isDeleteable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Performance Appraisal List</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a (click)="deletePerformanceAppraisal()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Performance Appraisal Modal -->
+
+</div>
+<!-- /Page Wrapper -->

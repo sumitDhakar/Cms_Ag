@@ -1,0 +1,247 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row">
+				<div class="col-sm-12">
+					<h3 class="page-title">Job Details</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active">Job Details</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+		<!-- <h1>{{manageJob.id}}</h1> -->
+		<div class="row">
+			<div class="col-md-8">
+				<div class="job-info job-widget">
+					<h3 class="job-title">{{manageJob.jobTitle.title}}</h3>
+					<span class="job-dept">{{manageJob.department.title}} </span>
+					<ul class="job-post-det">
+						<li><i class="fa fa-calendar"></i> Post Date: <span class="text-blue">{{manageJob.startDate}}
+							</span></li>
+						<li><i class="fa fa-calendar"></i> Last Date: <span class="text-blue">{{manageJob.expiredDate}}
+							</span></li>
+						<li><i class="fa fa-user-o"></i> Applications: <span class="text-blue">{{manageJob.totalAppliedCandidates}}</span></li>
+						<li><i class="fa fa-eye"></i> Views: <span class="text-blue">{{manageJob.noOfViews}}</span></li>
+					</ul>
+				</div>
+				<div class="job-content job-widget">
+					<!-- <div class="job-desc-title"><h4>Job Description</h4></div> -->
+					<!-- <div class="job-description">
+									<p>{{manageJob.description}} </p>
+								</div> -->
+					<div class="job-desc-title">
+						<h4>Job Description</h4>
+					</div>
+					<div class="job-description">
+						<!-- <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p> -->
+						<ul class="square-list">
+							<li>{{manageJob.description}}</li>
+							<!-- <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li> -->
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="job-det-info job-widget">
+					<a class="btn job-btn" (click)="editData()" data-toggle="modal" data-target="#edit_job">Edit</a>
+					<div class="info-list">
+						<span><i class="fa fa-bar-chart"></i></span>
+						<h5>{{manageJob.jobType}}</h5>
+						<p> {{manageJob.status}} </p>
+					</div>
+					<div class="info-list">
+						<span><i class="fa fa-money"></i></span>
+						<h5>Salary</h5>
+						<p>${{manageJob.salaryFrom }} - ${{manageJob.salaryTo }}</p>
+					</div>
+					<div class="info-list">
+						<span><i class="fa fa-suitcase"></i></span>
+						<h5>Experience</h5>
+						<p>${{manageJob.experience }} Years</p>
+					</div>
+					<div class="info-list">
+						<span><i class="fa fa-ticket"></i></span>
+						<h5>Vacancy</h5>
+						<p>{{manageJob.noOfVacancies}} </p>
+					</div>
+					<div class="info-list">
+						<span><i class="fa fa-map-signs"></i></span>
+						<h5>Location</h5>
+						<p> {{manageJob.jobLocation }}</p>
+					</div>
+					<div class="info-list">
+						<p class="text-truncate"> 818-978-7102
+							<br> <a href="mailto:danielporter@example.com"
+								title="danielporter@example.com">danielporterexample.com</a>
+							<br> <a href="../../../index.htm" target="_blank"
+								title="https://www.example.com">https://www.example.com</a>
+						</p>
+					</div>
+					<div class="info-list text-center">
+						<a class="app-ends" href="#">Application ends on {{manageJob.expiredDate}}</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Content -->
+
+	<!-- Edit Job Modal -->
+	<div id="edit_job" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Job</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Department</label>
+									<select (ngModelChange)="optionSelected(inp)" #inp name="department"
+										[(ngModel)]="manageJob.department.id">
+
+										<option value="0">Select</option>
+										<option *ngFor="let item of departments" [value]="item.id">{{ item.title }}
+										</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Job Title</label>
+									<select name="jobTitle" [(ngModel)]="manageJob.jobTitle.id">
+										<option value="0">Select</option>
+										<option *ngFor="let item of designations" [value]="item.id">{{ item.title }}
+										</option>
+									</select>
+								</div>
+							</div>
+
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Job Location</label>
+									<input class="form-control" name="jobLocation" [(ngModel)]="manageJob.jobLocation"
+										type="text">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>No of Vacancies</label>
+									<input class="form-control" name="noOfVacancies"
+										[(ngModel)]="manageJob.noOfVacancies" type="text">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Experience</label>
+									<input class="form-control" name="experience" [(ngModel)]="manageJob.experience"
+										type="text">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Age</label>
+									<input class="form-control" name="age" [(ngModel)]="manageJob.age" type="text">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Salary From</label>
+									<input type="text" name="salaryFrom" [(ngModel)]="manageJob.salaryFrom"
+										class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Salary To</label>
+									<input type="text" name="salaryTo" [(ngModel)]="manageJob.salaryTo"
+										class="form-control">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Job Type</label>
+									<select name="jobType" [(ngModel)]="manageJob.jobType">
+										<option>Full Time</option>
+										<option>Part Time</option>
+										<option>Internship</option>
+										<option>Temporary</option>
+										<option>Remote</option>
+										<option>Others</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Status</label>
+									<select name="status" [(ngModel)]="manageJob.status">
+										<option>Open</option>
+										<option>Closed</option>
+										<option>Cancelled</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Start Date</label>
+									<!-- <input name="startDate" [(ngModel)]="manageJob.startDate" type="text" class="form-control datetimepicker"> -->
+									<input class="form-control " max="2024-12-31" name="startDate"
+										[(ngModel)]="manageJob.startDate" type="date">
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Expired Date</label>
+									<input class="form-control " max="2024-12-31" name="expiredDate"
+										[(ngModel)]="manageJob.expiredDate" type="date">
+									<!-- <input name="expiredDate" [(ngModel)]="manageJob.expiredDate" type="text" class="form-control datetimepicker"> -->
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label>Description</label>
+									<textarea name="description" [(ngModel)]="manageJob.description"
+										class="form-control"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="submit-section">
+							<button (click)="updateManageJobs()" data-dismiss="modal"
+								class="btn btn-primary submit-btn">Submit</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Edit Job Modal -->
+</div>
+<!-- /Page Wrapper -->

@@ -1,0 +1,982 @@
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-inner slimscroll">
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a [routerLink]="baseRoute"><i class="la la-home"></i> <span>Back to Home</span></a>
+                </li>
+                <li class="menu-title">Add Projects <a routerLink="/dollop/projects/projects"><i
+                            class="fa fa-plus"></i></a></li>
+                <li *ngFor="let p of projects">
+                    <a [routerLink]="baseRoute+'/projects/tasks/'+p.id"><i class="la la-list"></i>
+                        <span>{{p.title}}</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- /Sidebar -->
+<div class="page-wrapper" style="min-height: 657px;">
+    <div class="chat-main-row" >
+        <div class="chat-main-wrapper">
+            <div class="col-lg-7 message-view task-view task-left-sidebar">
+                <div class="chat-window">
+                    <div class="fixed-header">
+                        <div class="navbar">
+                            <div class="float-left mr-auto">
+                                <div class="add-task-btn-wrapper"(click)="addForm()" data-toggle="modal" data-target="#create_project">
+                                    <span class="add-task-btn btn btn-white btn-sm visible">
+                                        Add Task
+                                    </span>
+                                </div>
+                            </div>
+                            <a class="task-chat profile-rightbar float-right" id="task_chat" href="#task_window"><i
+                                    class="fa fa fa-comment"></i></a>
+                            <ul class="nav float-right custom-menu">
+                                <li class="nav-item dropdown dropdown-action">
+                                    <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i
+                                            class="fa fa-cog"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="javascript:void(0)"
+                                            (click)="getAllTaskByProjectIdAndStatus('Todo')">Pending Tasks</a>
+                                        <a class="dropdown-item" href="javascript: void(0)"
+                                            (click)="getAllTaskByProjectIdAndStatus('Completed')">Completed Tasks</a>
+                                        <a class="dropdown-item" href="javascript:void(0)"
+                                            (click)="getAllTaskByProjectId()">All Tasks</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="chat-contents">
+                        <div class="chat-content-wrap">
+                            <div class="chat-wrap-inner">
+                                <div class="chat-box">
+                                    <div class="task-wrapper">
+                                        <div class="task-list-container">
+                                            <div class="task-list-body" *ngIf="permissions.isReadable">
+                                                <ul id="task-list" *ngIf="tasks.length === 0">
+
+                                                    <li class="task">
+                                                        <div class="task-container">
+                                                            <h3>
+                                                                No Task Present Add Task First!!
+                                                            </h3>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+
+                                                <ul id="task-list" *ngIf="tasks.length > 0">
+
+                                                    <li class="task" *ngFor="let t of tasks">
+                                                        <div class="task-container">
+                                                            <span class="task-action-btn task-check">
+                                                                <span class="action-circle large complete-btn"
+                                                                    class="badge bg-inverse-success"
+                                                                    [ngClass]="'badge ' + (t.status=='Todo'?'bg-inverse-warning':'bg-inverse-info')"
+                                                                    title="Mark Complete" (click)="updateTaskStatus(t)">
+                                                                    <i class="material-icons">check</i>
+                                                                </span>
+                                                            </span>
+                                                            <a href="javascript:void(0);"
+                                                                (click)="viewTaskDetailsAndComments(t.id)">
+                                                                <span class="task-label"
+                                                                    contenteditable="false">{{t.title}}</span></a>
+                                                            <span class="task-action-btn task-btn-right">
+                                                                <span class="action-circle large" title="Assign"
+                                                                    data-toggle="modal" data-target="#assignee">
+                                                                    <i class="material-icons">person_add</i>
+                                                                </span>
+                                                                <span class="action-circle large delete-btn"
+                                                                    title="Delete Task" data-toggle="modal"
+                                                                    (click)="deleteTask(t.id)" data-target="#">
+                                                                    <i class="material-icons">delete</i>
+                                                                </span>
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                         </div>
+                                    </div>
+                                    <div class="notification-popup hide">
+                                        <p>
+                                            <span class="task"></span>
+                                            <span class="notification-text"></span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 message-view task-chat-view task-right-sidebar"  *ngIf="taskDetails.id!=0&&tasks.length!=0" id="task_window">
+                <div class="chat-window">
+                    <div class="fixed-header">
+                        <div class="navbar">
+                            <div class="task-assign">
+                                <a class="task-complete-btn" id="task_complete" href="javascript:void(0);">
+                                    <i class="material-icons">check</i> Mark Complete
+                                </a>
+                            </div>
+                            <ul class="nav float-right custom-menu">
+                                <li class="dropdown dropdown-action">
+                                    <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i
+                                            class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" *ngIf="permissions.isDeleteable"
+                                            (click)="deleteTask(taskDetails.id)" href="javascript:void(0)">Delete
+                                            Task</a>
+                                        <a class="dropdown-item" href="javascript:void(0)">Settings</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="chat-contents task-chat-contents" *ngIf="taskDetails" >
+                        <div class="chat-content-wrap">
+                            <div class="chat-wrap-inner">
+                                <div class="chat-box">
+                                    <div class="chats">
+                                        <h4>{{taskDetails.title}} Phase 1</h4>
+                                        <div class="task-header">
+                                            <div class="assignee-info">
+                                                <a href="#" data-toggle="modal" 
+                                                    *ngFor="let member of taskDetails.taskMembers;let i =index">
+                                                    <div class="avatar" *ngIf="member.isLeader">
+                                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+member.members.id"
+                                                            data-toggle="tooltip" class="avatar" title="John Doe"><img
+                                                                alt="" [src]="member.members.profileName"></a>
+                                                    </div>
+                                                    <div class="assigned-info" *ngIf="member.isLeader">
+                                                        <div class="task-head-title">Assigned To</div>
+                                                        <div>
+                                                            <div class="task-assignee">
+                                                                {{member.members.firstName}} {{member.members.lastName}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                                <!-- <span class="remove-icon">
+                                                    <i class="fa fa-close"></i>
+                                                </span> -->
+                                            </div>
+                                            <div class="task-due-date">
+                                                <a href="#" data-toggle="modal" >
+                                                    <div class="due-icon">
+                                                        <span>
+                                                            <i class="material-icons">date_range</i>
+                                                        </span>
+                                                    </div>
+                                                    <div class="due-info">
+                                                        <div class="task-head-title">Due Date</div>
+                                                        <div class="due-date">
+                                                            {{taskDetails.deadline|date:'dd-MMM-yyyy'}}</div>
+                                                    </div>
+                                                </a>
+                                                <!-- <span class="remove-icon">
+                                                    <i class="fa fa-close"></i>
+                                                </span> -->
+                                            </div>
+                                        </div>
+                                        <hr class="task-line">
+                                        <div class="task-desc">
+                                            <div class="task-desc-icon">
+                                                <i class="material-icons">subject</i>
+                                            </div>
+                                            <div class="task-textarea">
+                                                <textarea class="form-control" placeholder="Description"></textarea>
+                                            </div>
+                                        </div>
+                                        <hr class="task-line">
+                                        <!-- <div class="task-information">
+                                            <span class="task-info-line"><a class="task-user" href="#">Lesley Grauer</a>
+                                                <span class="task-info-subject">created task</span></span>
+                                            <div class="task-time">Jan 20, 2019</div>
+                                        </div>
+                                        <div class="task-information">
+                                            <span class="task-info-line"><a class="task-user" href="#">Lesley Grauer</a>
+                                                <span class="task-info-subject">added to Hospital
+                                                    Administration</span></span>
+                                            <div class="task-time">Jan 20, 2019</div>
+                                        </div>
+                                        <div class="task-information">
+                                            <span class="task-info-line"><a class="task-user" href="#">Lesley Grauer</a>
+                                                <span class="task-info-subject">assigned to John Doe</span></span>
+                                            <div class="task-time">Jan 20, 2019</div>
+                                        </div>
+                                        <hr class="task-line">
+                                        <div class="task-information">
+                                            <span class="task-info-line"><a class="task-user" href="#">John Doe</a>
+                                                <span class="task-info-subject">changed the due date to Sep 28</span>
+                                            </span>
+                                            <div class="task-time">9:09pm</div>
+                                        </div>
+                                        <div class="task-information">
+                                            <span class="task-info-line"><a class="task-user" href="#">John Doe</a>
+                                                <span class="task-info-subject">assigned to you</span></span>
+                                            <div class="task-time">9:10pm</div>
+                                        </div> -->
+                                        <!-- <div class="chat chat-left">
+                                            <div class="chat-avatar">
+                                                <a href="profile.html" class="avatar">
+                                                    <img alt="" src="assets/img/profiles/avatar-02.jpg">
+                                                </a>
+                                            </div>
+                                            <div class="chat-body">
+                                                <div class="chat-bubble">
+                                                    <div class="chat-content">
+                                                        <span class="task-chat-user">John Doe</span> <span
+                                                            class="chat-time">8:35 am</span>
+                                                        <p>I'm just looking around.</p>
+                                                        <p>Will you tell me something about yourself? </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        <div class="completed-task-msg"><span class="task-success"><a href="#">John
+                                                    Doe</a> completed this task.</span> <span class="task-time">Today at
+                                                9:27am</span></div>
+                                        <div class="chat chat-left" *ngFor="let comment of projectComments">
+                                            <!-- <div class="chat-avatar">
+                                                <a href="profile.html" class="avatar">
+                                                    <img alt="" src="assets/img/profiles/avatar-02.jpg">
+                                                </a>
+                                            </div> -->
+                                            <div class="chat-body">
+                                                <div class="chat-bubble">
+                                                    <div class="chat-content">
+                                                        <span *ngIf="comment.createdBy.firstName"
+                                                            class="task-chat-user">{{comment.createdBy.firstName}}</span>
+                                                        <span *ngIf="comment.fileId" class="file-attached"> attached
+                                                            {{comment.fileId.length}} files</span> <span
+                                                            class="chat-time">{{comment.createdAt | date:'dd-MM-yyyy
+                                                            hh:mm:ss a' }}</span>
+                                                        <p>{{comment.description}}</p>
+
+                                                        <ul class="attach-list" *ngIf="comment.fileId">
+                                                            <li *ngFor="let file of comment.fileId"
+                                                                (click)="download(file.id,file.originalName)"><i
+                                                                    class="fa fa-file"></i> <a>{{file.originalName}}</a>
+                                                            </li>
+                                                            <!-- <li><i class="fa fa-file"></i> <a
+                                                                    href="#">video_conferencing.psd</a></li>
+                                                            <li><i class="fa fa-file"></i> <a
+                                                                    href="#">landing_page.psd</a></li> -->
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="chat chat-left">
+                                            <div class="chat-avatar">
+                                                <a href="profile.html" class="avatar">
+                                                    <img alt="" src="assets/img/profiles/avatar-16.jpg">
+                                                </a>
+                                            </div>
+                                            <div class="chat-body">
+                                                <div class="chat-bubble">
+                                                    <div class="chat-content">
+                                                        <span class="task-chat-user">Jeffery Lalor</span> <span
+                                                            class="file-attached">attached file <i
+                                                                class="fa fa-paperclip"></i></span> <span
+                                                            class="chat-time">Yesterday at 9:16pm</span>
+                                                        <ul class="attach-list">
+                                                            <li class="pdf-file"><i class="fa fa-file-pdf-o"></i> <a
+                                                                    href="#">Document_2016.pdf</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        <!-- <div class="chat chat-left">
+                                            <div class="chat-avatar">
+                                                <a href="profile.html" class="avatar">
+                                                    <img alt="" src="assets/img/profiles/avatar-16.jpg">
+                                                </a>
+                                            </div>
+                                            <div class="chat-body">
+                                                <div class="chat-bubble">
+                                                    <div class="chat-content">
+                                                        <span class="task-chat-user">Jeffery Lalor</span> <span
+                                                            class="file-attached">attached file <i
+                                                                class="fa fa-paperclip"></i></span> <span
+                                                            class="chat-time">Today at 12:42pm</span>
+                                                        <ul class="attach-list">
+                                                            <li class="img-file">
+                                                                <div class="attach-img-download"><a
+                                                                        href="#">avatar-1.jpg</a></div>
+                                                                <div class="task-attach-img"><img
+                                                                        src="assets/img/user.jpg" alt=""></div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        <!-- <div class="task-information">
+                                            <span class="task-info-line">
+                                                <a class="task-user" href="#">John Doe</a>
+                                                <span class="task-info-subject" >marked task as incomplete </span>
+                                            </span>
+                                            <div class="task-time">1:16pm</div>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="files">
+                        <ul class="attach-list">
+                            <li *ngFor="let file of projectComment.files"><i class="fa fa-file"></i> <a
+                                    href="#">{{file.name}}</a><i (click)="removeSelectedFile(file.name)"
+                                    class="fa fa-close"></i></li>
+                        </ul>
+                    </div>
+                    <div class="chat-footer">
+                        <div class="message-bar">
+                            <div class="message-inner">
+                                <a class="link attach-icon">
+                                    <label for="files">
+                                        <!-- <img src="assets/img/attachment.png" alt=""> -->
+                                        <input type="file" id="files" multiple (change)="selectedFile($event)"
+                                            style="display: none;">
+                                    </label>
+                                </a>
+                                <div class="message-area">
+                                    <div class="input-group">
+                                        <textarea class="form-control" [(ngModel)]="projectComment.description"
+                                            placeholder="Type message..."></textarea>
+                                        <span class="input-group-append">
+                                            <button class="btn btn-primary" type="button"
+                                                (click)="createProjectComment()"><i class="fa fa-send"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                        </div>
+
+
+                        <div class="project-members task-followers">
+                            <span class="followers-title">Followers</span>
+                            <div *ngFor="let tm of taskDetails.taskMembers;let i = index">
+                                <a *ngIf="!tm.isLeader && i<4"
+                                    [routerLink]="baseRoute+'/employee/employee_profile/'+tm.members.id"
+                                    data-toggle="tooltip" class="avatar position-relative" title="John Doe"><img alt=""
+                                        [src]="tm.members.profileName">
+                                        <button type="button" class="close " (click)="removeTaskMember(tm.id)" aria-label="Close">
+                                            <span aria-hidden="true" class="cross">&times;</span>
+                                        </button>
+                                       </a>
+                            </div>
+                            <!-- <a class="avatar" href="#" data-toggle="tooltip" title=""
+                                data-original-title="Jeffery Lalor">
+                                <img alt="" src="assets/img/profiles/avatar-16.jpg">
+                            </a> -->
+                            <a href="#" class="followers-add" data-toggle="modal" data-target="#task_followers"><i
+                                    class="material-icons">add</i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div id="create_project" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isWriteable">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Tasks</h5>
+                    <button type="button" class="close"id="add" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" (ngSubmit)="addTask()">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input class="form-control" type="text"formControlName="title" [(ngModel)]="task.title" title="title">
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('required')">
+                                    Title Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('minlength')">
+                                    Title length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('maxlength')">
+                                    Title length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('pattern')">
+                                    Title is invalid.
+                                </span>
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Related To</label>
+                                    <input class="form-control" placeholder="Select Owner" list="browsers"
+                                        name="relatedTo"formControlName="relatedTo" [(ngModel)]="task.relatedTo" />
+                                    <datalist id="browsers">
+                                        <option value="Client Project"></option>
+                                        <option value="Intern Project"></option>
+                                    </datalist>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('relatedTo')?.touched ) && myForm.get('relatedTo')?.hasError('required')">
+                                    related To Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('relatedTo')?.touched ) && myForm.get('relatedTo')?.hasError('minlength')">
+                                    related To length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('relatedTo')?.touched ) && myForm.get('relatedTo')?.hasError('maxlength')">
+                                    related To length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('relatedTo')?.touched ) && myForm.get('relatedTo')?.hasError('pattern')">
+                                    related To is invalid.
+                                </span>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <!-- <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Project</label>
+                                    <select class="form-control" [(ngModel)]="task.projectId.id" name="id">
+                                        <option value="">--SELECT--</option>
+                                        <option *ngFor="let item of projects" [value]="item.id">{{ item.title }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div> -->
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Points</label>
+                                    <input class="form-control" placeholder="Select Points" list="points" name="points"
+                                    formControlName="points"  [(ngModel)]="task.points" />
+                                    <datalist id="points">
+                                        <option value="1 Point">1 Point</option>
+                                        <option value="2 Point">2 Point</option>
+                                        <option value="3 Point">3 Point</option>
+                                        <option value="4 Point">4 Point</option>
+                                        <option value="5 Point">5 Point</option>
+                                    </datalist>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('points')?.touched ) && myForm.get('points')?.hasError('required')">
+                                    points Is Required.
+                                </span>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('minlength')">
+                                    Title length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('maxlength')">
+                                    Title length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('pattern')">
+                                    Title is invalid.
+                                </span> -->
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Assign To</label>
+                                    <select class="form-control"formControlName="members" [(ngModel)]="leader.members.id" name="id">
+                                        <option value="">--SELECT--</option>
+                                        <option *ngFor="let item of employees" [value]="item.id">{{ item.firstName +" "+
+                                            item.lastName }}</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('members')?.touched ) && myForm.get('members')?.hasError('required')">
+                                    Assign To Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('members')?.touched ) && myForm.get('members')?.hasError('minlength')">
+                                    Assign To length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('members')?.touched ) && myForm.get('members')?.hasError('maxlength')">
+                                    Assign To length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('members')?.touched ) && myForm.get('members')?.hasError('pattern')">
+                                    Assign To is invalid.
+                                </span>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <label>add Collabrators</label>
+                                    <select class="form-control"formControlName="title" (change)="selectMemberForTask(inp12.value,false)"
+                                        #inp12 name="id">
+                                        <option value="">--SELECT--</option>
+                                        <option *ngFor="let item of employees;let i= index " [value]="item.id">
+                                            {{i+1}}. {{ item.firstName +" "+
+                                            item.lastName }}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="card-body" *ngIf="collabratorList.length!=0">
+                                <h3>Employee Selected : </h3>
+                                <div class="table-responsive">
+                                    <table class="table table-striped mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Employee Email</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let u of collabratorList">
+                                                <td>{{u.members.firstName}} {{u.members.lastName}}</td>
+                                                <td>{{u.members.email}}</td>
+                                                <td (click)="removeCollaberators(u)">
+                                                    <div style="cursor: pointer !important; "><i class="fa fa-remove"
+                                                            style="font-size:18px;color:rgb(217, 60, 60)"></i></div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Status</label>
+                                    <select class="form-control" placeholder="Select status" list="status" name="status"
+                                    formControlName="status"    [(ngModel)]="task.status">
+                                        <option value="" selected>--SELECT--</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="OnHold">OnHold</option>
+                                        <option value="InProgress">InProgress</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Review">Review</option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('status')?.touched ) && myForm.get('status')?.hasError('required')">
+                                    status Is Required.
+                                </span>
+                               
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <!-- app.component.html -->
+
+                            <ckeditor [editor]="Editor" data="<p>Write Description!</p>" name="description"
+                                formControlName="description"     [(ngModel)]=task.description></ckeditor>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('required')">
+                                description Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('minlength')">
+                                description length should be greater than 3.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('maxlength')">
+                                description length should be smaller than 255.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('pattern')">
+                                description is invalid.
+                            </span>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <div>
+                                        <input class="form-control datetimepicker" type="date" 
+                                          (keydown)="false" [min]="todayDate" [max]="project.deadline"name="startDate"
+                                        formControlName="startDate"       [(ngModel)]="task.startDate">
+                                        <span class="text-danger"
+                                        *ngIf="(myForm.get('startDate')?.touched ) && myForm.get('startDate')?.hasError('required')">
+                                        start Date Is Required.
+                                    </span>
+                                    <!-- <span class="text-danger"
+                                        *ngIf="(myForm.get('startDate')?.touched ) && myForm.get('startDate')?.hasError('minlength')">
+                                        start Date length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('startDate')?.touched ) && myForm.get('startDate')?.hasError('maxlength')">
+                                        start Date length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('startDate')?.touched ) && myForm.get('startDate')?.hasError('pattern')">
+                                        Title is invalid.
+                                    </span>
+     -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <div>
+                                        <input class="form-control datetimepicker" type="date" name="deadline"
+                                        formControlName="deadline"  [min]="task.startDate"  [max]="project.deadline"  [readonly]="!task.startDate"[(ngModel)]="task.deadline">
+                                       
+                                     <span class="text-danger"
+                                        *ngIf="(myForm.get('deadline')?.touched ) && myForm.get('deadline')?.hasError('required')">
+                                        End Date Is Required.
+                                    </span>
+                                    <!-- <span class="text-danger"
+                                        *ngIf="(myForm.get('deadline')?.touched ) && myForm.get('deadline')?.hasError('minlength')">
+                                        End Date length should be greater than 3.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('deadline')?.touched ) && myForm.get('deadline')?.hasError('maxlength')">
+                                        End Date length should be smaller than 25.
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(myForm.get('deadline')?.touched ) && myForm.get('deadline')?.hasError('pattern')">
+                                        End Date is invalid.
+                                    </span>
+     -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Labels</label>
+                                    <input class="form-control" placeholder="Select Lables" name="label"
+                                        (ngModelChange)="addLabels(inp)" formControlName="label" [(ngModel)]="label" #inp list="labels" />
+                                    <datalist id="labels">
+                                        <option value="">--SELECT--</option>
+                                        <option *ngFor="let label of labels" [value]="label">{{label}}</option>
+                                    </datalist>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('label')?.touched ) && myForm.get('label')?.hasError('required')">
+                                    label Is Required.
+                                </span>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('label')?.touched ) && myForm.get('label')?.hasError('minlength')">
+                                    label length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('label')?.touched ) && myForm.get('label')?.hasError('maxlength')">
+                                    label length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('label')?.touched ) && myForm.get('label')?.hasError('pattern')">
+                                    Title is invalid.
+                                </span> -->
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" *ngIf="permissions.isWriteable"
+                               type="submit" >Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Create Task Modal -->
+
+    <!-- /Create Project Modal -->
+
+    <!-- Assignee Modal -->
+    <div id="assignee" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign to this task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group m-b-30">
+                        <input placeholder="Search to add" class="form-control search-input" name="firstName"
+                            [(ngModel)]="searchUser.firstName" type="text">
+                        <span class="input-group-append">
+                            <button class="btn btn-primary" (click)="searchEmployeeToAddCollabrators()">Search</button>
+                        </span>
+                    </div>
+                    <div>
+                        <ul class="chat-user-list">
+                            <li *ngFor="let m of employees ">
+                                <a [ngClass]="">
+                                    <div class="media" (click)="updateTaskAssignedEmployee(m)">
+                                        <span class="avatar"><img alt="" [src]="m.profileName"></span>
+                                        <div class="media-body align-self-center text-nowrap">
+                                            <div class="user-name">{{m.firstName+" "+m.lastName}}</div>
+                                            <!-- <span class="designation"
+                                                *ngIf="m.designation">{{m.designation.title}}</span> -->
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Assignee Modal -->
+
+    <!-- Delete Task Modal -->
+    <div class="modal custom-modal fade" id="delete_task" role="dialog" *ngIf="permissions.isDeleteable">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Task</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="javascript:void(0);" *ngIf="permissions.isDeleteable" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Task Modal -->
+
+
+    <!-- Create Project Modal -->
+    <div id="create_project" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input class="form-control" type="text" name="title">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Project Type</label>
+                                    <input class="form-control" placeholder="Select Type" list="project"
+                                        name="projectType" />
+                                    <datalist id="project">
+                                        <option value="Client Project"></option>
+                                        <option value="Intern Project"></option>
+                                    </datalist>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Client</label>
+                                    <input class="form-control" placeholder="Select clients" list="clients" name="id" />
+                                    <datalist id="clients">
+                                        <option></option>
+                                        <option></option>
+                                    </datalist>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Price</label>
+                                    <input placeholder="$50" class="form-control" type="text" name="price">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea rows="4" class="form-control " placeholder="Enter description here"
+                                name="description"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+
+                                    <input class="form-control " type="date" name="startDate">
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>End Date</label>
+
+                                    <input class="form-control " type="date" name="deadline">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Labels</label>
+                                    <input class="form-control" placeholder="Select clients" name="label" #inp
+                                        list="labels" />
+                                    <datalist id="labels">
+                                        <option></option>
+                                        <option>Priority</option>
+                                    </datalist>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                [ <input class="form-control" type="file">
+                                ]
+                            </div>
+                        </div>
+
+                        <h3>Files Selected : </h3>
+
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>File Name</th>
+                                            <th>Size</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td>
+                                                <div style="cursor: pointer !important; "><i class="fa fa-remove"
+                                                        style="font-size:18px;color:rgb(217, 60, 60)"></i></div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        <div class="submit-section">
+                            <button data-dismiss="modal" class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- /Create Project Modal -->
+
+
+    <!-- Task Followers Modal -->
+    <div id="task_followers" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add More collaborators to this task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group m-b-30">
+                        <input placeholder="Search to add" class="form-control search-input"
+                            [(ngModel)]="searchUser.firstName" name="firstName" type="text">
+                        <span class="input-group-append">
+                            <button class="btn btn-primary" (click)="searchEmployeeToAddCollabrators()">Search</button>
+                        </span>
+                    </div>
+                    <div>
+                        <ul class="chat-user-list">
+                            <div class="title" *ngIf="collabratorList.length!=0">
+                                <h3>Selected</h3>
+                                <li *ngFor="let m of collabratorList ">
+                                    <a [ngClass]="">
+                                        <div class="media">
+                                            <span class="avatar"><img alt=""
+                                                    [src]="m.members.profileName"></span>
+                                            <div class="media-body align-self-center text-nowrap">
+                                                <div class="user-name">{{m.members.firstName+" "+m.members.lastName}}
+                                                </div>
+                                                <span class="designation"
+                                                    *ngIf="m.members.designation">{{m.members.designation.title}}</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </div>
+                            <hr class="hr hr-blurry" />
+                            <li *ngFor="let item of employees">
+
+                                <div class="media" (click)="selectMemberForTask(item.id,false)">
+                                    <span class="avatar"><img alt="" [src]="item.profileName"></span>
+                                    <div class="media-body align-self-center text-nowrap">
+                                        <div class="user-name">{{item.firstName}} </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" (click)="addTaskMembers()">Add to Follow</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Task Followers Modal -->
+
+</div>

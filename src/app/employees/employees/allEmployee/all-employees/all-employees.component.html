@@ -1,0 +1,1197 @@
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Employee</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Employee</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto" *ngIf="permissions">
+                    <a class="btn add-btn" *ngIf="permissions.isWriteable" (click)="addForm()" data-toggle="modal"
+                        data-target="#add_employee"><i class="fa fa-plus"></i> Add Employee</a>
+                    <div class="view-icons">
+                        <a (click)="changeView(false)" class="grid-view btn btn-link active"><i
+                                class="fa fa-th"></i></a>
+                        <a (click)="changeView(true)" class="list-view btn btn-link"><i class="fa fa-bars"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <!-- Search Filter -->
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                    <input type="text" class="form-control floating" name="firstName" [(ngModel)]="searching.firstName">
+                    <label class="focus-label">Employee Name</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+             
+                <div class="form-group form-focus select-focus">
+                    <option >Designation</option>
+                    <select [(ngModel)]="searching.designation.id" name="id">
+                        <!-- <option value="0">--Select--</option> -->
+                        <option *ngFor="let item of designations" [value]="item.id">{{ item.title }}</option>
+                    </select>
+                    <!-- <label class="focus-label">Designation</label> -->
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+               <a  (click)="filter()" class="btn btn-success btn-block"> Search </a>
+            </div>
+        </div>
+        <!-- Search Filter -->
+
+        <!---- pagination -->
+
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+
+
+        <!---  Grid VIew --->
+        <div class="row staff-grid-row" *ngIf="!isListView">
+            <div class="col-md-4 col-sm-6 col-12 col-lg-4 col-xl-3" *ngFor="let employee of users">
+                <div class="profile-widget">
+                    <div class="profile-img">
+                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+employee.id" class="avatar"><img
+                                [src]="employee.profileName" alt="" class="img-fluid imagestudent"></a>
+                    </div>
+                    <div class="dropdown profile-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i
+                                class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" *ngIf="permissions.isEditable" (click)="setEditData(employee.id)" data-toggle="modal"
+                                data-target="#edit_employee"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                            <a class="dropdown-item" *ngIf="permissions.isDeleteable" (click)="confirm(employee.id)" data-toggle="modal"
+                                data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                        </div>
+                    </div>
+                    <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a
+                        [routerLink]="baseRoute+'/employee/employee_profile/'+employee.id">{{employee.firstName +" "+
+                            employee.lastName}}</a></h4>
+                    <div class="small text-muted" *ngIf="employee.designation">{{employee.designation.title}}</div>
+                </div>
+            </div>
+        </div>
+        <!---- grid View Completed -->
+
+        <!---- List View -->
+
+        <div class="row" *ngIf="isListView">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table datatable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Employee ID</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th class="text-nowrap">Join Date</th>
+                                <th>Role</th>
+                                <th class="text-right no-sort">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let employee of users">
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+employee.id"
+                                            class="avatar"> <img [src]="employee.profileName" alt=""
+                                                class="img-fluid imagestudent"></a>
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+employee.id">{{employee.firstName
+                                            +" "+employee.lastName}} <span>{{employee.jobTitle}}</span></a>
+                                    </h2>
+                                </td>
+                                <td>FT-00{{employee.id}}</td>
+                                <td>{{employee.email}}</td>
+                                <td>{{employee.phone}}</td>
+                                <td>{{employee.dob}}</td>
+                                <td >
+                                    <span class="badge bg-inverse-success"  *ngIf="employee.designation.title!=null">{{employee.designation.title}}</span>
+
+                                    <!-- <div class="dropdown">
+                                        <a href="" class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false" *ngIf="employee.designation">{{employee.designation.title}}
+                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" *ngFor="let designation of designations"
+                                                href="#">{{designation.title}} </a>
+                                            <a class="dropdown-item" href="#">Software Tester</a>
+                                            <a class="dropdown-item" href="#">Frontend Developer</a>
+                                            <a class="dropdown-item" href="#">UI/UX Developer</a>
+                                        </div>
+                                    </div> -->
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a  class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" *ngIf="permissions.isEditable"  (click)="setEditData(employee.id)"
+                                                data-toggle="modal" data-target="#edit_employee"><i
+                                                    class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" *ngIf="permissions.isDeleteable" (click)="confirm(employee.id)" data-toggle="modal"
+                                                data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i>
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!---list View Completed -->
+
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Employee Modal -->
+    <div id="add_employee" class="modal custom-modal fade" role="dialog" *ngIf="permissions">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" *ngIf="permissions.isWriteable">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Employee</h5>
+                    <button type="button" class="close" id="add" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" >
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                   
+                                    <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="firstName" formControlName="firstName"
+                                        [(ngModel)]="user.firstName">
+                                
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('required')">
+                                    firstName Is Required.
+                                </span>
+                                <span class="text-danger"2
+                                    *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('minlength')">
+                                    firstName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('maxlength')">
+                                    firstName length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('pattern')">
+                                    firstName is invalid.
+                                </span>
+
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('firstName')?.touched ) && myForm.get('firstName')?.hasError('pattern')">
+                                EX:- Abcd.
+                            </span>
+                            </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Last Name<span
+                                        class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="lastName" formControlName="lastName"
+                                        [(ngModel)]="user.lastName">
+                                
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('required')">
+                                    lastName Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('minlength')">
+                                    lastName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('maxlength')">
+                                    lastName length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('pattern')">
+                                    lastName is invalid.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('lastName')?.touched ) && myForm.get('lastName')?.hasError('pattern')">
+                                Ex:- Abcd.
+                            </span>
+                            </div>
+                                
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Employee Profile :<span
+                                        class="text-danger">*</span></label>
+                                    <input type="file" name="profile" (change)="selectFile($event)" accept="image/*">
+                                </div>
+
+
+                            </div>
+
+                            <!-- <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Mailing Address <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="address" [(ngModel)]="user.address">
+                                </div>
+                            </div> -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="email" name="email" formControlName="email"
+                                        [(ngModel)]="user.email">
+                               
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('required')">
+                                    Email Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('email')">
+                                    Email Formate Is Wrong.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('email')">
+                                Ex:- xyz@gmail.com.
+                            </span>
+
+                        </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Password<span
+                                        class="text-danger">*</span></label>
+                                    <input class="form-control" type="password" formControlName="password"
+                                        name="password" [(ngModel)]="user.password">
+                                
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('password')?.touched ) && (myForm.get('password')?.hasError('pattern')&&myForm.get('password')?.hasError('minlength'))">
+                                    Password Should Contain UpperCase And LowerCase With Numbers.
+                                </div>
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('password')?.touched ) && myForm.get('password')?.hasError('minlength')">
+                                    Password Length Must Be More Than 7.
+                                </div>
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('password')?.touched ) && myForm.get('password')?.hasError('required')">
+                                    Password Is Required.
+                                </div>
+                            </div>
+                        </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Repeat Password</label>
+                                    <input class="form-control" type="password" name="confirmPassword"
+                                        formControlName="confirmPassword" [(ngModel)]="confirmPassword">
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('confirmPassword')?.touched && !myForm.get('password')?.hasError('minlength')) && myForm.get('confirmPassword')?.hasError('required')">
+                                    confirmPassword Is Required.
+                                </div>
+                                <div class="text-danger"
+                                    *ngIf="(myForm.get('confirmPassword')?.touched && this.confirmPassword.length>=7) && myForm?.hasError('passwordMatch')">
+                                    Password and confirmPassword Must Be Same.
+                                </div>
+                            </div>
+                        </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Address <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="address" [(ngModel)]="user.address"
+                                        formControlName="address">
+                                   <span class="text-danger"
+                                *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('required')">
+                                Address Is Required.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('pattern')">
+                            Address is invalid.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(myForm.get('address')?.touched ) && myForm.get('address')?.hasError('pattern')">
+                        Ex:- Indore.
+                    </span>
+                    </div>
+                    </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Alternative Address</label>
+                                    <input class="form-control" type="text" name="alternativeAddress"
+                                        [(ngModel)]="user.alternativeAddress" formControlName="alternativeAddress">
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('alternativeAddress')?.touched ) && myForm.get('alternativeAddress')?.hasError('required')">
+                                    AlternativeAddress Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('alternativeAddress')?.touched ) && myForm.get('alternativeAddress')?.hasError('minlength')">
+                                    AlternativeAddress is to short.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('alternativeAddress')?.touched ) && myForm.get('alternativeAddress')?.hasError('pattern')">
+                                AlternativeAddress is invalid.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('alternativeAddress')?.touched ) && myForm.get('alternativeAddress')?.hasError('pattern')">
+                            Ex:- Indore.
+                        </span>
+
+                    </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Date of Birth <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control " id="selectedDate" type="date" (keydown)="false" name="dob"
+                                        [(ngModel)]="user.dob" formControlName="dob">
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('dob')?.touched ) && myForm.get('dob')?.hasError('required')">
+                                    dob Is Required.
+                                </span>
+                                <span class="text-danger" *ngIf="myForm.get('dob')?.hasError('invalidDate') ">
+                                    Selected date must be at least 18 years ago and not in the future.
+                                </span>
+                                <span class="text-danger" *ngIf="myForm.get('dob')?.hasError('invalidDate') ">
+                                    Ex:- 09-05-2001.
+                                </span>
+
+                                </div>
+
+                            </div>
+                            <!-- <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div> -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Joining Date <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control " type="date" (keydown)="false" name="createdAt" [min]="todayDate" [max]="todayDate"
+                                        [(ngModel)]="user.createdAt" formControlName="joining">
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('joining')?.touched ) && myForm.get('joining')?.hasError('required')">
+                                    joining Date Is Required.
+                                </span>
+                            </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Phone <span
+                                        class="text-danger">*</span></label>
+                                    <input class="form-control" formControlName="phone" type="text" name="phone"
+                                        [(ngModel)]="user.phone">
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('required')">
+                                    phoneNumber Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('pattern')">
+                                    phoneNumber Should Be Of 10 Digits.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('phone')?.touched ) && myForm.get('phone')?.hasError('pattern')">
+                                    Ex:- above 5.
+                                </span>
+                            </div>
+
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Alternative Phone</label>
+                                    <input class="form-control" type="text" name="alternativePhone"
+                                        formControlName="alternativePhone" [(ngModel)]="user.alternativePhone">
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('alternativePhone')?.touched ) && myForm.get('alternativePhone')?.hasError('required')">
+                                    alternativePhoneNumber Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('alternativePhone')?.touched ) && myForm.get('alternativePhone')?.hasError('pattern')">
+                                    alternativephoneNumber Should Be Of 10 Digits.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('alternativePhone')?.touched ) && myForm.get('alternativePhone')?.hasError('pattern')">
+                                Ex:- above 5.
+                            </span>
+                        </div>
+
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">SSN <span class="text-danger">*</span></label>
+                                    <input class="form-control datetimepicker" type="text" name="ssn"
+                                        formControlName="ssn" [(ngModel)]="user.ssn">
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('ssn')?.touched ) && myForm.get('ssn')?.hasError('required')">
+                                    ssn Is Required.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('ssn')?.touched ) && myForm.get('ssn')?.hasError('pattern')">
+                                ssn Is invalid .
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('ssn')?.touched ) && myForm.get('ssn')?.hasError('pattern')">
+                            Ex:- AK1234.
+                        </span>
+                    </div>
+                         
+                    </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Gender<span
+                                        class="text-danger">*</span></label>
+
+                                    <select formControlName="gender" name="gender" [(ngModel)]="user.gender">
+                                        <option value="">--select-- </option>
+                                        <option value="Male">Male </option>
+                                        <option value="Female">Female </option>
+                                        <option value="Other">Other </option>
+                                    </select>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('gender')?.touched ) && myForm.get('gender')?.hasError('required')">
+                                    gender Is Required.
+                                </span>
+                            </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Department <span class="text-danger">*</span></label>
+                                    <select (change)="optionSelected(inp)" #inp [(ngModel)]="department.id" name="id" formControlName="department">
+                                        <option *ngFor="let item of departments" [value]="item.id">{{ item.title }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- (ngModelChange)="    optionSelected()" -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Designation <span class="text-danger">*</span></label>
+                                    <select (change)="designationSelected(inp1)"  #inp1 [(ngModel)]="user.designation.id"
+                                    formControlName="designation">
+                                        <option value="" selected>Select Designation</option>
+                                        <option *ngFor="let item of designations" [value]="item.id">{{ item.title }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- <span class="text-danger"
+                            *ngIf="(myForm.get('designationId')?.touched &&myForm.get('designationId')?.dirty ) && myForm.get('designationId')?.hasError('required')">
+                            designation Is Required.
+                        </span> -->
+                        <!-- <div class="table-responsive m-t-15">
+                            <table class="table table-striped custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module Permission</th>
+                                        <th class="text-center">Read</th>
+                                        <th class="text-center">Write</th>
+                                        <th class="text-center">Create</th>
+                                        <th class="text-center">Delete</th>
+                                        <th class="text-center">Import</th>
+                                        <th class="text-center">Export</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Holidays</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Leaves</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Clients</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Projects</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tasks</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chats</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Assets</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Timing Sheets</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> -->
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" 
+                                (click)="addEmployee()" >Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Employee Modal -->
+
+    <!-- Edit Employee Modal -->
+    <div id="edit_employee" class="modal custom-modal fade" role="dialog" *ngIf="permissions">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document" *ngIf="permissions.isEditable" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Employee</h5>
+                    <button type="button" class="close" id="Eadit"data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="eadit" (ngSubmit)="updateEmployee()">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="firstName" formControlName="firstName"
+                                        [(ngModel)]="user.firstName">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('firstName')?.touched ) && eadit.get('firstName')?.hasError('required')">
+                                    firstName Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('firstName')?.touched ) && eadit.get('firstName')?.hasError('minlength')">
+                                    firstName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('firstName')?.touched ) && eadit.get('firstName')?.hasError('maxlength')">
+                                    firstName length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('firstName')?.touched ) && eadit.get('firstName')?.hasError('pattern')">
+                                    firstName is invalid.
+                                </span>
+
+                                <span class="text-danger"
+                                *ngIf="(eadit.get('firstName')?.touched ) && eadit.get('firstName')?.hasError('pattern')">
+                                EX:- Abcd.
+                            </span>
+
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Last Name</label>
+                                    <input class="form-control" type="text" name="lastName" formControlName="lastName"
+                                        [(ngModel)]="user.lastName">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('lastName')?.touched ) && eadit.get('lastName')?.hasError('required')">
+                                    lastName Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('lastName')?.touched ) && eadit.get('lastName')?.hasError('minlength')">
+                                    lastName length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('lastName')?.touched ) && eadit.get('lastName')?.hasError('maxlength')">
+                                    lastName length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('lastName')?.touched ) && eadit.get('lastName')?.hasError('pattern')">
+                                    lastName is invalid.
+                                </span>
+
+                                <span class="text-danger"
+                                *ngIf="(eadit.get('lastName')?.touched ) && eadit.get('lastName')?.hasError('pattern')">
+                                EX:- Abcd.
+                            </span>
+
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Employee Profile :</label>
+                                    <input type="file" name="profile" (change)="selectFile($event)" accept="image/*">
+                                </div>
+
+
+                            </div>
+
+                            <!-- <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Mailing Address <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="address" [(ngModel)]="user.address">
+                                </div>
+                            </div> -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="email" name="email" formControlName="email"
+                                        [(ngModel)]="user.email">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('email')?.touched ) && eadit.get('email')?.hasError('required')">
+                                    Email Is Required.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(eadit.get('email')?.touched ) && eadit.get('email')?.hasError('email')">
+                                Email Formate Is Wrong.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(eadit.get('email')?.touched ) && eadit.get('email')?.hasError('email')">
+                            Ex:- xyz@gmail.com.
+                        </span>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Address <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="address" [(ngModel)]="user.address"
+                                        formControlName="address">
+                                </div>
+                            </div>
+                            <span class="text-danger"
+                                *ngIf="(eadit.get('address')?.touched ) && eadit.get('address')?.hasError('required')">
+                                Address Is Required.
+                            </span>
+                            <span class="text-danger"
+                                *ngIf="(eadit.get('address')?.touched ) && eadit.get('address')?.hasError('minlength')">
+
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(eadit.get('address')?.touched ) && eadit.get('address')?.hasError('pattern')">
+                            Address is invalid.
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="(eadit.get('address')?.touched ) && eadit.get('address')?.hasError('pattern')">
+                        Ex:- Indore.
+                    </span>
+                            
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Alternative Address</label>
+                                    <input class="form-control" type="text" name="alternativeAddress"
+                                        [(ngModel)]="user.alternativeAddress" formControlName="alternativeAddress">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('alternativeAddress')?.touched ) && eadit.get('alternativeAddress')?.hasError('required')">
+                                    AlternativeAddress Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('alternativeAddress')?.touched ) && eadit.get('alternativeAddress')?.hasError('minlength')">
+                                    AlternativeAddress is to short.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(eadit.get('alternativePhone')?.touched ) && eadit.get('alternativePhone')?.hasError('pattern')">
+                                alternativephoneNumber Should Be Of 10 Digits.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(eadit.get('alternativePhone')?.touched ) && eadit.get('alternativePhone')?.hasError('pattern')">
+                            Ex:- above 5.
+                        </span>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Date of Birth <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control " id="selectedDate" type="date" name="dob"
+                                        [(ngModel)]="user.dob" formControlName="dob">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('dob')?.touched ) && eadit.get('dob')?.hasError('required')">
+                                    dob Is Required.
+                                </span>
+                                <span class="text-danger" *ngIf="eadit.get('dob')?.hasError('invalidDate') ">
+                                    Selected date must be at least 18 years ago and not in the future.
+                                </span>
+
+                            </div>
+                            <!-- <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div> -->
+                            <!-- <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label"> Joining Date <span
+                                            class="text-danger">*</span></label>
+                                    <input class="form-control " type="date" name="createdAt"
+                                        [(ngModel)]="user.createdAt" formControlName="joining">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('joining')?.touched ) && eadit.get('joining')?.hasError('required')">
+                                    joining Date Is Required.
+                                </span>
+
+                            </div> -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Phone<span
+                                        class="text-danger">*</span></label>
+                                    <input class="form-control" formControlName="phone" type="text" name="phone"
+                                        [(ngModel)]="user.phone">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('phone')?.touched ) && eadit.get('phone')?.hasError('required')">
+                                    phoneNumber Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('phone')?.touched ) && eadit.get('phone')?.hasError('pattern')">
+                                    phoneNumber Should Be Of 10 Digits.
+                                </span>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Alternative Phone<span
+                                        class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" name="alternativePhone"
+                                        formControlName="alternativePhone" [(ngModel)]="user.alternativePhone">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('alternativePhone')?.touched ) && eadit.get('alternativePhone')?.hasError('required')">
+                                    alternativePhoneNumber Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('alternativePhone')?.touched ) && eadit.get('alternativePhone')?.hasError('pattern')">
+                                    alternativephoneNumber Should Be Of 10 Digits.
+                                </span>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">SSN <span class="text-danger">*</span></label>
+                                    <input class="form-control datetimepicker" type="text" name="ssn"
+                                        formControlName="ssn" [(ngModel)]="user.ssn">
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('ssn')?.touched ) && eadit.get('ssn')?.hasError('required')">
+                                    ssn Is Required.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(eadit.get('ssn')?.touched ) && eadit.get('ssn')?.hasError('pattern')">
+                                ssn Is invalid .
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(eadit.get('ssn')?.touched ) && eadit.get('ssn')?.hasError('pattern')">
+                            Ex:- AK1234.
+                        </span>
+
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Gender<span
+                                        class="text-danger">*</span></label>
+                                    <select formControlName="gender" name="gender" [(ngModel)]="user.gender">
+                                        <option value="">--select-- </option>
+                                        <option value="Male">Male </option>
+                                        <option value="Female">Female </option>
+                                        <option value="Other">Other </option>
+                                    </select>
+                                </div>
+                                <span class="text-danger"
+                                    *ngIf="(eadit.get('gender')?.touched ) && eadit.get('gender')?.hasError('required')">
+                                    gender Is Required.
+                                </span>
+
+                            </div>
+                         </div>
+
+                        <!-- <span class="text-danger"
+                            *ngIf="(eadit.get('designationId')?.touched &&eadit.get('designationId')?.dirty ) && eadit.get('designationId')?.hasError('required')">
+                            designation Is Required.
+                        </span> -->
+                        <!-- <div class="table-responsive m-t-15">
+                            <table class="table table-striped custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module Permission</th>
+                                        <th class="text-center">Read</th>
+                                        <th class="text-center">Write</th>
+                                        <th class="text-center">Create</th>
+                                        <th class="text-center">Delete</th>
+                                        <th class="text-center">Import</th>
+                                        <th class="text-center">Export</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Holidays</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Leaves</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Clients</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Projects</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tasks</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chats</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Assets</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Timing Sheets</td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input checked="" type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> -->
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn"  [disabled]="eadit.invalid"
+                                type="submit">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Employee Modal -->
+
+    <!-- Delete Employee Modal -->
+    <div class="modal custom-modal fade" id="delete_employee" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Employee</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="javascript:void(0);" (click)="deleteEmployee()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Employee Modal -->
+
+</div>
+
+<!-- /Page Wrapper -->

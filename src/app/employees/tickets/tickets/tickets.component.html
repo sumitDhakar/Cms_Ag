@@ -1,0 +1,877 @@
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Tickets</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Tickets</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_ticket"><i
+                            *ngIf="permissions.isWriteable"(click)="addForm" class="fa fa-plus"></i> Add Ticket</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-group m-b-30">
+                    <div class="card"  *ngIf="tStatics">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <span class="d-block">Open Tickets</span>
+                                </div>
+                                <div>
+                                    <span class="text-success">{{newTickets}}%</span>
+                                </div>
+                            </div>
+                            <h3 class="mb-3"   >{{tStatics[1]}}</h3>
+                            <div class="progress mb-2" style="height: 5px;">
+                                <div class="progress-bar bg-primary" role="progressbar" [style]="'width:'+ newTickets + '%'"
+                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <span class="d-block">Solved Tickets</span>
+                                </div>
+                                <div>
+                                    <span class="text-success">{{solvedtickets}}%</span>
+                                </div>
+                            </div>
+                            <h3 class="mb-3"  *ngIf="tStatics[2]">{{tStatics[2]}}</h3>
+                            <div class="progress mb-2" style="height: 5px;">
+                                <div class="progress-bar bg-primary" role="progressbar" [style]="'width:'+ solvedtickets + '%'"
+                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <span class="d-block">Pending Tickets</span>
+                                </div>
+                                <div>
+                                    <span class="text-danger">{{pendingTickets}}%</span>
+                                </div>
+                            </div>
+                            <h3 class="mb-3" *ngIf="tStatics[3]" >{{tStatics[3]}}</h3>
+                            <div class="progress mb-2" style="height: 5px;">
+                                <div class="progress-bar bg-primary" role="progressbar" [style]="'width:'+ pendingTickets + '%'"
+                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <span class="d-block">Cancelled Tickets</span>
+                                </div>
+                                <div>
+                                    <span class="text-danger">{{closedTickets}}%</span>
+                                </div>
+                            </div>
+                            <h3 class="mb-3" *ngIf="tStatics[4]" >{{tStatics[4]}}</h3>
+                            <div class="progress mb-2" style="height: 5px;">
+                                <div class="progress-bar bg-primary" role="progressbar" [style]="'width:'+ closedTickets + '%'"
+                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Filter -->
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <label class="focus-label">Employee Name</label>
+                    <select class="select floating" name="id" [(ngModel)]="searching.assigned">
+                        <option *ngFor="let item of employees" [value]="item.id">{{ item.firstName }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div >
+                        <input class="form-control floating datetimepicker" [(ngModel)]="searching.createdAt"
+                            type="date">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div >
+                        <input class="form-control floating datetimepicker" [(ngModel)]="searching.lastActivityAt"
+                            type="date">
+                    </div>
+                    <label class="focus-label">To</label>
+                </div>
+            </div>
+            
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <a (click)="filter()" class="btn btn-success btn-block"> Search </a>
+            </div>
+        </div>
+        <!-- /Search Filter -->
+        <!---- pagination -->
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+
+        <div class="row" *ngIf="permissions.isReadable">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Ticket Id</th>
+                                <th>Ticket Subject</th>
+                                <th>Assigned Staff</th>
+                                <th>Created Date</th>
+                                <th>Last Reply</th>
+                                <th>Priority</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let t of tickets let i = index">
+                                <td>{{sequence+i+1}}</td>
+                                <td><a [routerLink]="baseRoute+'/tickets/ticket_view/'+t.id">#TKT-000{{t.id}}</a></td>
+                                <td>{{t.title}}</td>
+                                <td *ngIf="t.ticketMembers.length>0" >
+                                    <h2 class="table-avatar" *ngFor="let member of t.ticketMembers; let i = index" >
+                                        <a  *ngIf="member.isLeader" class="avatar avatar-xs" ><img alt=""
+                                                [src]="member.followers.profileName"></a>
+                                        <a *ngIf="member.isLeader" href="#">{{member.followers.firstName}} {{member.followers.lastName}} </a>
+                                  <br>
+
+                                  
+                                    </h2>
+                                </td>
+                                <td *ngIf="t.ticketMembers.length==0" >
+                                    <h2 >--Noleads--</h2>
+                                </td>
+                                <td>{{t.createdAt| date:'dd-MMM-yyyy hh:mm a'}}</td>
+                                <td>{{t.createdAt| date:'dd-MMM-yyyy hh:mm a'}}</td>
+                                <td>
+                                    <div class="dropdown action-label">
+                                        <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false"><i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (t.labels=='HighPriority'?'text-danger':(t.labels=='MediumPriority'?'text-warning':'text-info'))"></i>
+                                            {{t.labels}} </a>
+                                        <div class="dropdown-menu dropdown-menu-right" *ngIf="permissions.isEditable">
+                                            <a class="dropdown-item"
+                                                (click)="updateTicketsStatus(t.id,'HighPriority','priority')"><i
+                                                    class="fa fa-dot-circle-o text-danger"></i> HighPriority</a>
+                                            <a class="dropdown-item"
+                                                (click)="updateTicketsStatus(t.id,'MediumPriority','priority')"><i
+                                                    class="fa fa-dot-circle-o text-warning"></i> MediumPriority</a>
+                                            <a class="dropdown-item"
+                                                (click)="updateTicketsStatus(t.id,'LowPriority','priority')"><i
+                                                    class="fa fa-dot-circle-o text-blue"></i> LowPriority</a>
+                                        </div>
+                                    </div>
+                                </td>
+
+
+
+                                <td class="text-center">
+                                    <div class="dropdown action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#"
+                                            data-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-dot-circle-o text-danger"
+                                                [ngClass]="'fa fa-dot-circle-o ' + ((t.status=='Open'||t.status=='Reopened')?'text-info':((t.status=='OnHold'||t.status=='InProgress')?'text-success':'text-danger'))"></i>
+                                            {{t.status}} </a>
+                                        <div class="dropdown-menu dropdown-menu-right" *ngIf="permissions.isEditable">
+                                            <a class="dropdown-item"
+                                                (click)="updateTicketsStatus(t.id,'Open','status')"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> Open</a>
+                                            <a class="dropdown-item"
+                                                (click)="updateTicketsStatus(t.id,'Reopened','status')"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> Reopened</a>
+                                            <a class="dropdown-item"
+                                                (click)="updateTicketsStatus(t.id,'OnHold','status')"><i
+                                                    class="fa fa-dot-circle-o text-success"></i> On Hold</a>
+                                            <a class="dropdown-item"
+                                                (click)="updateTicketsStatus(t.id,'InProgress','status')"><i
+                                                    class="fa fa-dot-circle-o text-success"></i> In Progress</a>
+                                            <a class="dropdown-item"
+                                                (click)="updateTicketsStatus(t.id,'Closed','status')"><i
+                                                    class="fa fa-dot-circle-o text-danger"></i> Closed</a>
+                                            <a class="dropdown-item"
+                                                (click)="updateTicketsStatus(t.id,'Cancelled','status')"><i
+                                                    class="fa fa-dot-circle-o text-warning"></i> Cancelled</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a *ngIf="permissions.isEditable" class="dropdown-item"
+                                                (click)="getTicketById(t.id)" data-toggle="modal"
+                                                data-target="#edit_ticket"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a *ngIf="permissions.isDeleteable" class="dropdown-item"
+                                                (click)="deleteTicket(t.id)" data-toggle="modal"><i
+                                                    class="fa fa-trash-o m-r-5"></i>
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Ticket Modal -->
+    <div id="add_ticket" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content" *ngIf="permissions.isWriteable">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Ticket</h5>
+                    <button type="button" class="close" id="add"data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+              
+                <div class="modal-body">
+                    <form [formGroup]="E" (ngSubmit)="addTickets()">
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input class="form-control" formControlName="title" [(ngModel)]="addTicket.title" name="title" type="text">
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('title')?.touched ) && E.get('title')?.hasError('required')">
+                                    Title Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('title')?.touched ) && E.get('title')?.hasError('minlength')">
+                                    Title length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('title')?.touched ) && E.get('title')?.hasError('maxlength')">
+                                    Title length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('title')?.touched ) && E.get('title')?.hasError('pattern')">
+                                    Title is invalid.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(E.get('title')?.touched ) && E.get('title')?.hasError('pattern')">
+                                Ex :-Laptop Issue.
+                            </span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Client <span class="text-danger">*</span></label>
+                                    <select formControlName="client" [(ngModel)]="addTicket.client.id" name="id">
+                                        <option *ngFor="let item of clients" [value]="item.id">{{ item.companyName }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('client')?.touched ) && E.get('client')?.hasError('required')">
+                                    client Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('client')?.touched ) && E.get('client')?.hasError('minlength')">
+                                    client length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('client')?.touched ) && E.get('client')?.hasError('maxlength')">
+                                    client length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('client')?.touched ) && E.get('client')?.hasError('pattern')">
+                                    client is invalid.
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Requested By</label>
+                                    <select formControlName="requestedBy"  [(ngModel)]="addTicket.requestedBy.id"
+                                        name="id">
+                                        <option *ngFor="let item of  employees" [value]="item.id">{{ item.firstName }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('requestedBy')?.touched ) && E.get('requestedBy')?.hasError('required')">
+                                    requestedBy Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('requestedBy')?.touched ) && E.get('requestedBy')?.hasError('minlength')">
+                                    requestedBy length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('requestedBy')?.touched ) && E.get('requestedBy')?.hasError('maxlength')">
+                                    requestedBy length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('requestedBy')?.touched ) && E.get('requestedBy')?.hasError('pattern')">
+                                    requestedBy is invalid.
+                                </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>TicketsType <span class="text-danger">*</span></label>
+                                    <select formControlName="ticketTypeId" [(ngModel)]="addTicket.ticketTypeId.id" name="id">
+                                        <option *ngFor="let item of ticketsType" [value]="item.id">{{ item.title }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('ticketTypeId')?.touched ) && E.get('ticketTypeId')?.hasError('required')">
+                                    ticketTypeId Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('ticketTypeId')?.touched ) && E.get('ticketTypeId')?.hasError('minlength')">
+                                    ticketTypeId length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('ticketTypeId')?.touched ) && E.get('ticketTypeId')?.hasError('maxlength')">
+                                    ticketTypeId length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('ticketTypeId')?.touched ) && E.get('ticketTypeId')?.hasError('pattern')">
+                                    ticketTypeId is invalid.
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Assign To</label>
+                                    <select (change)="selectedAssignedEmployee(inp1)" #inp1
+                                        [(ngModel)]="addTicket.assigned" name="assigned">
+                                        <option *ngFor="let item of  assignedTo" [value]="item.id">{{ item.firstName }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div> -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control" name="description"
+                                    formControlName="description"    [(ngModel)]="addTicket.description" type="text"></textarea>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('required')">
+                                    description Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('minlength')">
+                                    description length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('maxlength')">
+                                    description length should be smaller than 215.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('description')?.touched ) && E.get('description')?.hasError('pattern')">
+                                    Title is invalid.
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Labels</label>
+                                    <select formControlName="labels" [(ngModel)]="addTicket.labels" name="labels">
+                                        <option *ngFor="let l of labels" [value]="l">{{ l }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(E.get('labels')?.touched ) && E.get('labels')?.hasError('required')">
+                                    labels Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('labels')?.touched ) && E.get('labels')?.hasError('minlength')">
+                                    labels length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('labels')?.touched ) && E.get('labels')?.hasError('maxlength')">
+                                    labels length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('labels')?.touched ) && E.get('labels')?.hasError('pattern')">
+                                    labels is invalid.
+                                </span> 
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="row"> -->
+                            <!-- <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Add Followers</label>
+                                    <select (change)="selectedCollabrators(inp12)" #inp12 name="id">
+                                        <option *ngFor="let item of  collabratorList" [value]="item.id">{{
+                                            item.firstName }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body" *ngIf="followers.length!=0">
+                                <h3>Employee Selected : </h3>
+                                <div class="table-responsive">
+                                    <table class="table table-striped mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Employee Email</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let u of followers">
+                                                <td> <a title="Richard Miles" data-toggle="tooltip" href="#"
+                                                        class="avatar">
+                                                        <img src="assets/img/profiles/avatar-09.jpg" alt="">
+                                                    </a>{{u.firstName}} {{u.lastName}}</td>
+                                                <td>{{u.email}}</td>
+                                                <td (click)="removeCollaberators(u)">
+                                                    <div style="cursor: pointer !important; "><i class="fa fa-remove"
+                                                            style="font-size:18px;color:rgb(217, 60, 60)"></i></div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div> -->
+
+
+                            <!-- <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Ticket Followers</label>
+                                    <div class="project-members">
+                                        <a title="Richard Miles" data-toggle="tooltip" href="#" class="avatar">
+                                            <img src="assets/img/profiles/avatar-09.jpg" alt="">
+                                        </a>
+
+                                        <span class="all-team">+2</span>
+                                    </div>
+                                </div>
+                            </div> -->
+                        <!-- </div>  -->
+                        <div class="row">
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                 <input class="form-control" type="file" formControlName="file" (change)="selectedFile($event)">
+                                 <span class="text-danger"
+                                    *ngIf="(E.get('file')?.touched ) && E.get('file')?.hasError('required')">
+                                    file Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('file')?.touched ) && E.get('file')?.hasError('minlength')">
+                                    file length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('file')?.touched ) && E.get('file')?.hasError('maxlength')">
+                                    file length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(E.get('file')?.touched ) && E.get('file')?.hasError('pattern')">
+                                    file is invalid.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body" *ngIf="addTicket.files.length!=0">
+                            <div class="table-responsive">
+                                <table class="table table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>File Name</th>
+                                            <th>Size</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let file of addTicket.files ; index as i">
+                                            <td>{{file.name}}</td>
+                                            <td>{{file.size | filesize}}</td>
+                                            <td (click)="removeFile(file)">
+                                                <div style="cursor: pointer !important; "><i class="fa fa-remove"
+                                                        style="font-size:18px;color:rgb(217, 60, 60)"></i></div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        <div class="submit-section">
+                            <button 
+                                class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Ticket Modal -->
+
+    <!-- Edit Ticket Modal -->
+    <div id="edit_ticket" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content" *ngIf="permissions.isEditable">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Ticket</h5>
+                    <button type="button" class="close"id="Eadit" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" (ngSubmit)="updateTickets()">
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input class="form-control" formControlName="title"[(ngModel)]="addTicket.title" name="title" type="text">
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('required')">
+                                    Title Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('minlength')">
+                                    Title length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('maxlength')">
+                                    Title length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('pattern')">
+                                    Title is invalid.
+                                </span>
+                                <span class="text-danger"
+                                *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('pattern')">
+                                ex:-LaptopIssue.
+                            </span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Client <span class="text-danger">*</span></label>
+                                    <select formControlName="client" [(ngModel)]="addTicket.client.id" name="id">
+                                        <option *ngFor="let item of clients" [value]="item.id">{{ item.companyName }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('client')?.touched ) && myForm.get('client')?.hasError('required')">
+                                    client Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('client')?.touched ) && myForm.get('client')?.hasError('minlength')">
+                                    client length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('client')?.touched ) && myForm.get('client')?.hasError('maxlength')">
+                                    client length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('client')?.touched ) && myForm.get('client')?.hasError('pattern')">
+                                    client is invalid.
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Requested By</label>
+                                    <select formControlName="requestedBy"  [(ngModel)]="addTicket.requestedBy.id"
+                                        name="id">
+                                        <option *ngFor="let item of  employees" [value]="item.id">{{ item.firstName }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('requestedBy')?.touched ) && myForm.get('requestedBy')?.hasError('required')">
+                                    requestedBy Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('requestedBy')?.touched ) && myForm.get('requestedBy')?.hasError('minlength')">
+                                    requestedBy length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('requestedBy')?.touched ) && myForm.get('requestedBy')?.hasError('maxlength')">
+                                    requestedBy length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('requestedBy')?.touched ) && myForm.get('requestedBy')?.hasError('pattern')">
+                                    requestedBy is invalid.
+                                </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>TicketsType <span class="text-danger">*</span></label>
+                                    <select formControlName="ticketTypeId" [(ngModel)]="addTicket.ticketTypeId.id" name="id">
+                                        <option *ngFor="let item of ticketsType" [value]="item.id">{{ item.title }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('ticketTypeId')?.touched ) && myForm.get('ticketTypeId')?.hasError('required')">
+                                    ticketTypeId Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('ticketTypeId')?.touched ) && myForm.get('ticketTypeId')?.hasError('minlength')">
+                                    ticketTypeId length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('ticketTypeId')?.touched ) && myForm.get('ticketTypeId')?.hasError('maxlength')">
+                                    ticketTypeId length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('ticketTypeId')?.touched ) && myForm.get('ticketTypeId')?.hasError('pattern')">
+                                    ticketTypeId is invalid.
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Assign To</label>
+                                    <select (change)="selectedAssignedEmployee(inp1)" #inp1
+                                        [(ngModel)]="addTicket.assigned" name="assigned">
+                                        <option *ngFor="let item of  assignedTo" [value]="item.id">{{ item.firstName }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div> -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control" name="description"
+                                    formControlName="description"    [(ngModel)]="addTicket.description" type="text"></textarea>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('required')">
+                                    description Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('minlength')">
+                                    description length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('maxlength')">
+                                    description length should be smaller than 215.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('description')?.touched ) && myForm.get('description')?.hasError('pattern')">
+                                    Title is invalid.
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Labels</label>
+                                    <select formControlName="labels" [(ngModel)]="addTicket.labels" name="labels">
+                                        <option *ngFor="let l of labels" [value]="l">{{ l }}
+                                        </option>
+                                    </select>
+                                    <span class="text-danger"
+                                    *ngIf="(myForm.get('labels')?.touched ) && myForm.get('labels')?.hasError('required')">
+                                    labels Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('labels')?.touched ) && myForm.get('labels')?.hasError('minlength')">
+                                    labels length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('labels')?.touched ) && myForm.get('labels')?.hasError('maxlength')">
+                                    labels length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('labels')?.touched ) && myForm.get('labels')?.hasError('pattern')">
+                                    labels is invalid.
+                                </span> 
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="row"> -->
+                            <!-- <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Add Followers</label>
+                                    <select (change)="selectedCollabrators(inp12)" #inp12 name="id">
+                                        <option *ngFor="let item of  collabratorList" [value]="item.id">{{
+                                            item.firstName }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body" *ngIf="followers.length!=0">
+                                <h3>Employee Selected : </h3>
+                                <div class="table-responsive">
+                                    <table class="table table-striped mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Employee Email</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let u of followers">
+                                                <td> <a title="Richard Miles" data-toggle="tooltip" href="#"
+                                                        class="avatar">
+                                                        <img src="assets/img/profiles/avatar-09.jpg" alt="">
+                                                    </a>{{u.firstName}} {{u.lastName}}</td>
+                                                <td>{{u.email}}</td>
+                                                <td (click)="removeCollaberators(u)">
+                                                    <div style="cursor: pointer !important; "><i class="fa fa-remove"
+                                                            style="font-size:18px;color:rgb(217, 60, 60)"></i></div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div> -->
+
+
+                            <!-- <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Ticket Followers</label>
+                                    <div class="project-members">
+                                        <a title="Richard Miles" data-toggle="tooltip" href="#" class="avatar">
+                                            <img src="assets/img/profiles/avatar-09.jpg" alt="">
+                                        </a>
+
+                                        <span class="all-team">+2</span>
+                                    </div>
+                                </div>
+                            </div> -->
+                        <!-- </div>  -->
+                        <div class="row">
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                 <input class="form-control" type="file" formControlName="file" (change)="selectedFile($event)">
+                                 <span class="text-danger"
+                                    *ngIf="(myForm.get('file')?.touched ) && myForm.get('file')?.hasError('required')">
+                                    file Is Required.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('file')?.touched ) && myForm.get('file')?.hasError('minlength')">
+                                    file length should be greater than 3.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('file')?.touched ) && myForm.get('file')?.hasError('maxlength')">
+                                    file length should be smaller than 25.
+                                </span>
+                                <span class="text-danger"
+                                    *ngIf="(myForm.get('file')?.touched ) && myForm.get('file')?.hasError('pattern')">
+                                    file is invalid.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body" *ngIf="addTicket.files.length!=0">
+                            <div class="table-responsive">
+                                <table class="table table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>File Name</th>
+                                            <th>Size</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let file of addTicket.files ; index as i">
+                                            <td>{{file.name}}</td>
+                                            <td>{{file.size | filesize}}</td>
+                                            <td (click)="removeFile(file)">
+                                                <div style="cursor: pointer !important; "><i class="fa fa-remove"
+                                                        style="font-size:18px;color:rgb(217, 60, 60)"></i></div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                                      <div class="submit-section">
+                        <button 
+                            class="btn btn-primary submit-btn">Update</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Ticket Modal -->
+
+    <!-- Delete Ticket Modal -->
+    <div class="modal custom-modal fade" id="delete_ticket" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" *ngIf="permissions.isDeleteable">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Ticket</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a data-dismiss="modal" class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Ticket Modal -->
+
+</div>
+<!-- /Page Wrapper -->

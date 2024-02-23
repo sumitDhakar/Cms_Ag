@@ -1,0 +1,145 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Estimates</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Estimates</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a *ngIf="permissions.isWriteable" [routerLink]="baseRoute+'/accounts/estimates_create'" class="btn add-btn"><i class="fa fa-plus"></i>
+                        Create Estimates</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <!-- Search Filter -->                                                                                                                                                                                                                                                                                                                                                           
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                   
+                        <input class="form-control floating " type="date"  [(ngModel)]="searching.billDate">
+                  
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+
+           
+
+
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                     
+                   
+                        <input class="form-control floating " type="date"  [(ngModel)]="searching.dueDate">
+                        <label class="focus-label">To</label>
+                   
+                </div>
+            </div>
+                <div class="col-sm-6 col-md-3">
+                <a (click)="filter()" *ngIf="permissions.isReadable" class="btn btn-success btn-block"> Search </a>
+            </div>
+        </div>
+        <!-- /Search Filter -->
+        <!---- pagination -->
+
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+
+        <div class="row">
+            <div class="col-md-12" *ngIf="permissions.isReadable">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Invoice Number</th>
+                                <th>Client</th>
+                                <th>Created Date</th>
+                                <th>Due Date</th>
+                                <th>Amount</th>
+                               
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let estl of estimateList; let i = index">
+                                <td>{{i+1}}</td>
+                                <td><a [routerLink]="'/dollop/accounts/estimates_view/'+estl.id">#Est-000{{estl.id}}</a></td>
+                                <td>{{estl.clientId.companyName}}</td>
+                                <td>{{estl.billDate}}</td>
+                                <td>{{estl.dueDate}}</td>
+                                <td>Rs. {{estl.grandTotal}}</td>
+                                    <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item"
+                                                [routerLink]="'/dollop/accounts/estimates_edit/'+estl.id"><i
+                                                *ngIf="permissions.isEditable"  class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item"
+                                                [routerLink]="'/dollop/accounts/estimates_view/'+estl.id"><i
+                                                    class="fa fa-eye m-r-5"></i> View</a>
+                                                  
+                                            <a class="dropdown-item" *ngIf="permissions.isDeleteable" (click)="setDeleteInvoice(estl.id)" href="#"
+                                                data-toggle="modal" data-target="#delete_goal"><i
+                                                    class="fa fa-trash-o m-r-5"></i> Delete</a>
+
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+
+    <!-- Delete Goal Modal -->
+    <div class="modal custom-modal fade" id="delete_goal" role="dialog" *ngIf="permissions.isDeleteable">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Goal Tracking List</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a (click)="deleteInvoice()" data-dismiss="modal"
+                                *ngIf="permissions.isDeleteable"    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Goal Modal -->
+
+
+
+</div>
+<!-- /Page Wrapper -->

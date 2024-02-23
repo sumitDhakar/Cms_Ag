@@ -1,0 +1,90 @@
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+    <div class="account-content">
+        <a routerLink="/apply/job" class="btn btn-primary apply-btn">Apply Job</a>
+        <div class="container">
+
+            <!-- Account Logo -->
+            <div class="account-logo">
+                <a href="index.html"><img src="assets/img/logo2.png" alt="Dreamguy's Technologies"></a>
+            </div>
+            <!-- /Account Logo -->
+
+            <div class="account-box">
+                <div class="account-wrapper">
+                    <h3 class="account-title">Register</h3>
+                    <p class="account-subtitle">Access to our dashboard</p>
+
+                    <!-- Account Form -->
+                    <form [formGroup]="myForm" (ngSubmit)="registration()">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input class="form-control" formControlName="userName" type="text" name="userName"
+                                [(ngModel)]="userRegistration.userName">
+                        </div>
+                        <div class="text-danger"
+                            *ngIf="(myForm.get('userName')?.touched ) && myForm.get('userName')?.hasError('minlength')">
+                            UserName lenght should Be greater than 3.
+                        </div>
+                        <div class="text-danger"
+                            *ngIf="(myForm.get('userName')?.touched ) && myForm.get('userName')?.hasError('required')">
+                            UserName Is Required.
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input class="form-control" type="email" formControlName="email" name="email" [(ngModel)]="userRegistration.email">
+                        </div>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('required')">
+                            Email Is Required.
+                        </span>
+                        <div class="text-danger"
+                            *ngIf="(myForm.get('email')?.touched ) && myForm.get('email')?.hasError('email')">
+                            Email Formate is Required.
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input class="form-control" type="password" formControlName="password" name="password"
+                                [(ngModel)]="userRegistration.password">
+                        </div>
+                        <div class="text-danger"
+                            *ngIf="(myForm.get('password')?.touched ) && (myForm.get('password')?.hasError('pattern')&&myForm.get('password')?.hasError('minlength'))">
+                            Password Should Contain UpperCase And LowerCase With Numbers.
+                        </div>
+                        <div class="text-danger"
+                            *ngIf="(myForm.get('password')?.touched ) && myForm.get('password')?.hasError('minlength')">
+                            Password Length Must Be More Than 7.
+                        </div>
+                        <div class="text-danger"
+                            *ngIf="(myForm.get('password')?.touched ) && myForm.get('password')?.hasError('required')">
+                            Password Is Required.
+                        </div>
+                        <div class="form-group">
+                            <label>Repeat Password</label>
+                            <input class="form-control" type="password" name="confirmPassword"
+                                formControlName="confirmPassword" [(ngModel)]="confirmPassword">
+                        </div>
+                        <div class="text-danger"
+                            *ngIf="(myForm.get('confirmPassword')?.touched && !myForm.get('password')?.hasError('minlength')) && myForm.get('confirmPassword')?.hasError('required')">
+                            confirmPassword Is Required.
+                        </div>
+                        <div class="text-danger"
+                            *ngIf="(myForm.get('confirmPassword')?.touched &&!myForm.get('password')?.hasError('minlength')) && myForm?.hasError('passwordMatch')">
+                            Password and confirmPassword Must Be Same.
+                        </div>
+
+                        <div class="form-group text-center">
+                            <button class="btn btn-primary account-btn" type="submit">Register</button>
+                        </div>
+                        <div class="account-footer">
+                            <p>Already have an account? <a style="cursor: pointer; color: rgb(255, 142, 35);"
+                                    (click)="checkIsloggedIn()">Login</a></p>
+                        </div>
+                    </form>
+                    <!-- /Account Form -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Main Wrapper -->

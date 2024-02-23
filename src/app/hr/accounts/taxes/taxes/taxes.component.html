@@ -1,0 +1,246 @@
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Taxes</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Taxes</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a (click)="addForm()" *ngIf="permissions.isWriteable" class="btn add-btn" data-toggle="modal" data-target="#add_tax"><i
+                            class="fa fa-plus"></i> Add Tax</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+	    
+        <mat-paginator #paginator
+        class="demo-paginator"
+        (page)="handlePageEvent($event)"
+        [length]="length"
+        [pageSize]="pageSize"
+        [disabled]="disabled"
+        [showFirstLastButtons]="showFirstLastButtons"
+        [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+        [hidePageSize]="hidePageSize"
+        [pageIndex]="pageIndex"
+        aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+        
+        
+        
+        <div class="row" *ngIf="permissions.isReadable">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Tax Name </th>
+                                <th>Tax Percentage (%) </th>
+                                <th>Status</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tt of taxes let i = index">
+                                <td>{{sequence+i+1}}</td>
+                                <td>{{tt.title}}</td>
+                                <td>{{tt.percentage}}%</td>
+
+                                <td  >
+                                    <div class="dropdown action-label">
+                                        <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false"><i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (tt.status=='Active'?'text-success':'text-danger')"></i>
+                                            {{tt.status}} </a>
+                                        <div class="dropdown-menu" *ngIf="permissions.isReadable">
+                                            <a class="dropdown-item" (click)="updateTaxesStatus(tt.id,'InActive')"><i
+                                                    class="fa fa-dot-circle-o text-danger"></i> InActive</a>
+                                            <a class="dropdown-item" (click)="updateTaxesStatus(tt.id,'Active')"><i
+                                                    class="fa fa-dot-circle-o text-success"></i> Active</a>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <!-- <td class="text-center" *ngIf="(tt.status=='Approved')" >
+                                    <div class="action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                            <i
+                                            [ngClass]="'fa fa-dot-circle-o ' + (tt.status=='Approved'?'text-success':'text-danger')"></i>
+                                            {{tt.status}}
+                                        </a>
+                                    </div>
+                                </td> -->
+
+
+
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" *ngIf="permissions.isEditable"
+                                                (click)="setEditData(tt.id)" data-toggle="modal"
+                                                data-target="#edit_tax"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" *ngIf="permissions.isDeleteable"
+                                                (click)="confirm(tt.id)" data-toggle="modal"
+                                                data-target="#delete_tax"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Tax Modal -->
+    <div id="add_tax" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isWriteable">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Tax</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" (ngSubmit)="addTaxes()">
+                        <div class="form-group">
+                            <label>Tax Name <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="title" formControlName="title"
+                                [(ngModel)]="taxe.title">
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('required')">
+                                Tax Name should not be empty.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('required')">
+                            Tax Name is invalid.
+                        </span>
+                       
+
+                        </div>
+                        <div class="form-group">
+                            <label>Tax Percentage (%) <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" formControlName="percentage" name="percentage"
+                                [(ngModel)]="taxe.percentage">
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('percentage')?.touched ) && myForm.get('percentage')?.hasError('required')">
+                                Percentage should not be empty.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('percentage')?.touched ) && myForm.get('percentage')?.hasError('pattern')">
+                            Percentage is invalid 1-20 .
+                        </span>
+                       
+                        </div>
+                      
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" type="submit"
+                                [disabled]="myForm.invalid">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Tax Modal -->
+
+    <!-- Edit Tax Modal -->
+    <div id="edit_tax" class="modal custom-modal fade" *ngIf="permissions.isEditable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Tax</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="myForm" (ngSubmit)="updateTaxes()">
+                        <div class="form-group">
+                            <label>Tax Name <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="title" formControlName="title"
+                                [(ngModel)]="taxe.title">
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('required')">
+                                Tax Name should not be empty.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('required')">
+                            Tax Name is invalid.
+                        </span>
+                       
+
+                        </div>
+                        <div class="form-group">
+                            <label>Tax Percentage (%) <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" formControlName="percentage" name="percentage"
+                                [(ngModel)]="taxe.percentage">
+                            <span class="text-danger"
+                                *ngIf="(myForm.get('percentage')?.touched ) && myForm.get('percentage')?.hasError('required')">
+                                Percentage should not be empty.
+                            </span>
+                            <span class="text-danger"
+                            *ngIf="(myForm.get('title')?.touched ) && myForm.get('title')?.hasError('pattern')">
+                            Percentage is invalid 1-20 .
+                        </span>
+                       
+                        </div>
+                         <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" 
+                            [disabled]="myForm.invalid"  type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Tax Modal -->
+
+    <!-- Delete Tax Modal -->
+    <div class="modal custom-modal fade" id="delete_tax" *ngIf="permissions.isDeleteable" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Tax</h3>
+                        <p>Are you sure want to delete?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+
+
+                                <a (click)="deleteTaxes()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Tax Modal -->
+
+</div>
+<!-- /Page Wrapper -->

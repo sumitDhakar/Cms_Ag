@@ -1,0 +1,409 @@
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Leaves</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Leaves</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto" *ngIf="permissions.isWriteable">
+                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_leave"><i
+                            class="fa fa-plus"></i> Add Leave</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <!-- Leave Statistics -->
+        <!-- <div class="row" *ngIf="emloyeeLeaveStatics">
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>Annual Leave</h6>
+                    <h4>{{emloyeeLeaveStatics.annualLeaves?emloyeeLeaveStatics.annualLeaves:"0"}}</h4>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>Medical Leave</h6>
+                    <h4>{{emloyeeLeaveStatics.medicalLeaves?emloyeeLeaveStatics.medicalLeaves:"0"}}</h4>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>Other Leave</h6>
+                    <h4>{{ emloyeeLeaveStatics.otherLeaves?emloyeeLeaveStatics.otherLeaves:"0" }}</h4>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-info">
+                    <h6>Remaining Leave</h6>
+                    <h4>{{ emloyeeLeaveStatics.remainingLeaves?emloyeeLeaveStatics.remainingLeaves:"0"}}</h4>
+                </div>
+            </div>
+        </div> -->
+        <!-- /Leave Statistics -->
+
+
+        <!---- pagination -->
+
+        <mat-paginator #paginator class="demo-paginator" (page)="handlePageEvent($event)" [length]="length"
+            [pageSize]="pageSize" [disabled]="disabled" [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []" [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex" aria-label="Select page">
+        </mat-paginator>
+        <!---pagination end -->
+
+        <div class="row">
+            <div class="col-md-12" *ngIf="permissions">
+                <div class="table-responsive" *ngIf="permissions.isReadable">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>Leave Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>No of Days</th>
+                                <th>Reason</th>
+                                <th class="text-center">Status</th>
+                                <th>Checked by</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let leaveApplication of leaveApplications">
+                                <td>{{leaveApplication.leaveTypeId.title}}</td>
+                                <td>{{leaveApplication.startDate | date}}</td>
+                                <td>{{leaveApplication.endDate | date}}</td>
+                                <td>{{leaveApplication.totalDays>1?leaveApplication.totalDays +"Days":leaveApplication.totalHours+" hrs"}} </td>
+                                <td>{{leaveApplication.reason}}</td>
+                                <td class="text-center">
+                                    <div class="action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded" href="javascript:void(0);">
+                                            <i
+                                                [ngClass]="'fa fa-dot-circle-o ' + (leaveApplication.status=='Declined'?'text-danger':(leaveApplication.status=='Approved'?'text-success':(leaveApplication.status=='Pending'?'text-info':'text-purple')))"></i>
+                                            {{leaveApplication.status}}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h2 class="table-avatar" *ngIf="leaveApplication.checkedBy">
+                                        <a [routerLink]="baseRoute+'/employee/employee_profile/'+(leaveApplication.checkedBy!=null?leaveApplication.checkedBy.id:0)"
+                                            class="avatar avatar-xs"><img
+                                                [src]="leaveApplication.checkedBy.profileName" alt=""></a>
+                                        <a
+                                            [routerLink]="baseRoute+'/employee/employee_profile/'+(leaveApplication.checkedBy!=null?leaveApplication.checkedBy.id:0)">{{leaveApplication.checkedBy.firstName
+                                            +" "+leaveApplication.checkedBy.lastName }}</a>
+                                    </h2>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <!-- <a class="dropdown-item" (click)="setEditData(leaveApplication.id)"
+                                                *ngIf="permissions.isEditable" data-toggle="modal"
+                                                data-target="#edit_leave"><i class="fa fa-pencil m-r-5"></i> Edit</a> -->
+                                            <a class="dropdown-item" (click)="confirm(leaveApplication.id)"
+                                                data-toggle="modal" data-target="#delete_approve"><i
+                                                    *ngIf="permissions.isDeleteable" class="fa fa-trash-o m-r-5"></i>
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Add Leave Modal -->
+    <div id="add_leave" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isWriteable">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Leave</h5>
+                    
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form  (ngSubmit)="createApplication()">
+                        <div class="form-group">
+                            <label>Leave Type <span class="text-danger">*</span></label>
+                            <select class="" name="id"  required="required"
+                                [(ngModel)]="leaveApplication.leaveTypeId.id">
+                                
+                                <option *ngFor="let type of leaveTypes" [value]="type.id">{{type.title}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration <span class="text-danger">*</span></label>
+                            <div class="">
+                                <input [(ngModel)]="check" name="check" value="single"
+                                    type="radio">Single
+                                <input [(ngModel)]="check" name="check" value="multiple"
+                                    type="radio">Multiple Days
+                                <input [(ngModel)]="check" name="check" value="halfDay"
+                                    type="radio">HalfDay
+                            </div>
+                            <!-- <span class="text-danger"
+                                *ngIf="(myForm.get('check')?.touched ) && myForm.get('check')?.hasError('required')">
+                                Select Duration Type.
+                            </span> -->
+                        </div>
+                        <!----Form  For HOurs Leave-->
+                        <div *ngIf="check=='halfDay'">
+                            <div class="form-group">
+                                <label>Date <span class="text-danger">*</span></label>
+                                <div class="">
+                                    <input class="form-control  "  (keydown)="false"  [min]="todayDate"  type="date" 
+                                        name="startDate" [(ngModel)]="leaveApplication.startDate">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('startDate')?.touched ) && myForm.get('startDate')?.hasError('required')">
+                                    leave start date is required.
+                                </span> -->
+
+                            </div>
+                            <!-- <div class="form-group">
+                                <label>Hours <span class="text-danger">*</span></label>
+                                <div>
+                                    <input class="form-control " min="1" type="number" 
+                                         name="totalHours" [(ngModel)]="leaveApplication.totalHours">
+                                </div>
+                             
+                            </div> -->
+                            <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('totalHours')?.touched ) && myForm.get('totalHours')?.hasError('required')">
+                                    leave start date is required.
+                                </span> -->
+                        </div>
+                        <!-- FOrm hours ends -->
+
+                        <!----Form  For single Leave-->
+                        <div *ngIf="check=='single'">
+                            <div class="form-group">
+                                <label>Date <span class="text-danger">*</span></label>
+                                <div class="">
+                                    <input class="form-control "  (keydown)="false"  [min]="todayDate"  type="date"
+                                        name="startDate" [(ngModel)]="leaveApplication.startDate">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('startDate')?.touched ) && myForm.get('startDate')?.hasError('required')">
+                                    leave start date is required.
+                                </span> -->
+                            </div>
+
+                        </div>
+                        <!-- FOrm single ends -->
+
+                        <!----Form  For multiple Leave-->
+                        <div *ngIf="check=='multiple'">
+                            <div class="form-group">
+                                <label>Start Date <span class="text-danger">*</span></label>
+                                <div class="">
+                                    <input class="form-control" type="date"  name="startDate"
+                                     (keydown)="false"  [min]="todayDate"   [(ngModel)]="leaveApplication.startDate">
+                                </div>
+                                <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('startDate')?.touched ) && myForm.get('startDate')?.hasError('required')">
+                                    leave start date is required.
+                                </span> -->
+                            </div>
+                            <div class="form-group">
+                                <label>END Date <span class="text-danger">*</span></label>
+                                <div>
+                                    <input class="form-control" type="date" (keydown)="false" [min]="todayDate" [readonly]="!leaveApplication.startDate" name="endDate"
+                                         [(ngModel)]="leaveApplication.endDate">
+                                    <!-- <span class="text-danger"
+                                    *ngIf="(myForm.get('endDate')?.touched ) && myForm.get('endDate')?.hasError('required')">
+                                    leave start date is required.
+                                </span> -->
+                                </div>
+                            </div>
+                            <input class="form-control " min="1" type="hidden"
+                               name="totalHours" [value]="1" [(ngModel)]="leaveApplication.totalHours" required>
+                                <!-- <span class="text-danger"
+                                *ngIf="(myForm.get('totalHours')?.touched ) && myForm.get('totalHours')?.hasError('required')">
+                                leave start date is required.
+                            </span> -->
+                        
+                            </div>
+                        <!-- FOrm multiple ends -->
+
+
+
+                        <div class="form-group">
+                            <label>Leave Reason <span class="text-danger">*</span></label>
+                            <textarea rows="4" class="form-control" 
+                                [(ngModel)]="leaveApplication.reason" name="reason"></textarea>
+                        </div>
+                        <!-- <span class="text-danger"
+                            *ngIf="(myForm.get('reason')?.touched ) && myForm.get('reason')?.hasError('required')">
+                            reason is required.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('reason')?.touched ) && myForm.get('reason')?.hasError('minlength')">
+                            reason explanation should be greater than 10 words.
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="(myForm.get('reason')?.touched ) && myForm.get('reason')?.hasError('maxlength')">
+                            reason explanation should not be greater than 255 words.
+                        </span> -->
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" type="submit"
+                                >Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Leave Modal -->
+
+
+
+
+
+    <!-- Edit Leave Modal -->
+    <div id="edit_leave" class="modal custom-modal fade" role="dialog" *ngIf="permissions.isEditable">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Leave</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Leave Type <span class="text-danger">*</span></label>
+                            <select class="select" name="leaveType" [(ngModel)]="leaveApplication.leaveTypeId.id"
+                                value="leaveType">
+                                <option>Select Leave Type</option>
+                                <option *ngFor="let type of leaveTypes" [value]="type.id">{{type.title}}</option>
+
+
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration <span class="text-danger">*</span></label>
+                            <div class="">
+                                <input [(ngModel)]="check" name="check" value="single" type="radio">Single
+                                <input [(ngModel)]="check" name="check" value="multiple" type="radio">Multiple Days
+                                <input [(ngModel)]="check" name="check" value="hours" type="radio">Hours
+                            </div>
+                        </div>
+
+
+                        <!----Form  For HOurs Leave-->
+                        <div *ngIf="check=='hours'">
+                            <div class="form-group">
+                                <label>Date <span class="text-danger">*</span></label>
+                                <div class="">
+                                    <input class="form-control  " type="date" value="leaveApplication.startDate"
+                                        name="startDate" [(ngModel)]="leaveApplication.startDate">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Hours <span class="text-danger">*</span></label>
+                                <div>
+                                    <input class="form-control " min="1" type="number" name="totalHours"
+                                        [(ngModel)]="leaveApplication.totalHours" value="leaveApplication.totalHours">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- FOrm hours ends -->
+
+                        <!----Form  For single Leave-->
+                        <div *ngIf="check=='single'">
+                            <div class="form-group">
+                                <label>Date <span class="text-danger">*</span></label>
+                                <div class="">
+                                    <input class="form-control " type="date" name="startDate"
+                                        [(ngModel)]="leaveApplication.startDate" [value]="leaveApplication.startDate">
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- FOrm single ends -->
+
+                        <!----Form  For multiple Leave-->
+                        <div *ngIf="check=='multiple'">
+                            <div class="form-group">
+                                <label>Start Date <span class="text-danger">*</span></label>
+                                <div class="">
+                                    <input class="form-control" type="date" name="startDate"
+                                        [(ngModel)]="leaveApplication.startDate"
+                                        placeholder="leaveApplication.startDate">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>END Date <span class="text-danger">*</span></label>
+                                <div>
+                                    <input class="form-control " type="date" name="endDate"
+                                        [(ngModel)]="leaveApplication.endDate" [value]="leaveApplication.endDate">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- FOrm multiple ends -->
+
+
+
+                        <div class="form-group">
+                            <label>Leave Reason <span class="text-danger">*</span></label>
+                            <textarea rows="4" class="form-control" [(ngModel)]="leaveApplication.reason" name="reason"
+                                value="leaveApplication.reason"></textarea>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn" data-dismiss="modal"
+                                (click)="updateLeaveApplication()">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Leave Modal -->
+
+    <!-- Delete Leave Modal -->
+    <div class="modal custom-modal fade" id="delete_approve" role="dialog" *ngIf="permissions.isDeleteable">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Delete Leave</h3>
+                        <p>Are you sure want to Cancel this leave?</p>
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <a (click)="deleteLeave()" data-dismiss="modal"
+                                    class="btn btn-primary continue-btn">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal"
+                                    class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Delete Leave Modal -->
+
+</div>
+<!-- /Page Wrapper -->
